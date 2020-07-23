@@ -10,6 +10,7 @@ import pl.swaggerexample.model.Role;
 import pl.swaggerexample.model.User;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -23,16 +24,16 @@ public class AuthenticationService implements UserDetailsService
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
 	{
-		User user = userService.getUserByEmail(username);
+		Optional<User> user = userService.getUserByEmail(username);
 		
-		if (user == null) throw new UsernameNotFoundException("There is no user with e-mail address: " + username);
+		if (!user.isPresent()) throw new UsernameNotFoundException("There is no user with e-mail address: " + username);
 		
 		Set<SimpleGrantedAuthority> roles = new HashSet<>();
-		for (Role role : user.getRoles())
+		for (Role role : user.get().getRoles())
 		{
 			roles.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
 		}
 		
-		return org.springframework.security.core.userdetails.User.builder().username(user.getEmail()).password(user.getPassword()).authorities(roles).build();
+		return org.springframework.security.core.userdetails.User.builder().username(user.get().getEmail()).password(user.get().getPassword()).authorities(roles).build();
 	}
 }

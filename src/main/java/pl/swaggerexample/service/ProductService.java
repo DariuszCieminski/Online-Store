@@ -2,60 +2,68 @@ package pl.swaggerexample.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.swaggerexample.dao.ProductDaoImpl;
+import org.springframework.validation.BindingResult;
+import pl.swaggerexample.dao.ProductDao;
 import pl.swaggerexample.exception.NotFoundException;
 import pl.swaggerexample.model.Product;
 
+import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
-public class ProductService
+public class ProductService implements EntityService<Product>
 {
-	private final ProductDaoImpl productDao;
+	private final ProductDao productDao;
 	
 	@Autowired
-	public ProductService(ProductDaoImpl productDao) {this.productDao = productDao;}
-	
-	public List<Product> getAllProducts(List<Predicate<Product>> predicates)
+	public ProductService(ProductDao productDao)
 	{
-		List<Product> products = productDao.getAll();
-		if (predicates == null || predicates.isEmpty()) return products;
-		
-		return products.stream().filter(predicates.stream().reduce(p -> true, Predicate::and)).collect(Collectors.toList());
+		this.productDao = productDao;
 	}
 	
-	public Product getProductById(Long id)
+	@Override
+	public Product getById(Long id)
 	{
-		return productDao.getById(id).orElseThrow(() -> new NotFoundException("There is no product with id: " + id));
+		return productDao.findById(id).orElseThrow(() -> new NotFoundException("There is no product with id: " + id));
 	}
 	
-	public Product addProduct(Product product)
+	@Override
+	public List<Product> getAll()
 	{
-		validateProduct(product);
-		return productDao.save(product);
+		List<Product> products = new ArrayList<>();
+		productDao.findAll().forEach(products::add);
+		return products;
 	}
 	
-	public Product updateProduct(Product product)
+	@Override
+	public Product add(@Valid Product object, BindingResult result)
 	{
-		if (getAllProducts(null).stream().noneMatch(p -> p.getId().equals(product.getId())))
-			throw new NotFoundException("Product doesn't exist!");
-		
-		validateProduct(product);
-		
-		return productDao.update(product);
+		return productDao.save(object);
 	}
 	
-	public void deleteProduct(Long productId)
+	@Override
+	public Product update(@Valid Product object, BindingResult result)
 	{
-		Product product = getProductById(productId);
+		if (getAll().stream().noneMatch(p -> p.getId().equals(object.getId())))
+			throw new NotFoundException("Product doesn't exist.");
+		return productDao.save(object);
+	}
+	
+	@Override
+	public void delete(Long id)
+	{
+		Product product = getById(id);
 		productDao.delete(product);
 	}
 	
-	private void validateProduct(Product product)
+	public List<Product> getProductsByPredicates(List<Predicate<Product>> predicates)
 	{
-		if (product.getName().isEmpty()) throw new IllegalArgumentException("Product name cannot be empty!");
-		if (product.getPrice() < 0) throw new IllegalArgumentException("Price must be greater than zero!");
+		List<Product> products = getAll();
+		if (predicates == null || predicates.isEmpty()) return products;
+		
+		return products.stream().filter(predicates.stream().reduce(p -> true, Predicate::and)).collect(Collectors.toList());
 	}
 }

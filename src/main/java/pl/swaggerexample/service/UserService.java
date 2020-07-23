@@ -3,61 +3,63 @@ package pl.swaggerexample.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
-import pl.swaggerexample.dao.UserDaoImpl;
+import org.springframework.validation.BindingResult;
+import pl.swaggerexample.dao.UserDao;
 import pl.swaggerexample.exception.NotFoundException;
-import pl.swaggerexample.model.Role;
 import pl.swaggerexample.model.User;
 
-import java.util.Collections;
+import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
-public class UserService
+public class UserService implements EntityService<User>
 {
-	private final UserDaoImpl userDao;
+	private final UserDao userDao;
 	
 	@Autowired
-	public UserService(UserDaoImpl userDao) {this.userDao = userDao;}
-	
-	public List<User> getAllUsers()
+	public UserService(UserDao userDao)
 	{
-		return userDao.getAll();
+		this.userDao = userDao;
 	}
 	
-	public User getUserById(Long id)
+	public Optional<User> getUserByEmail(String email)
 	{
-		return userDao.getById(id).orElseThrow(() -> new NotFoundException("There is no user with id: " + id));
+		return userDao.getUserByEmail(email);
 	}
 	
-	public User getUserByEmail(String email)
+	@Override
+	public User getById(Long id)
 	{
-		return userDao.getUserByEmail(email).orElse(null);
+		return userDao.findById(id).orElseThrow(() -> new NotFoundException("There is no user with id: " + id));
 	}
 	
-	public User addUser(User user)
+	@Override
+	public List<User> getAll()
 	{
-		if (user.getRoles() == null || user.getRoles().isEmpty()) user.setRoles(Collections.singleton(Role.USER));
-		validateUser(user);
-		user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
-		
-		return userDao.save(user);
+		List<User> users = new ArrayList<>();
+		userDao.findAll().forEach(users::add);
+		return users;
 	}
 	
-	public void deleteUser(Long userId)
+	@Override
+	public User add(@Valid User object, BindingResult result)
 	{
-		User user = getUserById(userId);
+		object.setPassword(BCrypt.hashpw(object.getPassword(), BCrypt.gensalt()));
+		return userDao.save(object);
+	}
+	
+	@Override
+	public User update(@Valid User object, BindingResult result)
+	{
+		return userDao.save(object);
+	}
+	
+	@Override
+	public void delete(Long id)
+	{
+		User user = getById(id);
 		userDao.delete(user);
-	}
-	
-	private void validateUser(User user)
-	{
-		if (getAllUsers().stream().anyMatch(u -> u.getEmail().equals(user.getEmail())))
-			throw new IllegalArgumentException("There is already a user with e-mail address: " + user.getEmail());
-		if (user.getEmail().isEmpty()) throw new IllegalArgumentException("E-Mail address cannot be empty!");
-		if (user.getName().isEmpty() || user.getSurname().isEmpty())
-			throw new IllegalArgumentException("User name or surname cannot be empty!");
-		if (user.getPassword().isEmpty()) throw new IllegalArgumentException("User password was not specified!");
-		if (user.getRoles() == null || user.getRoles().isEmpty())
-			throw new IllegalArgumentException("User needs to have assigned at least 1 role!");
 	}
 }
