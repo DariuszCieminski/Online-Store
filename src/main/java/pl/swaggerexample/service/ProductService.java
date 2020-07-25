@@ -1,8 +1,8 @@
 package pl.swaggerexample.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 import pl.swaggerexample.dao.ProductDao;
 import pl.swaggerexample.exception.NotFoundException;
 import pl.swaggerexample.model.Product;
@@ -10,8 +10,6 @@ import pl.swaggerexample.model.Product;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductService implements EntityService<Product>
@@ -38,14 +36,19 @@ public class ProductService implements EntityService<Product>
 		return products;
 	}
 	
+	public List<Product> getProductsByPredicates(Specification<Product> productSpecification)
+	{
+		return productDao.findAll(productSpecification);
+	}
+	
 	@Override
-	public Product add(@Valid Product object, BindingResult result)
+	public Product add(@Valid Product object)
 	{
 		return productDao.save(object);
 	}
 	
 	@Override
-	public Product update(@Valid Product object, BindingResult result)
+	public Product update(@Valid Product object)
 	{
 		if (getAll().stream().noneMatch(p -> p.getId().equals(object.getId())))
 			throw new NotFoundException("Product doesn't exist.");
@@ -57,13 +60,5 @@ public class ProductService implements EntityService<Product>
 	{
 		Product product = getById(id);
 		productDao.delete(product);
-	}
-	
-	public List<Product> getProductsByPredicates(List<Predicate<Product>> predicates)
-	{
-		List<Product> products = getAll();
-		if (predicates == null || predicates.isEmpty()) return products;
-		
-		return products.stream().filter(predicates.stream().reduce(p -> true, Predicate::and)).collect(Collectors.toList());
 	}
 }

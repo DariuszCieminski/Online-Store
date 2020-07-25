@@ -2,7 +2,6 @@ package pl.swaggerexample.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 import pl.swaggerexample.dao.TransactionDao;
 import pl.swaggerexample.exception.NotFoundException;
 import pl.swaggerexample.model.Transaction;
@@ -37,13 +36,13 @@ public class TransactionService implements EntityService<Transaction>
 	}
 	
 	@Override
-	public Transaction add(@Valid Transaction object, BindingResult result)
+	public Transaction add(@Valid Transaction object)
 	{
 		return transactionDao.save(object);
 	}
 	
 	@Override
-	public Transaction update(@Valid Transaction object, BindingResult result)
+	public Transaction update(Transaction object)
 	{
 		throw new UnsupportedOperationException("Transaction update is unsupported.");
 	}

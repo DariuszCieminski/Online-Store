@@ -26,7 +26,7 @@ public class UserController
 	@ApiOperation(value = "Returns list of all registered customers")
 	public List<User> getUsers()
 	{
-		return userService.getAllUsers();
+		return userService.getAll();
 	}
 	
 	@GetMapping("/{id}")
@@ -34,24 +34,32 @@ public class UserController
 	@ApiResponses(value = {@ApiResponse(code = 404, message = "User with specified ID doesn't exist")})
 	public User getUser(@PathVariable @ApiParam(value = "Unique ID of existing customer", example = "1") Long id)
 	{
-		return userService.getUserById(id);
+		return userService.getById(id);
 	}
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	@ApiOperation(value = "Adds new user to the database")
 	@ApiResponses(value = {@ApiResponse(code = 422, message = "User has invalid data")})
-	public User createUser(@RequestBody @ApiParam(value = "Data of the new customer") User user)
+	public User createUser(@RequestBody @ApiParam(value = "Data of the new user") User user)
 	{
-		return userService.addUser(user);
+		return userService.add(user);
+	}
+	
+	@PutMapping
+	@ApiOperation(value = "Updates an existing user")
+	@ApiResponses(value = {@ApiResponse(code = 404, message = "User with specified ID doesn't exist"), @ApiResponse(code = 422, message = "Updated user has invalid data")})
+	public User updateUser(@RequestBody @ApiParam(value = "Updated data of the existing user") User user)
+	{
+		return userService.update(user);
 	}
 	
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@ApiOperation(value = "Removes a single user by his ID")
 	@ApiResponses(value = {@ApiResponse(code = 404, message = "User with specified ID doesn't exist")})
-	public void deleteUser(@PathVariable @ApiParam(value = "Unique ID of existing customer", example = "1") Long id)
+	public void deleteUser(@PathVariable @ApiParam(value = "Unique ID of existing user", example = "1") Long id)
 	{
-		userService.deleteUser(id);
+		userService.delete(id);
 	}
 }

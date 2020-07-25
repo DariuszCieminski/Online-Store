@@ -26,7 +26,7 @@ public class TransactionController
 	@ApiOperation(value = "Returns list of all made transactions")
 	public List<Transaction> getTransactions()
 	{
-		return transactionService.getAllTransactions();
+		return transactionService.getAll();
 	}
 	
 	@GetMapping("/{id}")
@@ -34,7 +34,7 @@ public class TransactionController
 	@ApiResponses(value = {@ApiResponse(code = 404, message = "Transaction with specified ID doesn't exist")})
 	public Transaction getTransaction(@PathVariable @ApiParam(value = "Unique ID of existing transaction", example = "1") Long id)
 	{
-		return transactionService.getTransactionById(id);
+		return transactionService.getById(id);
 	}
 	
 	@PostMapping
@@ -43,7 +43,7 @@ public class TransactionController
 	@ApiResponses(value = {@ApiResponse(code = 422, message = "Transaction has invalid data")})
 	public Transaction addTransaction(@RequestBody @ApiParam(value = "Data of the new transaction") Transaction transaction)
 	{
-		return transactionService.addTransaction(transaction);
+		return transactionService.add(transaction);
 	}
 	
 	@DeleteMapping("/{id}")
@@ -52,6 +52,6 @@ public class TransactionController
 	@ApiResponses(value = {@ApiResponse(code = 404, message = "Transaction with specified ID doesn't exist")})
 	public void deleteTransaction(@PathVariable @ApiParam(value = "Unique ID of existing transaction", example = "1") Long id)
 	{
-		transactionService.deleteTransaction(id);
+		transactionService.delete(id);
 	}
 }

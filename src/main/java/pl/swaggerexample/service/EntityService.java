@@ -1,8 +1,5 @@
 package pl.swaggerexample.service;
 
-import org.springframework.validation.BindingResult;
-
-import javax.validation.Valid;
 import java.util.List;
 
 public interface EntityService<T>
@@ -11,9 +8,9 @@ public interface EntityService<T>
 	
 	List<T> getAll();
 	
-	T add(@Valid T object, BindingResult result);
+	T add(T object);
 	
-	T update(@Valid T object, BindingResult result);
+	T update(T object);
 	
 	void delete(Long id);
 }

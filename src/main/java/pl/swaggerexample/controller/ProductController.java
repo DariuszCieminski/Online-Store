@@ -2,14 +2,16 @@ package pl.swaggerexample.controller;
 
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.swaggerexample.model.Product;
 import pl.swaggerexample.service.ProductService;
 
+import javax.persistence.criteria.Predicate;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 @RestController
 @RequestMapping("/api/products")
@@ -29,19 +31,23 @@ public class ProductController
 	@ApiResponses(value = {@ApiResponse(code = 400, message = "Price parameter is not a number")})
 	public List<Product> getProducts(@RequestParam(value = "nameContains", required = false) @ApiParam(value = "Filters by product name containing this value.") String name,
 	                                 @RequestParam(value = "descContains", required = false) @ApiParam(value = "Filters by product description containing this value.") String desc,
-	                                 @RequestParam(value = "priceGreaterThan", required = false) @ApiParam(value = "Filters by product price greater than this value.", example = "10.99") Double priceGreater,
-	                                 @RequestParam(value = "priceLessThan", required = false) @ApiParam(value = "Filters by product price less than this value.", example = "10.99") Double priceLess,
-	                                 @RequestParam(value = "priceEqualTo", required = false) @ApiParam(value = "Filters by product price equal to this value.", example = "10.99") Double priceEqualTo)
+	                                 @RequestParam(value = "priceGreaterThan", required = false) @ApiParam(value = "Filters by product price greater than this value.", example = "10.99") BigDecimal priceGreater,
+	                                 @RequestParam(value = "priceLessThan", required = false) @ApiParam(value = "Filters by product price less than this value.", example = "10.99") BigDecimal priceLess,
+	                                 @RequestParam(value = "priceEqualTo", required = false) @ApiParam(value = "Filters by product price equal to this value.", example = "10.99") BigDecimal priceEqualTo)
 	{
-		List<Predicate<Product>> predicates = new ArrayList<>();
+		Specification<Product> specification = (root, query, criteriaBuilder) -> {
+			List<Predicate> predicates = new ArrayList<>();
+			
+			if (name != null) predicates.add(criteriaBuilder.like(root.get("name"), name));
+			if (desc != null) predicates.add(criteriaBuilder.like(root.get("description"), desc));
+			if (priceGreater != null) predicates.add(criteriaBuilder.greaterThan(root.get("price"), priceGreater));
+			if (priceLess != null) predicates.add(criteriaBuilder.lessThan(root.get("price"), priceLess));
+			if (priceEqualTo != null) predicates.add(criteriaBuilder.equal(root.get("price"), priceEqualTo));
+			
+			return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+		};
 		
-		if (name != null) predicates.add(p -> p.getName().contains(name));
-		if (desc != null) predicates.add(p -> p.getDescription().contains(desc));
-		if (priceGreater != null) predicates.add(p -> p.getPrice() > priceGreater);
-		if (priceLess != null) predicates.add(p -> p.getPrice() > priceLess);
-		if (priceEqualTo != null) predicates.add(p -> p.getPrice() > priceEqualTo);
-		
-		return productService.getAllProducts(predicates);
+		return productService.getProductsByPredicates(specification);
 	}
 	
 	@GetMapping("/{id}")
@@ -49,7 +55,7 @@ public class ProductController
 	@ApiResponses(value = {@ApiResponse(code = 404, message = "Product with specified ID doesn't exist")})
 	public Product getProduct(@PathVariable @ApiParam(value = "Unique ID of existing product", example = "1") Long id)
 	{
-		return productService.getProductById(id);
+		return productService.getById(id);
 	}
 	
 	@PostMapping
@@ -58,15 +64,15 @@ public class ProductController
 	@ApiResponses(value = {@ApiResponse(code = 422, message = "Product has invalid data")})
 	public Product addProduct(@RequestBody @ApiParam(value = "Data of the new product") Product product)
 	{
-		return productService.addProduct(product);
+		return productService.add(product);
 	}
 	
 	@PutMapping
-	@ApiOperation(value = "Edits an existing product with new data")
+	@ApiOperation(value = "Updates an existing product")
 	@ApiResponses(value = {@ApiResponse(code = 404, message = "Product with specified ID doesn't exist"), @ApiResponse(code = 422, message = "Updated product has invalid data")})
-	public Product editProduct(@RequestBody @ApiParam(value = "New data of existing product in database") Product product)
+	public Product editProduct(@RequestBody @ApiParam(value = "Updated data of existing product") Product product)
 	{
-		return productService.updateProduct(product);
+		return productService.update(product);
 	}
 	
 	@DeleteMapping("/{id}")
@@ -75,6 +81,6 @@ public class ProductController
 	@ApiResponses(value = {@ApiResponse(code = 404, message = "Product with specified ID doesn't exist")})
 	public void deleteProduct(@PathVariable @ApiParam(value = "Unique ID of existing product", example = "1") Long id)
 	{
-		productService.deleteProduct(id);
+		productService.delete(id);
 	}
 }

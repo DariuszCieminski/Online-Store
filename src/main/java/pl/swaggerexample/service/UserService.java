@@ -3,12 +3,14 @@ package pl.swaggerexample.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import pl.swaggerexample.dao.UserDao;
 import pl.swaggerexample.exception.NotFoundException;
 import pl.swaggerexample.model.User;
+import pl.swaggerexample.util.ValidationGroups;
 
 import javax.validation.Valid;
+import javax.validation.groups.Default;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,15 +46,18 @@ public class UserService implements EntityService<User>
 	}
 	
 	@Override
-	public User add(@Valid User object, BindingResult result)
+	public User add(@Validated({Default.class, ValidationGroups.UserCreation.class}) User object)
 	{
 		object.setPassword(BCrypt.hashpw(object.getPassword(), BCrypt.gensalt()));
 		return userDao.save(object);
 	}
 	
 	@Override
-	public User update(@Valid User object, BindingResult result)
+	public User update(@Valid User object)
 	{
+		User user = getById(object.getId());
+		if (object.getPassword() != null) object.setPassword(BCrypt.hashpw(object.getPassword(), BCrypt.gensalt()));
+		else object.setPassword(user.getPassword());
 		return userDao.save(object);
 	}
 	

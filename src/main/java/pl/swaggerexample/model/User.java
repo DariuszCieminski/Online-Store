@@ -3,8 +3,8 @@ package pl.swaggerexample.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.lang.Nullable;
 import pl.swaggerexample.util.AddressConverter;
+import pl.swaggerexample.util.ValidationGroups;
 import pl.swaggerexample.validation.UniqueEmail;
 
 import javax.persistence.*;
@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.util.Set;
 
 @Entity
@@ -33,7 +34,6 @@ public class User
 	@ApiModelProperty(value = "User's surname", required = true, example = "Smith", position = 2)
 	private String surname;
 	
-	@Nullable
 	@Valid
 	@Convert(converter = AddressConverter.class)
 	@ApiModelProperty(notes = "Home address of the user", position = 4)
@@ -44,7 +44,8 @@ public class User
 	@ApiModelProperty(value = "E-Mail address of the user", required = true, example = "john.smith@myemail.com", position = 3)
 	private String email;
 	
-	@NotBlank(message = "User password cannot be empty.")
+	@NotBlank(message = "User password cannot be empty.", groups = ValidationGroups.UserCreation.class)
+	@Size(min = 8, message = "Password must have at least {min} characters.")
 	@ApiModelProperty(value = "Password for user account. Will be encrypted after account creation.", required = true, example = "myP@ssw0rd", position = 5)
 	private String password;
 	
