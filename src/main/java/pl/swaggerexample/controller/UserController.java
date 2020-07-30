@@ -3,10 +3,14 @@ package pl.swaggerexample.controller;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.swaggerexample.model.User;
 import pl.swaggerexample.service.UserService;
+import pl.swaggerexample.util.ValidationGroups;
 
+import javax.validation.Valid;
+import javax.validation.groups.Default;
 import java.util.List;
 
 @RestController
@@ -41,7 +45,7 @@ public class UserController
 	@ResponseStatus(HttpStatus.CREATED)
 	@ApiOperation(value = "Adds new user to the database")
 	@ApiResponses(value = {@ApiResponse(code = 422, message = "User has invalid data")})
-	public User createUser(@RequestBody @ApiParam(value = "Data of the new user") User user)
+	public User createUser(@Validated({Default.class, ValidationGroups.UserCreation.class}) @RequestBody @ApiParam(value = "Data of the new user") User user)
 	{
 		return userService.add(user);
 	}
@@ -49,7 +53,7 @@ public class UserController
 	@PutMapping
 	@ApiOperation(value = "Updates an existing user")
 	@ApiResponses(value = {@ApiResponse(code = 404, message = "User with specified ID doesn't exist"), @ApiResponse(code = 422, message = "Updated user has invalid data")})
-	public User updateUser(@RequestBody @ApiParam(value = "Updated data of the existing user") User user)
+	public User updateUser(@Valid @RequestBody @ApiParam(value = "Updated data of the existing user") User user)
 	{
 		return userService.update(user);
 	}

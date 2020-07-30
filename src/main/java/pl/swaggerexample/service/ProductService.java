@@ -7,7 +7,6 @@ import pl.swaggerexample.dao.ProductDao;
 import pl.swaggerexample.exception.NotFoundException;
 import pl.swaggerexample.model.Product;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,13 +41,13 @@ public class ProductService implements EntityService<Product>
 	}
 	
 	@Override
-	public Product add(@Valid Product object)
+	public Product add(Product object)
 	{
 		return productDao.save(object);
 	}
 	
 	@Override
-	public Product update(@Valid Product object)
+	public Product update(Product object)
 	{
 		if (getAll().stream().noneMatch(p -> p.getId().equals(object.getId())))
 			throw new NotFoundException("Product doesn't exist.");

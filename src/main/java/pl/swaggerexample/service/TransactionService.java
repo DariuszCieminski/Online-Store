@@ -6,7 +6,6 @@ import pl.swaggerexample.dao.TransactionDao;
 import pl.swaggerexample.exception.NotFoundException;
 import pl.swaggerexample.model.Transaction;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +35,7 @@ public class TransactionService implements EntityService<Transaction>
 	}
 	
 	@Override
-	public Transaction add(@Valid Transaction object)
+	public Transaction add(Transaction object)
 	{
 		return transactionDao.save(object);
 	}

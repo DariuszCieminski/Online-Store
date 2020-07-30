@@ -63,12 +63,13 @@ public class User
 	{
 	}
 	
-	public User(String name, String surname, String email, String password)
+	public User(String name, String surname, String email, String password, Set<Role> roles)
 	{
 		this.name = name;
 		this.surname = surname;
 		this.email = email;
 		this.password = password;
+		this.roles = roles;
 	}
 	
 	public Long getId()

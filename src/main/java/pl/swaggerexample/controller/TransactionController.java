@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.swaggerexample.model.Transaction;
 import pl.swaggerexample.service.TransactionService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -41,7 +42,7 @@ public class TransactionController
 	@ResponseStatus(HttpStatus.CREATED)
 	@ApiOperation(value = "Adds new transaction to database")
 	@ApiResponses(value = {@ApiResponse(code = 422, message = "Transaction has invalid data")})
-	public Transaction addTransaction(@RequestBody @ApiParam(value = "Data of the new transaction") Transaction transaction)
+	public Transaction addTransaction(@Valid @RequestBody @ApiParam(value = "Data of the new transaction") Transaction transaction)
 	{
 		return transactionService.add(transaction);
 	}

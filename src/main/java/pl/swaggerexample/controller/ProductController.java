@@ -9,6 +9,7 @@ import pl.swaggerexample.model.Product;
 import pl.swaggerexample.service.ProductService;
 
 import javax.persistence.criteria.Predicate;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +39,8 @@ public class ProductController
 		Specification<Product> specification = (root, query, criteriaBuilder) -> {
 			List<Predicate> predicates = new ArrayList<>();
 			
-			if (name != null) predicates.add(criteriaBuilder.like(root.get("name"), name));
-			if (desc != null) predicates.add(criteriaBuilder.like(root.get("description"), desc));
+			if (name != null) predicates.add(criteriaBuilder.like(root.get("name"), String.format("%%%s%%", name)));
+			if (desc != null) predicates.add(criteriaBuilder.like(root.get("description"), String.format("%%%s%%", desc)));
 			if (priceGreater != null) predicates.add(criteriaBuilder.greaterThan(root.get("price"), priceGreater));
 			if (priceLess != null) predicates.add(criteriaBuilder.lessThan(root.get("price"), priceLess));
 			if (priceEqualTo != null) predicates.add(criteriaBuilder.equal(root.get("price"), priceEqualTo));
@@ -62,7 +63,7 @@ public class ProductController
 	@ResponseStatus(HttpStatus.CREATED)
 	@ApiOperation(value = "Adds new product to the database")
 	@ApiResponses(value = {@ApiResponse(code = 422, message = "Product has invalid data")})
-	public Product addProduct(@RequestBody @ApiParam(value = "Data of the new product") Product product)
+	public Product addProduct(@Valid @RequestBody @ApiParam(value = "Data of the new product") Product product)
 	{
 		return productService.add(product);
 	}
@@ -70,7 +71,7 @@ public class ProductController
 	@PutMapping
 	@ApiOperation(value = "Updates an existing product")
 	@ApiResponses(value = {@ApiResponse(code = 404, message = "Product with specified ID doesn't exist"), @ApiResponse(code = 422, message = "Updated product has invalid data")})
-	public Product editProduct(@RequestBody @ApiParam(value = "Updated data of existing product") Product product)
+	public Product updateProduct(@Valid @RequestBody @ApiParam(value = "Updated data of existing product") Product product)
 	{
 		return productService.update(product);
 	}

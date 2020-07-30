@@ -18,6 +18,10 @@ public class Address
 	@NotBlank
 	private String city;
 	
+	public Address()
+	{
+	}
+	
 	public Address(String street, String postCode, String city)
 	{
 		this.street = street;

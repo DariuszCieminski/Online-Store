@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -22,13 +23,14 @@ public class Transaction
 	@ApiModelProperty(value = "Unique transaction idenfifier", readOnly = true, example = "1")
 	private Long id;
 	
+	@Valid
 	@NotNull(message = "Buyer is null.")
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(optional = false)
 	@ApiModelProperty(value = "User that make transaction. Cannot be null", required = true, position = 1)
 	private User buyer;
 	
 	@NotEmpty(message = "Product list is empty.")
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "transaction_products", joinColumns = {@JoinColumn(name = "transaction_id")}, inverseJoinColumns = {@JoinColumn(name = "product_id")})
 	@ApiModelProperty(value = "List of products that user purchased. Cannot be empty or null.", required = true, position = 2)
 	private List<Product> products;

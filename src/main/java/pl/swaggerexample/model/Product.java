@@ -2,13 +2,9 @@ package pl.swaggerexample.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -29,7 +25,7 @@ public class Product
 	@ApiModelProperty(value = "Short description of the product.", position = 2)
 	private String description;
 	
-	@URL
+	@Pattern(regexp = "^(http|https)?.*/.*")
 	@ApiModelProperty(value = "Link to product's image.", example = "http://picsum.photos/200", position = 4)
 	private String imageUrl;
 	

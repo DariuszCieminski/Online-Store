@@ -25,14 +25,14 @@ public class SwaggerTests
 	private MockMvc mockMvc;
 	
 	@Test
-	public void openSwaggerWithAuthorizationExpectSuccess() throws Exception
+	public void openSwaggerWithAuthorizationReturnOk() throws Exception
 	{
 		mockMvc.perform(get("/swagger-ui.html").with(user(developer.build()))).andExpect(status().isOk());
 		mockMvc.perform(get("/v2/api-docs").with(user(developer.build()))).andExpect(status().isOk());
 	}
 	
 	@Test
-	public void openSwaggerWithoutAuthorizationExpectForbidden() throws Exception
+	public void openSwaggerWithoutAuthorizationReturnForbidden() throws Exception
 	{
 		mockMvc.perform(get("/swagger-ui.html").with(user(user.build()))).andExpect(status().isForbidden());
 		mockMvc.perform(get("/v2/api-docs").with(user(user.build()))).andExpect(status().isForbidden());
