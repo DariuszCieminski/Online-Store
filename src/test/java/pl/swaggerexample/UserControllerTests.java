@@ -99,10 +99,10 @@ class UserControllerTests
 		User client = new User("Jan", "Nowak", "jan.nowak@poczta.pl", "test-test", Collections.singleton(Role.USER));
 		MvcResult mvcResult = mockMvc.perform(post("/api/users").with(user(user.build())).content(mapper.writeValueAsString(client)).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andReturn();
 		client = mapper.readValue(mvcResult.getResponse().getContentAsString(), User.class);
-		client.setEmail("testowyemail");
+		client.setEmail("testowy.email");
 		client.setPassword("hasło");
 		
-		mockMvc.perform(put("/api/users").with(user(user.build())).content(mapper.writeValueAsString(client)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isUnprocessableEntity()).andExpect(jsonPath("$.validationErrors").isArray()).andExpect(jsonPath("$.validationErrors", hasSize(2)));
+		mockMvc.perform(put("/api/users").with(user(user.build())).content(mapper.writeValueAsString(client)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isUnprocessableEntity()).andExpect(jsonPath("$.errors").isArray()).andExpect(jsonPath("$.errors", hasSize(2)));
 	}
 	
 	@Test

@@ -35,7 +35,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler
 			errorList.add(errorMap);
 		}
 		
-		Map<String, List<Map<String, String>>> output = Collections.singletonMap("validationErrors", errorList);
+		Map<String, List<Map<String, String>>> output = Collections.singletonMap("errors", errorList);
 		
 		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(output);
 	}

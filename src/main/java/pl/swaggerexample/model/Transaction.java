@@ -25,13 +25,13 @@ public class Transaction
 	
 	@Valid
 	@NotNull(message = "Buyer is null.")
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
 	@ApiModelProperty(value = "User that make transaction. Cannot be null", required = true, position = 1)
 	private User buyer;
 	
 	@NotEmpty(message = "Product list is empty.")
 	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "transaction_products", joinColumns = {@JoinColumn(name = "transaction_id")}, inverseJoinColumns = {@JoinColumn(name = "product_id")})
+	@JoinTable(name = "transaction_products", joinColumns = {@JoinColumn(name = "transaction_id")}, inverseJoinColumns = {@JoinColumn(name = "product_id")}, inverseForeignKey = @ForeignKey(name = "FK_PRODUCT_TRANSACTION", foreignKeyDefinition = "FOREIGN KEY (product_id) REFERENCES Product (id) ON DELETE CASCADE"))
 	@ApiModelProperty(value = "List of products that user purchased. Cannot be empty or null.", required = true, position = 2)
 	private List<Product> products;
 	
