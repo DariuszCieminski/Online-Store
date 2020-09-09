@@ -1,0 +1,15 @@
+<form (ngSubmit)="onLogin()" [formGroup]="form" class="centered">
+	<mat-form-field>
+		<mat-label>E-Mail address</mat-label>
+		<input formControlName="email" matInput type="email">
+		<mat-icon matSuffix>email</mat-icon>
+		<mat-error *ngIf="form.get('email').invalid">Not a valid E-Mail address</mat-error>
+	</mat-form-field>
+	<mat-form-field>
+		<mat-label>Password</mat-label>
+		<input formControlName="password" matInput type="password">
+		<mat-icon matSuffix>lock</mat-icon>
+		<mat-error *ngIf="form.get('password').invalid">Must be not empty</mat-error>
+	</mat-form-field>
+	<button color="primary" mat-raised-button type="submit">Login</button>
+</form>

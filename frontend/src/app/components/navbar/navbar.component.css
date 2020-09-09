@@ -1,0 +1,17 @@
+.fill-space
+{
+	flex: 1 1 auto;
+}
+
+a
+{
+	text-decoration: none;
+	padding: .7rem;
+	margin-left: 1rem;
+	color: white;
+}
+
+a:hover
+{
+	background-color: mediumpurple;
+}

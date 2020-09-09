@@ -1,0 +1,76 @@
+<form [formGroup]="formGroup" class="centered">
+	<mat-horizontal-stepper formArrayName="formArray" linear="true">
+		<mat-step [stepControl]="formArray.get([0])" formGroupName="0">
+			<ng-template matStepLabel>First and last name</ng-template>
+			<mat-form-field>
+				<mat-label>First name</mat-label>
+				<input formControlName="name" matInput>
+				<mat-error *ngIf="formArray.get([0]).get('name').invalid">Must not be empty</mat-error>
+			</mat-form-field>
+			<mat-form-field>
+				<mat-label>Last name</mat-label>
+				<input formControlName="surname" matInput>
+				<mat-error *ngIf="formArray.get([0]).get('surname').invalid">Must not be empty</mat-error>
+			</mat-form-field>
+			<mat-form-field>
+				<mat-label>E-mail address</mat-label>
+				<input formControlName="email" matInput type="email">
+				<mat-icon matSuffix>email</mat-icon>
+				<mat-error *ngIf="formArray.get([0]).get('email').invalid">Not a valid E-Mail address</mat-error>
+			</mat-form-field>
+			<div>
+				<button class="form-btn" mat-raised-button matStepperNext>Next step</button>
+			</div>
+		</mat-step>
+		<mat-step [stepControl]="formArray.get([1])" formGroupName="1">
+			<ng-template matStepLabel>Password</ng-template>
+			<mat-form-field [ngClass]="{'mat-form-field-invalid': formArray.get([1]).errors || formArray.get([1]).get('password').errors}">
+				<mat-label>Your password</mat-label>
+				<input formControlName="password" matInput type="password">
+				<mat-icon matSuffix>lock</mat-icon>
+				<mat-error
+						*ngIf="formArray.get([1]).get('password').invalid && !formArray.get([1]).get('password').pristine">
+					Must have at least 8 characters
+				</mat-error>
+			</mat-form-field>
+			<mat-form-field [ngClass]="{'mat-form-field-invalid': formArray.get([1]).errors || formArray.get([1]).get('repeatPassword').errors}">
+				<mat-label>Repeat your password</mat-label>
+				<input formControlName="repeatPassword" matInput type="password">
+				<mat-icon matSuffix>lock</mat-icon>
+				<mat-error
+						*ngIf="formArray.get([1]).get('repeatPassword').value !== formArray.get([1]).get('password').value && !formArray.get([1]).get('repeatPassword').pristine">
+				</mat-error>
+			</mat-form-field>
+			<mat-error *ngIf="formArray.get([1]).getError('password_mismatch') && !formArray.get([1]).pristine" style="margin-bottom: .75rem; margin-top: .5rem">
+				Passwords do not match each other
+			</mat-error>
+			<div>
+				<button class="form-btn" mat-raised-button matStepperPrevious>Previous step</button>
+				<button class="form-btn" mat-raised-button matStepperNext>Next step</button>
+			</div>
+		</mat-step>
+		<mat-step [stepControl]="formArray.get([2])" formGroupName="2" optional>
+			<ng-template matStepLabel>Home address</ng-template>
+			<mat-form-field>
+				<mat-label>Street</mat-label>
+				<input formControlName="street" matInput>
+				<mat-error *ngIf="formArray.get([2]).get('street').invalid">Must not be empty</mat-error>
+			</mat-form-field>
+			<mat-form-field>
+				<mat-label>Post code</mat-label>
+				<input formControlName="postCode" matInput>
+				<mat-error *ngIf="formArray.get([2]).get('postCode').invalid">Invalid postcode</mat-error>
+			</mat-form-field>
+			<mat-form-field>
+				<mat-label>City</mat-label>
+				<input formControlName="city" matInput>
+				<mat-error *ngIf="formArray.get([2]).get('city').invalid">Must not be empty</mat-error>
+			</mat-form-field>
+			<div>
+				<button class="form-btn" mat-raised-button matStepperPrevious>Previous step</button>
+				<button (click)="onSubmit()" class="form-btn" color="primary" mat-raised-button type="submit">Register
+				</button>
+			</div>
+		</mat-step>
+	</mat-horizontal-stepper>
+</form>
