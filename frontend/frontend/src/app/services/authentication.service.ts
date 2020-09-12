@@ -57,7 +57,7 @@ export class AuthenticationService {
     reAuthentication(): Observable<boolean> {
         let accessToken = sessionStorage.getItem(this.accessToken);
         let refreshToken = sessionStorage.getItem(this.refreshToken);
-        let tokens = {"access_token": accessToken, "refresh_token": refreshToken};
+        let tokens = { "access_token": accessToken, "refresh_token": refreshToken };
 
         return this.httpClient.post('http://localhost:8080/login', tokens)
             .pipe(
@@ -67,6 +67,13 @@ export class AuthenticationService {
                     this.clearUserData();
                     return of(false);
                 }));
+    }
+
+    logout(): Observable<void> {
+        return this.httpClient.post('http://localhost:8080/logout', null)
+            .pipe(
+                tap(() => this.clearUserData()),
+                map(() => { }));
     }
 
     private clearUserData(): void {

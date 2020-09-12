@@ -14,4 +14,9 @@ export class NavbarComponent {
     getUser(): string {
         return this.auth.getUser;
     }
+
+    doLogout(): void {
+        this.auth.logout()
+            .subscribe(() => console.log('user logged out'));
+    }
 }
