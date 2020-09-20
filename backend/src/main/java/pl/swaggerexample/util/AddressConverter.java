@@ -7,7 +7,7 @@ import pl.swaggerexample.model.Address;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-@Converter(autoApply = true)
+@Converter
 public class AddressConverter implements AttributeConverter<Address, String>
 {
 	private final ObjectMapper mapper = new ObjectMapper();

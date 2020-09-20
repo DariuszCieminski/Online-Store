@@ -49,11 +49,11 @@ public class ProductControllerTests
 	public void init() throws Exception
 	{
 		List<Product> products = Arrays.asList(
-				new Product("Milk", "A carton of milk.", "/milkimageurl", BigDecimal.valueOf(4.99D)),
-				new Product("Bread", "A single loaf of bread.", "/breadimageurl", BigDecimal.valueOf(2.79D)),
-				new Product("Ham", "250g of ham.", "/hamimageurl", BigDecimal.valueOf(10.50D)),
-				new Product("Coffee", "A packet of coffee.", "/coffeeimageurl", BigDecimal.valueOf(15.00D)),
-				new Product("Butter", "500g of butter.", "/butterimageurl", BigDecimal.valueOf(7.29D))
+				new Product("Milk", "A carton of milk.", "/milkimageurl", BigDecimal.valueOf(4.99D), 20),
+				new Product("Bread", "A single loaf of bread.", "/breadimageurl", BigDecimal.valueOf(2.79D), 32),
+				new Product("Ham", "250g of ham.", "/hamimageurl", BigDecimal.valueOf(10.50D), 16),
+				new Product("Coffee", "A packet of coffee.", "/coffeeimageurl", BigDecimal.valueOf(15.00D), 10),
+				new Product("Butter", "500g of butter.", "/butterimageurl", BigDecimal.valueOf(7.29D), 8)
 		);
 		
 		for (Product product : products)
@@ -65,28 +65,35 @@ public class ProductControllerTests
 	@Test
 	public void createProductReturnOk() throws Exception
 	{
-		Product product = new Product("Product 1", "Simple description of Product 1", "https://picsum.photos/200", BigDecimal.valueOf(11.99D));
+		Product product = new Product("Product 1", "Simple description of Product 1", "https://picsum.photos/200", BigDecimal.valueOf(11.99D), 3);
 		mockMvc.perform(post("/api/products").with(user(user.build())).content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isCreated()).andExpect(jsonPath("$.name").value(product.getName())).andExpect(jsonPath("$.price").value(product.getPrice()));
 	}
 	
 	@Test
 	public void createProductWithoutNameReturnUnprocessableEntity() throws Exception
 	{
-		Product product = new Product("", "Simple description of Product 1", "https://picsum.photos/200", BigDecimal.valueOf(11.99D));
+		Product product = new Product("", "Simple description of Product 1", "https://picsum.photos/200", BigDecimal.valueOf(11.99D), 1);
 		mockMvc.perform(post("/api/products").with(user(user.build())).content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isUnprocessableEntity());
 	}
 	
 	@Test
 	public void createProductWithInvalidPriceReturnUnprocessableEntity() throws Exception
 	{
-		Product product = new Product("Product", "Description", "https://picsum.photos/200", BigDecimal.valueOf(-8.99D));
+		Product product = new Product("Product", "Description", "https://picsum.photos/200", BigDecimal.valueOf(-8.99D), 1);
+		mockMvc.perform(post("/api/products").with(user(user.build())).content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isUnprocessableEntity());
+	}
+	
+	@Test
+	public void createProductWithNegativeQuantityReturnUnprocessableEntity() throws Exception
+	{
+		Product product = new Product("Product", "Description", "https://picsum.photos/200", BigDecimal.valueOf(-8.99D), -5);
 		mockMvc.perform(post("/api/products").with(user(user.build())).content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isUnprocessableEntity());
 	}
 	
 	@Test
 	public void getProductByValidIdReturnOk() throws Exception
 	{
-		Product product = new Product("Product", "Simple description of product", "https://picsum.photos/200", BigDecimal.valueOf(11.99D));
+		Product product = new Product("Product", "Simple description of product", "https://picsum.photos/200", BigDecimal.valueOf(11.99D), 2);
 		MvcResult result = mockMvc.perform(post("/api/products").with(user(user.build())).content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andReturn();
 		product = mapper.readValue(result.getResponse().getContentAsString(), Product.class);
 		
@@ -137,7 +144,7 @@ public class ProductControllerTests
 	@Test
 	public void updateProductWithInvalidIdReturnNotFound() throws Exception
 	{
-		Product p = new Product("Product", "Description", "https://picsum.photos/200", BigDecimal.valueOf(3.99D));
+		Product p = new Product("Product", "Description", "https://picsum.photos/200", BigDecimal.valueOf(3.99D), 1);
 		p.setId(333L);
 		
 		mockMvc.perform(put("/api/products").with(user(user.build())).content(mapper.writeValueAsString(p)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isNotFound());
@@ -146,7 +153,7 @@ public class ProductControllerTests
 	@Test
 	public void deleteProductWithAuthorizationReturnNoContent() throws Exception
 	{
-		Product p = new Product("Product", "Description", "https://picsum.photos/200", BigDecimal.valueOf(3.99D));
+		Product p = new Product("Product", "Description", "https://picsum.photos/200", BigDecimal.valueOf(3.99D), 0);
 		MvcResult result = mockMvc.perform(post("/api/products").with(user(user.build())).content(mapper.writeValueAsString(p)).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andReturn();
 		p = mapper.readValue(result.getResponse().getContentAsString(), Product.class);
 		mockMvc.perform(delete("/api/products/{id}", p.getId()).with(user(manager.build()))).andDo(print()).andExpect(status().isNoContent());

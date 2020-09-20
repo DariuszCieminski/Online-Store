@@ -1,6 +1,7 @@
 package pl.swaggerexample.model;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -13,6 +14,7 @@ public class Address
 	
 	@NotBlank
 	@Pattern(regexp = "^[0-9]{2}-[0-9]{3}$")
+	@ApiModelProperty(example = "01-234")
 	private String postCode;
 	
 	@NotBlank
@@ -57,5 +59,16 @@ public class Address
 	public void setCity(String city)
 	{
 		this.city = city;
+	}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		if (this == o) return true;
+		if (!(o instanceof Address)) return false;
+		Address address = (Address) o;
+		return getStreet().equals(address.getStreet()) &&
+				getPostCode().equals(address.getPostCode()) &&
+				getCity().equals(address.getCity());
 	}
 }

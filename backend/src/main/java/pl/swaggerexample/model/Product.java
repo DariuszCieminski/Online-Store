@@ -26,7 +26,7 @@ public class Product
 	private String description;
 	
 	@Pattern(regexp = "^(http|https)?.*/.*")
-	@ApiModelProperty(value = "Link to product's image.", example = "http://picsum.photos/200", position = 4)
+	@ApiModelProperty(value = "Link to product's image.", example = "http://picsum.photos/200", position = 5)
 	private String imageUrl;
 	
 	@NotNull(message = "Product price was not specified.")
@@ -35,16 +35,22 @@ public class Product
 	@ApiModelProperty(value = "Price of the product. Must be positive and have a precision of 2 decimal places.", required = true, example = "11.99", position = 3)
 	private BigDecimal price;
 	
+	@NotNull(message = "Product quantity was not specified.")
+	@PositiveOrZero(message = "Product quantity must not be less than zero.")
+	@ApiModelProperty(value = "Quantity of the product available in stock. Must not be less than zero.", required = true, example = "30", position = 4)
+	private Integer quantity;
+	
 	public Product()
 	{
 	}
 	
-	public Product(String name, String description, String imageUrl, BigDecimal price)
+	public Product(String name, String description, String imageUrl, BigDecimal price, Integer quantity)
 	{
 		this.name = name;
 		this.description = description;
 		this.imageUrl = imageUrl;
 		this.price = price;
+		this.quantity = quantity;
 	}
 	
 	public Long getId()
@@ -95,6 +101,16 @@ public class Product
 	public void setPrice(BigDecimal price)
 	{
 		this.price = price;
+	}
+	
+	public Integer getQuantity()
+	{
+		return quantity;
+	}
+	
+	public void setQuantity(Integer quantity)
+	{
+		this.quantity = quantity;
 	}
 	
 	@Override

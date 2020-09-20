@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 import java.util.Set;
 
 @Entity
-@UniqueEmail
+@UniqueEmail(groups = ValidationGroups.UserCreation.class)
 @ApiModel(description = "Shop's customer")
 public class User
 {
@@ -50,14 +50,14 @@ public class User
 	private String password;
 	
 	@NotEmpty(message = "User needs to have assigned at least 1 role.")
-	@ElementCollection(fetch = FetchType.EAGER)
+	@ElementCollection
 	@Enumerated(EnumType.STRING)
 	@ApiModelProperty(value = "All roles that user has. Must not be empty or null.", required = true, position = 6)
 	private Set<Role> roles;
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "buyer", cascade = CascadeType.REMOVE)
-	private Set<Transaction> transactions;
+	private Set<Order> orders;
 	
 	public User()
 	{
@@ -142,14 +142,14 @@ public class User
 		this.roles = roles;
 	}
 	
-	public Set<Transaction> getTransactions()
+	public Set<Order> getOrders()
 	{
-		return transactions;
+		return orders;
 	}
 	
-	public void setTransactions(Set<Transaction> transactions)
+	public void setOrders(Set<Order> orders)
 	{
-		this.transactions = transactions;
+		this.orders = orders;
 	}
 	
 	@Override
