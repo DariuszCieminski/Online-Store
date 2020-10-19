@@ -5,19 +5,19 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,9 +43,14 @@ public class JwtManager
 				.atZone(ZoneOffset.systemDefault())
 				.toInstant());
 		
+		String[] roles = authentication.getAuthorities()
+				.stream()
+				.map(GrantedAuthority::getAuthority)
+				.toArray(String[]::new);
+		
 		return Jwts.builder()
 				.setSubject(authentication.getName())
-				.claim("roles", authentication.getAuthorities())
+				.claim("roles", roles)
 				.setExpiration(expirationTime)
 				.signWith(SECRET_KEY)
 				.compact();
@@ -78,11 +83,15 @@ public class JwtManager
 	{
 		try
 		{
-			Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token);
+			Jwts.parserBuilder()
+					.setSigningKey(SECRET_KEY)
+					.build()
+					.parseClaimsJws(token);
+			
 			return true;
 		}
 		
-		catch (ExpiredJwtException e)
+		catch (ExpiredJwtException | SignatureException e)
 		{
 			return false;
 		}
@@ -90,14 +99,31 @@ public class JwtManager
 	
 	public boolean isSwaggerCookie(String cookie)
 	{
-		return Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(cookie).getBody().get("swagger") != null;
+		try
+		{
+			return Jwts.parserBuilder()
+					.setSigningKey(SECRET_KEY).build()
+					.parseClaimsJws(cookie)
+					.getBody()
+					.get("swagger") != null;
+		}
+		
+		catch (SignatureException e)
+		{
+			return false;
+		}
 	}
 	
 	public String getUsername(String token)
 	{
 		try
 		{
-			return Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody().getSubject();
+			return Jwts.parserBuilder()
+					.setSigningKey(SECRET_KEY)
+					.build()
+					.parseClaimsJws(token)
+					.getBody()
+					.getSubject();
 		}
 		
 		catch (ExpiredJwtException e)
@@ -112,16 +138,19 @@ public class JwtManager
 		
 		try
 		{
-			claims = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody();
+			claims = Jwts.parserBuilder()
+					.setSigningKey(SECRET_KEY)
+					.build()
+					.parseClaimsJws(token)
+					.getBody();
 		}
 		catch (ExpiredJwtException e)
 		{
 			claims = e.getClaims();
 		}
 		
-		ArrayList<LinkedHashMap<String, String>> roles = claims.get("roles", ArrayList.class);
-		List<SimpleGrantedAuthority> authorities = roles.stream().map(role -> new SimpleGrantedAuthority(role.get("authority"))).collect(Collectors.toList());
+		List<String> authorities = claims.get("roles", List.class);
 		
-		return new UsernamePasswordAuthenticationToken(claims.getSubject(), "", authorities);
+		return new UsernamePasswordAuthenticationToken(claims.getSubject(), "", authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
 	}
 }

@@ -12,8 +12,9 @@ import java.io.IOException;
 
 public class JwtAuthorizationFilter extends OncePerRequestFilter
 {
-	private static final String AUTH_HEADER = "Authorization";
-	private static final String AUTH_PREFIX = "Bearer ";
+	public static final String AUTH_HEADER = "Authorization";
+	public static final String AUTH_PREFIX = "Bearer ";
+	
 	private final JwtManager jwt;
 	
 	public JwtAuthorizationFilter(JwtManager jwt)

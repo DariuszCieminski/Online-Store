@@ -42,18 +42,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		try
 		{
 			JsonNode requestBody = mapper.readTree(request.getReader());
-			
 			if (isReAuthentication(requestBody))
 			{
-				String accessToken = requestBody.get("access_token").textValue();
-				String refreshToken = requestBody.get("refresh_token").textValue();
-				
-				if (!jwt.isTokenValid(refreshToken)) throw new JwtTokenParsingException("Refresh token is not valid.");
-				if (!jwt.getUsername(accessToken).equals(jwt.getUsername(refreshToken)))
-					throw new JwtTokenParsingException("Tokens are not matched.");
-				response.addHeader("reauth", "true");
-				
-				return jwt.getAuthentication(accessToken);
+				if (request.getHeader("Authorization") == null)
+					throw new AuthenticationException("Missing 'Authorization' header.") {};
+				return doReauthentication(requestBody, response);
 			}
 			
 			User user = mapper.treeToValue(requestBody, User.class);
@@ -70,9 +63,31 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException
 	{
-		setSwaggerCookie(response, authResult);
-		response.getWriter().print(mapper.writeValueAsString(response.containsHeader("reauth") ? writeReauthentication(authResult) : writeAuthentication(authResult)));
+		if (response.containsHeader("reauth"))
+		{
+			response.getWriter().print(mapper.writeValueAsString(writeReauthentication(authResult)));
+		}
+		
+		else
+		{
+			setSwaggerCookie(response, authResult);
+			response.getWriter().print(mapper.writeValueAsString(writeAuthentication(authResult)));
+		}
+		
 		response.flushBuffer();
+	}
+	
+	private Authentication doReauthentication(JsonNode requestBody, HttpServletResponse response)
+	{
+		String accessToken = requestBody.get("access_token").textValue();
+		String refreshToken = requestBody.get("refresh_token").textValue();
+		
+		if (!jwt.isTokenValid(refreshToken)) throw new JwtTokenParsingException("Refresh token is not valid.");
+		if (!jwt.getUsername(accessToken).equals(jwt.getUsername(refreshToken)))
+			throw new JwtTokenParsingException("Tokens are not matched.");
+		response.addHeader("reauth", "true");
+		
+		return jwt.getAuthentication(accessToken);
 	}
 	
 	private void setSwaggerCookie(HttpServletResponse response, Authentication authentication)

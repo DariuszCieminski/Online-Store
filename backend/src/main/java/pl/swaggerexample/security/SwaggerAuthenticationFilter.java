@@ -31,13 +31,17 @@ public class SwaggerAuthenticationFilter extends OncePerRequestFilter
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException
 	{
-		if (request.getCookies() != null && requestURIs.stream().anyMatch(uri -> request.getRequestURI().contains(uri)))
+		if (requestURIs.stream().anyMatch(uri -> request.getRequestURI().contains(uri)))
 		{
-			Optional<Cookie> swaggerCookie = Arrays.stream(request.getCookies()).filter(cookie -> cookie.getName().equals("swagger_id")).findFirst();
-			if (swaggerCookie.isPresent() && jwt.isSwaggerCookie(swaggerCookie.get().getValue()))
+			SecurityContextHolder.clearContext();
+			if (request.getCookies() != null)
 			{
-				Authentication authentication = new UsernamePasswordAuthenticationToken(jwt.getUsername(swaggerCookie.get().getValue()), "", Collections.singleton(new SimpleGrantedAuthority("ROLE_" + Role.DEVELOPER.name())));
-				SecurityContextHolder.getContext().setAuthentication(authentication);
+				Optional<Cookie> swaggerCookie = Arrays.stream(request.getCookies()).filter(cookie -> cookie.getName().equals("swagger_id")).findFirst();
+				if (swaggerCookie.isPresent() && jwt.isSwaggerCookie(swaggerCookie.get().getValue()))
+				{
+					Authentication authentication = new UsernamePasswordAuthenticationToken(jwt.getUsername(swaggerCookie.get().getValue()), "", Collections.singleton(new SimpleGrantedAuthority("ROLE_" + Role.DEVELOPER.name())));
+					SecurityContextHolder.getContext().setAuthentication(authentication);
+				}
 			}
 		}
 		

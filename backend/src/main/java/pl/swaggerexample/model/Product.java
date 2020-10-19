@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @ApiModel(description = "Product, which is offered to buy on the shop.")
@@ -25,9 +26,10 @@ public class Product
 	@ApiModelProperty(value = "Short description of the product.", position = 2)
 	private String description;
 	
-	@Pattern(regexp = "^(http|https)?.*/.*")
-	@ApiModelProperty(value = "Link to product's image.", example = "http://picsum.photos/200", position = 5)
-	private String imageUrl;
+	@ElementCollection
+	@Column(name = "image")
+	@ApiModelProperty(value = "Links to product's images.", example = "['http://picsum.photos/200', '/link']", position = 5)
+	private Set<@Pattern(regexp = "^(http|https)?.*/.*") String> images;
 	
 	@NotNull(message = "Product price was not specified.")
 	@Positive(message = "Price must be greater than zero.")
@@ -44,11 +46,11 @@ public class Product
 	{
 	}
 	
-	public Product(String name, String description, String imageUrl, BigDecimal price, Integer quantity)
+	public Product(String name, String description, Set<String> images, BigDecimal price, Integer quantity)
 	{
 		this.name = name;
 		this.description = description;
-		this.imageUrl = imageUrl;
+		this.images = images;
 		this.price = price;
 		this.quantity = quantity;
 	}
@@ -83,14 +85,14 @@ public class Product
 		this.description = description;
 	}
 	
-	public String getImageUrl()
+	public Set<String> getImages()
 	{
-		return imageUrl;
+		return images;
 	}
 	
-	public void setImageUrl(String imageUrl)
+	public void setImages(Set<String> images)
 	{
-		this.imageUrl = imageUrl;
+		this.images = images;
 	}
 	
 	public BigDecimal getPrice()
