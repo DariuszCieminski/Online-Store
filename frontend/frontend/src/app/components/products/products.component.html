@@ -1,0 +1,19 @@
+<mat-toolbar fxLayout="row" fxLayoutGap="1rem">
+	<button (click)="showAddProductDialog()" *ngxPermissionsOnly="'MANAGER'" color="primary" mat-flat-button>Add product</button>
+	<span style="flex: 1 1 auto"></span>
+	<input #search_box class="search-box" fxFlex="1 1 300px" matInput placeholder="Product name">
+	<button (click)="searchByProductName()" color="primary" mat-flat-button><mat-icon>search</mat-icon>Search</button>
+	<filter-panel (onFilter)="searchProducts($event)"></filter-panel>
+	<mat-paginator (page)="onPageChange($event)" [pageSizeOptions]="[10,50,100]"
+	               [pageSize]=10></mat-paginator>
+</mat-toolbar>
+<div fxLayout="row wrap" fxLayout.lt-md="column" fxLayoutGap="20px grid">
+	<div *ngFor="let product of paginated" fxFlex="0 1 calc(20%-5px)" fxFlex.lt-md="0 1 calc(50%-5px)"
+	     fxFlex.md="0 1 calc(100/3-5px)">
+		<mat-card (click)="showProductDetails(product)" fxLayout="column" fxLayoutAlign="center center">
+			<mat-card-title>{{product.name}}</mat-card-title>
+			<img [src]="product.images[0]" mat-card-image>
+			<mat-card-footer>{{product.price}} zł</mat-card-footer>
+		</mat-card>
+	</div>
+</div>

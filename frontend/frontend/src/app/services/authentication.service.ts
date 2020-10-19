@@ -3,7 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { NgxPermissionsService } from 'ngx-permissions';
 import { User } from "../models/user";
 import { Observable, of } from "rxjs";
-import { catchError, map, tap } from "rxjs/operators";
+import { catchError, mapTo, tap } from "rxjs/operators";
 
 @Injectable({
     providedIn: 'root'
@@ -30,9 +30,10 @@ export class AuthenticationService {
     }
 
     isTokenValid(): boolean {
-        if (!sessionStorage.getItem(this.accessToken)) return false;
+        let token = sessionStorage.getItem(this.accessToken);
+        if (token == null) return false;
 
-        let tokenClaims = sessionStorage.getItem(this.accessToken).split('.')[1];
+        let tokenClaims = token.split('.')[1];
         let expDate = JSON.parse(atob(tokenClaims))["exp"] * 1000;
         return expDate > new Date().getTime();
     }
@@ -41,7 +42,7 @@ export class AuthenticationService {
         return this.httpClient.post('http://localhost:8080/login', loginData)
             .pipe(
                 tap(value => this.loadUser(value)),
-                map(() => true),
+                mapTo(true),
                 catchError(() => of(false)));
     }
 
@@ -57,23 +58,24 @@ export class AuthenticationService {
     reAuthentication(): Observable<boolean> {
         let accessToken = sessionStorage.getItem(this.accessToken);
         let refreshToken = sessionStorage.getItem(this.refreshToken);
-        let tokens = { "access_token": accessToken, "refresh_token": refreshToken };
+        let tokens = {"access_token": accessToken, "refresh_token": refreshToken};
 
-        return this.httpClient.post('http://localhost:8080/login', tokens)
+        return this.httpClient.post('http://localhost:8080/login', tokens, {headers: {"reauth": "true"}})
             .pipe(
                 tap(response => sessionStorage.setItem(this.accessToken, response[this.accessToken])),
-                map(() => true),
+                mapTo(true),
                 catchError(() => {
                     this.clearUserData();
                     return of(false);
                 }));
     }
 
-    logout(): Observable<void> {
+    logout(): Observable<boolean> {
         return this.httpClient.post('http://localhost:8080/logout', null)
             .pipe(
                 tap(() => this.clearUserData()),
-                map(() => { }));
+                mapTo(true),
+                catchError(() => of(false)));
     }
 
     private clearUserData(): void {

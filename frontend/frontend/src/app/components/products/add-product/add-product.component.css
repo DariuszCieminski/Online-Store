@@ -1,0 +1,36 @@
+.header
+{
+	font-size: x-large;
+	font-weight: bold;
+	text-align: center;
+	padding: 1rem 0;
+	border-bottom-color: black;
+	border-bottom-style: solid;
+	border-bottom-width: 2px;
+	background-color: blueviolet;
+	color: white;
+}
+
+.controls
+{
+	margin: 1rem auto;
+}
+
+.footer
+{
+	margin-top: 1rem;
+	padding: 1rem 0;
+	border-top-color: black;
+	border-top-style: solid;
+	border-top-width: 2px;
+	text-align: center;
+	display: flex;
+	justify-content: space-evenly;
+	background-color: palegoldenrod;
+}
+
+.btn-addImageField
+{
+	position: absolute;
+	transform: translateX(12rem);
+}

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from "@angular/forms";
+import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
+import { Validator } from "../../util/validator";
 
 @Component({
     selector: 'app-register',
@@ -30,7 +31,7 @@ export class RegisterComponent implements OnInit {
                         password: new FormControl('', [Validators.required, Validators.minLength(8)]),
                         repeatPassword: new FormControl('', Validators.required)
                     },
-                    {validators: this.passwordValidator()}),
+                    {validators: Validator.passwordValidator()}),
                 this.builder.group({
                     street: new FormControl(''),
                     postCode: new FormControl(''),
@@ -70,14 +71,6 @@ export class RegisterComponent implements OnInit {
                 .subscribe(() => {
                     this.router.navigateByUrl('/login', {state: {register: true}});
                 });
-        }
-    }
-
-    private passwordValidator(): ValidatorFn {
-        return (control: AbstractControl): { [key: string]: boolean } | null => {
-            const password = control.get("password").value;
-            const repeat = control.get("repeatPassword").value;
-            return password === repeat ? null : {"password_mismatch": true};
         }
     }
 }

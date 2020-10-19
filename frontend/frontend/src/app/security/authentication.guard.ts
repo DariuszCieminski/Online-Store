@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Data, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AuthenticationService } from "./authentication.service";
-import { tap } from "rxjs/operators";
+import { AuthenticationService } from "../services/authentication.service";
+import { map } from "rxjs/operators";
 
 @Injectable({
     providedIn: 'root'
@@ -20,14 +20,11 @@ export class AuthenticationGuard implements CanActivate {
         } else {
             if (!this.auth.getUser) return this.allowOrRedirect(next.data);
             return this.auth.reAuthentication().pipe(
-                tap(success => {
-                    if (success) return true;
-                    return this.allowOrRedirect(next.data);
-                }));
+                map(success => success ? true : this.allowOrRedirect(next.data)));
         }
     }
 
-    private allowOrRedirect(data: Data): boolean | Promise<boolean> {
-        return data.canAnonymous ? true : this.router.navigateByUrl('/');
+    private allowOrRedirect(data: Data): boolean | UrlTree {
+        return data.canAnonymous ? true : this.router.parseUrl('/');
     }
 }

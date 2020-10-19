@@ -1,0 +1,31 @@
+<mat-expansion-panel>
+	<mat-expansion-panel-header>
+		<mat-panel-title>Filter</mat-panel-title>
+	</mat-expansion-panel-header>
+	<form (ngSubmit)="onFilterSubmit()" [formGroup]="form" fxLayout="column" fxLayoutGap="1rem">
+		<mat-form-field>
+			<mat-label>Product description</mat-label>
+			<input formControlName="descContains" matInput>
+		</mat-form-field>
+		<mat-form-field [ngClass]="{'mat-form-field-invalid': form.hasError('priceFilter')}">
+			<mat-label>Price greater than</mat-label>
+			<input formControlName="priceGreaterThan" matInput min="0" type="number">
+			<mat-error *ngFor="let error of form.get('priceGreaterThan').errors | keyvalue">{{ errorMessages[error.key] }}</mat-error>
+		</mat-form-field>
+		<mat-form-field [ngClass]="{'mat-form-field-invalid': form.hasError('priceFilter')}">
+			<mat-label>Price less than</mat-label>
+			<input formControlName="priceLessThan" matInput min="0" type="number">
+			<mat-error *ngFor="let error of form.get('priceLessThan').errors | keyvalue">{{ errorMessages[error.key] }}</mat-error>
+		</mat-form-field>
+		<mat-error *ngIf="form.hasError('priceFilter')">{{ errorMessages['priceFilter'] }}</mat-error>
+		<mat-form-field>
+			<mat-label>Price equal to</mat-label>
+			<input formControlName="priceEqualTo" matInput min="0" type="number">
+			<mat-error *ngFor="let error of form.get('priceEqualTo').errors | keyvalue">{{ errorMessages[error.key] }}</mat-error>
+		</mat-form-field>
+		<button *ngIf="form.valid" color="primary" mat-flat-button type="submit">
+			<mat-icon>check</mat-icon>
+			<span> Filter</span>
+		</button>
+	</form>
+</mat-expansion-panel>

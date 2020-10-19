@@ -1,0 +1,39 @@
+mat-card:hover
+{
+	background-color: cornsilk;
+	cursor: pointer;
+}
+
+mat-card-footer
+{
+	color: dodgerblue;
+	text-align: center;
+	font-weight: bold;
+	font-size: large;
+	padding-bottom: 10px;
+}
+
+mat-toolbar
+{
+	border: 1px solid black;
+	margin-bottom: 1rem;
+}
+
+mat-paginator
+{
+	background-color: whitesmoke;
+}
+
+filter-panel
+{
+	margin-top: .45rem;
+	align-self: baseline;
+	z-index: 1;
+}
+
+.search-box
+{
+	background-color: white;
+	border: 1px solid black;
+	padding: 5px;
+}

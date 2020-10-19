@@ -16,7 +16,6 @@ export class NavbarComponent {
     }
 
     doLogout(): void {
-        this.auth.logout()
-            .subscribe(() => console.log('user logged out'));
+        this.auth.logout().subscribe(() => window.location.reload());
     }
 }
