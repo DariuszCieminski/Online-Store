@@ -13,7 +13,7 @@
 		<mat-card (click)="showProductDetails(product)" fxLayout="column" fxLayoutAlign="center center">
 			<mat-card-title>{{product.name}}</mat-card-title>
 			<img [src]="product.images[0]" mat-card-image>
-			<mat-card-footer>{{product.price}} zł</mat-card-footer>
+			<mat-card-footer>{{product.price | currency:'PLN':'symbol':'1.2-2':'pl'}}</mat-card-footer>
 		</mat-card>
 	</div>
 </div>

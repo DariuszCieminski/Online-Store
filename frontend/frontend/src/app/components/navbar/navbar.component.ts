@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthenticationService } from "../../services/authentication.service";
+import { Router } from "@angular/router";
 
 @Component({
     selector: 'navbar',
@@ -8,7 +9,7 @@ import { AuthenticationService } from "../../services/authentication.service";
 })
 export class NavbarComponent {
 
-    constructor(private auth: AuthenticationService) {
+    constructor(private auth: AuthenticationService, private router: Router) {
     }
 
     getUser(): string {
@@ -16,6 +17,6 @@ export class NavbarComponent {
     }
 
     doLogout(): void {
-        this.auth.logout().subscribe(() => window.location.reload());
+        this.auth.logout().subscribe(() => this.router.navigateByUrl("/"));
     }
 }

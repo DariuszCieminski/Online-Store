@@ -25,7 +25,7 @@ export class AuthenticationService {
         }
     }
 
-    get getUser(): string {
+    get getUser(): string | null {
         return this.user ? (this.user.firstName + ' ' + this.user.lastName) : null;
     }
 

@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
+import localePl from '@angular/common/locales/pl';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -20,7 +20,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { RouterModule } from "@angular/router";
 import { MatButtonModule } from "@angular/material/button";
 import { MatGridListModule } from "@angular/material/grid-list";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatStepperModule } from "@angular/material/stepper";
 import { MatCardModule } from "@angular/material/card";
 import { MatPaginatorModule } from "@angular/material/paginator";
@@ -31,6 +31,9 @@ import { NgxPermissionsGuard, NgxPermissionsModule } from 'ngx-permissions';
 import { RequestInterceptor } from "./security/request.interceptor";
 import { AuthenticationGuard } from "./security/authentication.guard";
 import { FlexLayoutModule } from "@angular/flex-layout";
+import { registerLocaleData } from "@angular/common";
+
+registerLocaleData(localePl);
 
 @NgModule({
     declarations: [
@@ -97,6 +100,14 @@ import { FlexLayoutModule } from "@angular/flex-layout";
             provide: HTTP_INTERCEPTORS,
             useClass: RequestInterceptor,
             multi: true
+        },
+        {
+            provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
+            useValue: {
+                duration: 3000,
+                horizontalPosition: "center",
+                verticalPosition: "bottom"
+            }
         }
     ],
     bootstrap: [AppComponent]

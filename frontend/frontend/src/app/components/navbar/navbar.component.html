@@ -7,5 +7,5 @@
 	<span *ngxPermissionsExcept="'GUEST'" [innerText]="getUser()"></span>
 	<a *ngxPermissionsOnly="'GUEST'" routerLink="/register">Register</a>
 	<a *ngxPermissionsOnly="'GUEST'" routerLink="/login">Login</a>
-	<a (click)="doLogout()" *ngxPermissionsExcept="'GUEST'">Logout</a>
+	<a *ngxPermissionsExcept="'GUEST'" (click)="doLogout()">Logout</a>
 </mat-toolbar>

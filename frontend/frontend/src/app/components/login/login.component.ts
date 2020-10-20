@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { AuthenticationService } from "../../services/authentication.service";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
+import { SnackbarService } from "../../services/snackbar.service";
 
 @Component({
     selector: 'login-form',
@@ -12,7 +12,7 @@ import { Router } from "@angular/router";
 export class LoginComponent implements OnInit {
     form: FormGroup;
 
-    constructor(private authService: AuthenticationService, private router: Router, private snackBar: MatSnackBar) {
+    constructor(private authService: AuthenticationService, private router: Router, private snackBar: SnackbarService) {
     }
 
     ngOnInit(): void {
@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit {
         });
 
         if (history.state.register) {
-            this.showSnackBar("Your account was successfully created. You can now log in.", null);
+            this.snackBar.showSnackbar("Your account was successfully created. You can now log in.");
         }
     }
 
@@ -30,17 +30,8 @@ export class LoginComponent implements OnInit {
         if (this.form.valid) {
             this.authService.login(this.form.value)
                 .subscribe(success => {
-                    if (success) this.router.navigateByUrl('/');
-                    else this.showSnackBar("Invalid email or password", "Close");
+                    (success) ? this.router.navigateByUrl('/') : this.snackBar.showSnackbar("Invalid email or password", "Close");
                 });
         }
-    }
-
-    showSnackBar(message: string, action: string | null) {
-        this.snackBar.open(message, action, {
-            duration: 3000,
-            horizontalPosition: "center",
-            verticalPosition: "bottom"
-        });
     }
 }

@@ -5,8 +5,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ProductDetailsComponent } from './product-details/product-details.component';
 import { AddProductComponent } from "./add-product/add-product.component";
 import { ProductService } from "../../services/product.service";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { HttpErrorResponse } from "@angular/common/http";
+import { SnackbarService } from "../../services/snackbar.service";
 
 @Component({
     selector: 'app-products',
@@ -19,7 +19,7 @@ export class ProductsComponent {
     @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
     @ViewChild('search_box', {static: false}) searchBox: ElementRef;
 
-    constructor(private productService: ProductService, private dialog: MatDialog, private snackBar: MatSnackBar) {
+    constructor(private productService: ProductService, private dialog: MatDialog, private snackBar: SnackbarService) {
     }
 
     onPageChange(event: PageEvent): void {
@@ -40,7 +40,7 @@ export class ProductsComponent {
                 this.allProducts = response;
                 this.paginated = this.allProducts;
                 this.paginator.length = this.paginated.length;
-            }, (error: HttpErrorResponse) => this.handleError(error));
+            }, error => this.handleError(error));
     }
 
     showProductDetails(p: Product): void {
@@ -52,23 +52,17 @@ export class ProductsComponent {
             .subscribe(value => {
                 if (typeof value === "object") {
                     return this.productService.addProduct(value)
-                        .subscribe(product => this.showSnackBar(
-                            "Product '" + product.name + "' was successfully added.",
-                            "OK"
-                        ), error => this.handleError(error));
+                        .subscribe(product => this.showSnackBar("Product '" + product.name + "' was successfully added."),
+                            error => this.handleError(error));
                 }
             });
     }
 
-    showSnackBar(message: string, action: string): void {
-        this.snackBar.open(
-            message,
-            action,
-            {horizontalPosition: "center", verticalPosition: "bottom"}
-        );
+    private showSnackBar(message: string): void {
+        this.snackBar.showSnackbar(message, "OK", {duration: 0});
     }
 
-    handleError(error: HttpErrorResponse): void {
-        this.showSnackBar(error.error + " with status " + error.status, "OK");
+    private handleError(error: HttpErrorResponse): void {
+        this.showSnackBar(error.error + " with status " + error.status);
     }
 }
