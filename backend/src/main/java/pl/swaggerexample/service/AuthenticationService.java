@@ -22,9 +22,6 @@ public class AuthenticationService implements UserDetailsService
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
 	{
 		Optional<User> user = userService.getUserByEmail(username);
-		
-		if (!user.isPresent()) throw new UsernameNotFoundException("There is no user with e-mail address: " + username);
-		
-		return new AuthenticatedUser(user.get());
+		return new AuthenticatedUser(user.orElseThrow(() -> new UsernameNotFoundException("There is no user with e-mail address: " + username)));
 	}
 }

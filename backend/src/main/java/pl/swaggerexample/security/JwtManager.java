@@ -1,9 +1,6 @@
 package pl.swaggerexample.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +24,15 @@ public class JwtManager
 	private final long ACCESS_TOKEN_VALIDATION_TIME;
 	private final long REFRESH_TOKEN_VALIDATION_TIME;
 	private final SecretKey SECRET_KEY;
+	private final JwtParser parser;
 	
 	@Autowired
 	public JwtManager(@Value("${jwt.access-token.validation-time}") long accessValidationTime, @Value("${jwt.refresh-token.validation-time}") long refreshValidationTime)
 	{
-		ACCESS_TOKEN_VALIDATION_TIME = accessValidationTime;
-		REFRESH_TOKEN_VALIDATION_TIME = refreshValidationTime;
-		SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+		this.ACCESS_TOKEN_VALIDATION_TIME = accessValidationTime;
+		this.REFRESH_TOKEN_VALIDATION_TIME = refreshValidationTime;
+		this.SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+		this.parser = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build();
 	}
 	
 	public String generateAccessToken(Authentication authentication)
@@ -43,13 +42,14 @@ public class JwtManager
 				.atZone(ZoneOffset.systemDefault())
 				.toInstant());
 		
-		String[] roles = authentication.getAuthorities()
+		List<String> roles = authentication.getAuthorities()
 				.stream()
 				.map(GrantedAuthority::getAuthority)
-				.toArray(String[]::new);
+				.collect(Collectors.toList());
 		
 		return Jwts.builder()
 				.setSubject(authentication.getName())
+				.claim("userId", authentication.getDetails())
 				.claim("roles", roles)
 				.setExpiration(expirationTime)
 				.signWith(SECRET_KEY)
@@ -83,11 +83,7 @@ public class JwtManager
 	{
 		try
 		{
-			Jwts.parserBuilder()
-					.setSigningKey(SECRET_KEY)
-					.build()
-					.parseClaimsJws(token);
-			
+			parser.parseClaimsJws(token);
 			return true;
 		}
 		
@@ -101,8 +97,7 @@ public class JwtManager
 	{
 		try
 		{
-			return Jwts.parserBuilder()
-					.setSigningKey(SECRET_KEY).build()
+			return parser
 					.parseClaimsJws(cookie)
 					.getBody()
 					.get("swagger") != null;
@@ -118,9 +113,7 @@ public class JwtManager
 	{
 		try
 		{
-			return Jwts.parserBuilder()
-					.setSigningKey(SECRET_KEY)
-					.build()
+			return parser
 					.parseClaimsJws(token)
 					.getBody()
 					.getSubject();
@@ -132,18 +125,31 @@ public class JwtManager
 		}
 	}
 	
+	public Long getUserId(String token)
+	{
+		try
+		{
+			return parser
+					.parseClaimsJws(token)
+					.getBody()
+					.get("userId", Long.class);
+		}
+		
+		catch (ExpiredJwtException e)
+		{
+			return e.getClaims().get("userId", Long.class);
+		}
+	}
+	
 	public UsernamePasswordAuthenticationToken getAuthentication(String token)
 	{
 		Claims claims;
 		
 		try
 		{
-			claims = Jwts.parserBuilder()
-					.setSigningKey(SECRET_KEY)
-					.build()
-					.parseClaimsJws(token)
-					.getBody();
+			claims = parser.parseClaimsJws(token).getBody();
 		}
+		
 		catch (ExpiredJwtException e)
 		{
 			claims = e.getClaims();

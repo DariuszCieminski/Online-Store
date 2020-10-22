@@ -1,9 +1,11 @@
 package pl.swaggerexample.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import pl.swaggerexample.util.AddressConverter;
+import pl.swaggerexample.util.JsonViews;
 import pl.swaggerexample.util.ValidationGroups;
 import pl.swaggerexample.validation.UniqueEmail;
 
@@ -28,20 +30,24 @@ public class User
 	
 	@NotBlank(message = "User's name cannot be empty.")
 	@ApiModelProperty(value = "User's name", required = true, example = "John", position = 1)
+	@JsonView(JsonViews.UserAuthentication.class)
 	private String name;
 	
 	@NotBlank(message = "User's surname cannot be empty.")
 	@ApiModelProperty(value = "User's surname", required = true, example = "Smith", position = 2)
+	@JsonView(JsonViews.UserAuthentication.class)
 	private String surname;
 	
 	@Valid
 	@Convert(converter = AddressConverter.class)
 	@ApiModelProperty(notes = "Home address of the user", position = 4)
+	@JsonView(JsonViews.UserAuthentication.class)
 	private Address address;
 	
 	@NotBlank(message = "E-Mail address cannot be empty.")
 	@Email
 	@ApiModelProperty(value = "E-Mail address of the user", required = true, example = "john.smith@myemail.com", position = 3)
+	@JsonView(JsonViews.UserAuthentication.class)
 	private String email;
 	
 	@NotBlank(message = "User password cannot be empty.", groups = ValidationGroups.UserCreation.class)
