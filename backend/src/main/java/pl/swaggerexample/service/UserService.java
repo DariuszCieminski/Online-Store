@@ -5,9 +5,11 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import pl.swaggerexample.dao.UserDao;
 import pl.swaggerexample.exception.NotFoundException;
+import pl.swaggerexample.model.Role;
 import pl.swaggerexample.model.User;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +47,7 @@ public class UserService implements EntityService<User>
 	public User add(User object)
 	{
 		object.setPassword(BCrypt.hashpw(object.getPassword(), BCrypt.gensalt()));
+		object.setRoles(Collections.singleton(Role.USER));
 		return userDao.save(object);
 	}
 	

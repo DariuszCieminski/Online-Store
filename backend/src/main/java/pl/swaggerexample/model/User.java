@@ -13,7 +13,6 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
@@ -55,7 +54,6 @@ public class User
 	@ApiModelProperty(value = "Password for user account. Will be encrypted after account creation.", required = true, example = "myP@ssw0rd", position = 5)
 	private String password;
 	
-	@NotEmpty(message = "User needs to have assigned at least 1 role.")
 	@ElementCollection
 	@Enumerated(EnumType.STRING)
 	@ApiModelProperty(value = "All roles that user has. Must not be empty or null.", required = true, position = 6)
@@ -63,6 +61,7 @@ public class User
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "buyer", cascade = CascadeType.REMOVE)
+	@ApiModelProperty(value = "All orders made by user.", position = 7)
 	private Set<Order> orders;
 	
 	public User()

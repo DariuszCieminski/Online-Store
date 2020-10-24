@@ -5,11 +5,13 @@
 			<mat-form-field>
 				<mat-label>First name</mat-label>
 				<input formControlName="name" matInput>
+				<mat-icon matSuffix>person</mat-icon>
 				<mat-error *ngIf="formArray.get([0]).get('name').invalid">Must not be empty</mat-error>
 			</mat-form-field>
 			<mat-form-field>
 				<mat-label>Last name</mat-label>
 				<input formControlName="surname" matInput>
+				<mat-icon matSuffix>person</mat-icon>
 				<mat-error *ngIf="formArray.get([0]).get('surname').invalid">Must not be empty</mat-error>
 			</mat-form-field>
 			<mat-form-field>
@@ -54,16 +56,19 @@
 			<mat-form-field>
 				<mat-label>Street</mat-label>
 				<input formControlName="street" matInput>
+				<mat-icon matSuffix>traffic</mat-icon>
 				<mat-error *ngIf="formArray.get([2]).get('street').invalid">Must not be empty</mat-error>
 			</mat-form-field>
 			<mat-form-field>
 				<mat-label>Post code</mat-label>
 				<input formControlName="postCode" matInput>
+				<mat-icon matSuffix>markunread_mailbox</mat-icon>
 				<mat-error *ngIf="formArray.get([2]).get('postCode').invalid">Invalid postcode</mat-error>
 			</mat-form-field>
 			<mat-form-field>
 				<mat-label>City</mat-label>
 				<input formControlName="city" matInput>
+				<mat-icon matSuffix>location_city</mat-icon>
 				<mat-error *ngIf="formArray.get([2]).get('city').invalid">Must not be empty</mat-error>
 			</mat-form-field>
 			<div>

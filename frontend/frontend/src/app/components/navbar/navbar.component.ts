@@ -13,7 +13,7 @@ export class NavbarComponent {
     }
 
     getUser(): string {
-        return this.auth.getUser;
+        return this.auth.getUser ? this.auth.getUser.name + ' ' + this.auth.getUser.surname : "";
     }
 
     doLogout(): void {

@@ -73,7 +73,7 @@ registerLocaleData(localePl);
             {
                 path: "products",
                 component: ProductsComponent,
-                canActivate: [AuthenticationGuard, NgxPermissionsGuard],
+                canActivate: [NgxPermissionsGuard, AuthenticationGuard],
                 data: {permissions: {except: 'GUEST', redirectTo: '/login'}}
             }
         ]),

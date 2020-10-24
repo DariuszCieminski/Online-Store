@@ -60,7 +60,6 @@ export class RegisterComponent implements OnInit {
     onSubmit(): void {
         if (this.formGroup.valid) {
             let data = Object.assign({}, this.formArray.get([0]).value, this.formArray.get([1]).value);
-            data.roles = ['USER'];
             delete data.repeatPassword;
 
             const address = this.formArray.get([2]).value;

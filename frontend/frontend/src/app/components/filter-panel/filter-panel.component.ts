@@ -14,7 +14,7 @@ export class FilterPanelComponent implements OnInit {
     readonly errorMessages: object = {
         min: "Price must be greater than zero",
         price: "Price has wrong precision",
-        priceFilter: "Price range does not match"
+        priceFilter: "Price range is invalid"
     };
 
     constructor(private builder: FormBuilder) {
