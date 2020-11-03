@@ -1,28 +1,37 @@
-import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
-import { MatDialogRef } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Validator } from "../../../util/validator";
+import { Product } from "../../../models/product";
 
 @Component({
     selector: 'app-add-product',
-    templateUrl: './add-product.component.html',
-    styleUrls: ['./add-product.component.css']
+    templateUrl: './product-data.component.html',
+    styleUrls: ['./product-data.component.css']
 })
-export class AddProductComponent implements OnInit {
+export class ProductDataComponent implements OnInit {
     productForm: FormGroup;
     @ViewChild('content') dialogContent: ElementRef;
 
-    constructor(private builder: FormBuilder, private dialogRef: MatDialogRef<AddProductComponent>, private renderer: Renderer2) {
+    constructor(@Inject(MAT_DIALOG_DATA) public product: Product, private builder: FormBuilder, private dialogRef: MatDialogRef<ProductDataComponent>, private renderer: Renderer2) {
     }
 
     ngOnInit(): void {
         this.productForm = this.builder.group({
+            id: new FormControl(),
             name: new FormControl(null, Validators.required),
             description: new FormControl(),
-            price: new FormControl(null, [Validators.required, Validators.min(0.01), Validator.PriceValidator()]),
+            price: new FormControl(null, [Validators.required, Validators.min(0.01), Validator.price()]),
             quantity: new FormControl(null, [Validators.required, Validators.min(0)]),
             images: new FormArray([this.createImageField()])
         });
+
+        if (this.product) {
+            for (let i = 1; i < this.product.images.length; i++) {
+                this.getImageFields().push(this.createImageField());
+            }
+            this.productForm.patchValue(this.product);
+        }
     }
 
     getImageFields(): FormArray {
@@ -30,7 +39,7 @@ export class AddProductComponent implements OnInit {
     }
 
     createImageField(): FormControl {
-        return new FormControl(null, Validators.pattern("^(http|https)?.*\\/.*"));
+        return new FormControl('', Validators.pattern("^(http|https)?.*\\/.*"));
     }
 
     addImageFieldToForm(): void {
@@ -39,7 +48,7 @@ export class AddProductComponent implements OnInit {
         setTimeout(() => formDialog.scroll({
             top: formDialog.scrollHeight,
             behavior: 'smooth'
-        }), 1);
+        }));
     }
 
     removeImageField(index: number): void {
@@ -49,8 +58,8 @@ export class AddProductComponent implements OnInit {
     onSubmit(): void {
         if (this.productForm.valid) {
             let value = this.productForm.value;
-            value.price = value.price.replace(',', '.');
-            value.images = value.images.filter(i => i != null);
+            value.price = value.price.toString().replace(',', '.');
+            value.images = value.images.filter(i => i != '');
 
             this.dialogRef.close(value);
         }

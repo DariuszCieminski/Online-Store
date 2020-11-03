@@ -31,7 +31,7 @@ export class RegisterComponent implements OnInit {
                         password: new FormControl('', [Validators.required, Validators.minLength(8)]),
                         repeatPassword: new FormControl('', Validators.required)
                     },
-                    {validators: Validator.passwordValidator()}),
+                    {validators: Validator.passwordMatch()}),
                 this.builder.group({
                     street: new FormControl(''),
                     postCode: new FormControl(''),

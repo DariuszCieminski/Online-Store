@@ -4,9 +4,7 @@
 	font-weight: bold;
 	text-align: center;
 	padding: 1rem 0;
-	border-bottom-color: black;
-	border-bottom-style: solid;
-	border-bottom-width: 2px;
+	border-bottom: 2px solid black;
 	background-color: blueviolet;
 	color: white;
 }
@@ -20,12 +18,7 @@
 {
 	margin-top: 1rem;
 	padding: 1rem 0;
-	border-top-color: black;
-	border-top-style: solid;
-	border-top-width: 2px;
-	text-align: center;
-	display: flex;
-	justify-content: space-evenly;
+	border-top: 2px solid black;
 	background-color: palegoldenrod;
 }
 

@@ -3,10 +3,12 @@ import { Product } from "../../models/product";
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { ProductDetailsComponent } from './product-details/product-details.component';
-import { AddProductComponent } from "./add-product/add-product.component";
+import { ProductDataComponent } from "./product-data/product-data.component";
 import { ProductService } from "../../services/product.service";
 import { HttpErrorResponse } from "@angular/common/http";
 import { SnackbarService } from "../../services/snackbar.service";
+import { NoopScrollStrategy } from "@angular/cdk/overlay";
+import { ProductDeleteComponent } from "./product-delete.component";
 
 @Component({
     selector: 'app-products',
@@ -28,14 +30,14 @@ export class ProductsComponent {
         this.paginated = this.allProducts.slice(start, end);
     }
 
-    searchByProductName(): void {
-        let value = this.searchBox.nativeElement.value;
-        let productName = (value === '') ? {} : {nameContains: value};
-        this.searchProducts(productName);
-    }
+    searchProducts(filters?: object): void {
+        if (!filters) filters = {};
+        let productName = this.searchBox.nativeElement.value;
+        if (productName.toString().trim() !== '') {
+            filters["nameContains"] = productName;
+        }
 
-    searchProducts(value): void {
-        this.productService.getProducts(value)
+        this.productService.getProducts(filters)
             .subscribe(response => {
                 this.allProducts = response;
                 this.paginated = this.allProducts;
@@ -43,17 +45,52 @@ export class ProductsComponent {
             }, error => this.handleError(error));
     }
 
-    showProductDetails(p: Product): void {
-        this.dialog.open(ProductDetailsComponent, {height: 'auto', width: '50%', data: {product: p}});
+    showProductDetails(product: Product): void {
+        this.dialog.open(ProductDetailsComponent, {
+            height: 'auto',
+            width: '60%',
+            data: product,
+            scrollStrategy: new NoopScrollStrategy()
+        });
     }
 
-    showAddProductDialog(): void {
-        this.dialog.open(AddProductComponent, {height: 'auto', width: '30%', disableClose: true}).afterClosed()
+    showProductDataDialog(p?: Product): void {
+        this.dialog.open(ProductDataComponent, {
+            height: 'auto',
+            width: '40%',
+            data: p,
+            disableClose: true,
+            scrollStrategy: new NoopScrollStrategy()
+        }).afterClosed()
             .subscribe(value => {
-                if (typeof value === "object") {
-                    return this.productService.addProduct(value)
-                        .subscribe(product => this.showSnackBar("Product '" + product.name + "' was successfully added."),
-                            error => this.handleError(error));
+                if (value !== '') {
+                    if (value.id) {
+                        return this.productService.updateProduct(value)
+                            .subscribe(() => this.showSnackBar("Product '" + p.name + "' was successfully modified."),
+                                error => this.handleError(error));
+                    } else {
+                        return this.productService.addProduct(value)
+                            .subscribe(product => this.showSnackBar("Product '" + product.name + "' was successfully added."),
+                                error => this.handleError(error));
+                    }
+                }
+            });
+    }
+
+    showProductDeleteDialog(id: number): void {
+        this.dialog.open(ProductDeleteComponent, {
+            height: 'auto',
+            width: '30%',
+            scrollStrategy: new NoopScrollStrategy()
+        }).afterClosed()
+            .subscribe(value => {
+                if (value) {
+                    return this.productService.deleteProduct(id)
+                        .subscribe(() => {
+                            let index = this.paginated.findIndex(product => product.id === id);
+                            this.paginated.splice(index);
+                            this.showSnackBar('Product was deleted successfully');
+                        }, error => this.handleError(error));
                 }
             });
     }
@@ -63,6 +100,6 @@ export class ProductsComponent {
     }
 
     private handleError(error: HttpErrorResponse): void {
-        this.showSnackBar(error.error + " with status " + error.status);
+        this.showSnackBar(error.name + " with status " + error.status);
     }
 }

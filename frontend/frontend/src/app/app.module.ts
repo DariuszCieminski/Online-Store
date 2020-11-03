@@ -10,9 +10,10 @@ import { RegisterComponent } from './components/register/register.component';
 import { HomeComponent } from './components/home/home.component';
 import { ProductsComponent } from './components/products/products.component';
 import { ProductDetailsComponent } from './components/products/product-details/product-details.component';
-import { AddProductComponent } from './components/products/add-product/add-product.component';
+import { ProductDataComponent } from './components/products/product-data/product-data.component';
 import { CartComponent } from './components/cart/cart.component';
 import { FilterPanelComponent } from './components/filter-panel/filter-panel.component';
+import { ProductDeleteComponent } from './components/products/product-delete.component';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -45,8 +46,9 @@ registerLocaleData(localePl);
         ProductsComponent,
         ProductDetailsComponent,
         CartComponent,
-        AddProductComponent,
-        FilterPanelComponent
+        ProductDataComponent,
+        FilterPanelComponent,
+        ProductDeleteComponent
     ],
     imports: [
         BrowserModule,
