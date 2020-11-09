@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthenticationService } from "../../services/authentication.service";
+import { CartService } from "../../services/cart.service";
 import { Router } from "@angular/router";
 
 @Component({
@@ -9,11 +10,15 @@ import { Router } from "@angular/router";
 })
 export class NavbarComponent {
 
-    constructor(private auth: AuthenticationService, private router: Router) {
+    constructor(private auth: AuthenticationService, private router: Router, private cart: CartService) {
     }
 
     getUser(): string {
         return this.auth.getUser ? this.auth.getUser.name + ' ' + this.auth.getUser.surname : "";
+    }
+
+    getCartItemCount(): number {
+        return this.cart.getCartProducts().length;
     }
 
     doLogout(): void {

@@ -4,11 +4,11 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { ProductDetailsComponent } from './product-details/product-details.component';
 import { ProductDataComponent } from "./product-data/product-data.component";
+import { ProductDeleteComponent } from "./product-delete.component";
 import { ProductService } from "../../services/product.service";
-import { HttpErrorResponse } from "@angular/common/http";
 import { SnackbarService } from "../../services/snackbar.service";
 import { NoopScrollStrategy } from "@angular/cdk/overlay";
-import { ProductDeleteComponent } from "./product-delete.component";
+import { HttpErrorResponse } from "@angular/common/http";
 
 @Component({
     selector: 'app-products',
@@ -51,7 +51,12 @@ export class ProductsComponent {
             width: '60%',
             data: product,
             scrollStrategy: new NoopScrollStrategy()
-        });
+        }).afterClosed()
+            .subscribe(value => {
+                if (value) {
+                    this.showSnackBar(`Product '${product.name}' was added to the cart.`);
+                }
+            });
     }
 
     showProductDataDialog(p?: Product): void {
@@ -66,11 +71,11 @@ export class ProductsComponent {
                 if (value !== '') {
                     if (value.id) {
                         return this.productService.updateProduct(value)
-                            .subscribe(() => this.showSnackBar("Product '" + p.name + "' was successfully modified."),
+                            .subscribe(() => this.showSnackBar(`Product '${p.name}' was successfully modified.`),
                                 error => this.handleError(error));
                     } else {
                         return this.productService.addProduct(value)
-                            .subscribe(product => this.showSnackBar("Product '" + product.name + "' was successfully added."),
+                            .subscribe(product => this.showSnackBar(`Product '${product.name}' was successfully added.`),
                                 error => this.handleError(error));
                     }
                 }

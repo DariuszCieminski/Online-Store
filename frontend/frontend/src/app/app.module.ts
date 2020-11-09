@@ -14,6 +14,7 @@ import { ProductDataComponent } from './components/products/product-data/product
 import { CartComponent } from './components/cart/cart.component';
 import { FilterPanelComponent } from './components/filter-panel/filter-panel.component';
 import { ProductDeleteComponent } from './components/products/product-delete.component';
+import { QuantityPanelComponent } from './components/products/quantity-panel/quantity-panel.component';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -33,6 +34,7 @@ import { RequestInterceptor } from "./security/request.interceptor";
 import { AuthenticationGuard } from "./security/authentication.guard";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { registerLocaleData } from "@angular/common";
+import { MatBadgeModule } from "@angular/material/badge";
 
 registerLocaleData(localePl);
 
@@ -48,7 +50,8 @@ registerLocaleData(localePl);
         CartComponent,
         ProductDataComponent,
         FilterPanelComponent,
-        ProductDeleteComponent
+        ProductDeleteComponent,
+        QuantityPanelComponent
     ],
     imports: [
         BrowserModule,
@@ -77,6 +80,12 @@ registerLocaleData(localePl);
                 component: ProductsComponent,
                 canActivate: [NgxPermissionsGuard, AuthenticationGuard],
                 data: {permissions: {except: 'GUEST', redirectTo: '/login'}}
+            },
+            {
+                path: "cart",
+                component: CartComponent,
+                canActivate: [NgxPermissionsGuard, AuthenticationGuard],
+                data: {permissions: {except: 'GUEST', redirectTo: '/login'}}
             }
         ]),
         NgxPermissionsModule.forRoot(),
@@ -95,7 +104,8 @@ registerLocaleData(localePl);
         MatPaginatorModule,
         MatDialogModule,
         FlexLayoutModule,
-        MatExpansionModule
+        MatExpansionModule,
+        MatBadgeModule
     ],
     providers: [
         {

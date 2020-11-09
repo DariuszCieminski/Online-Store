@@ -1,0 +1,19 @@
+<div [ngClass]="cartItems.length > 0 ? 'container' : 'centered'">
+	<div fxLayout="column" fxLayoutGap="3rem">
+		<div *ngIf="cartItems.length > 0" class="summary" fxLayout="row" fxLayoutAlign="space-evenly center">
+			<h2>Total item value in the cart: {{cartValue | currency:'PLN':'symbol':'1.2-2':'pl'}}</h2>
+			<button mat-flat-button color="primary" [disabled]="!isCartValid"><mat-icon>monetization_on</mat-icon> Make order</button>
+		</div>
+		<h2 style="text-align: center">{{cartItems.length > 0 ? 'Content of your cart' : 'Your cart is empty'}}</h2>
+		<div class="item" *ngFor="let item of cartItems">
+			<img [src]="item.product.images[0]">
+			<span class="product-name">{{item.product.name}}</span>
+			<quantity-panel [min]="1" [max]="item.product.quantity" [value]="item.quantity"
+			                (valueChanged)="modifyItemQuantity(item, $event)"
+			                (onError)="isCartValid=false" fxLayoutAlign="baseline center"></quantity-panel>
+			<button mat-icon-button color="warn" (click)="deleteItem(item)">
+				<mat-icon>delete</mat-icon>
+			</button>
+		</div>
+	</div>
+</div>

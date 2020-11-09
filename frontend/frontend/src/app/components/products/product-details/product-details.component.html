@@ -9,25 +9,14 @@
 <div class="description">
 	<h3>{{product.description}}</h3>
 </div>
-<div class="error">
-	<mat-error *ngFor="let error of quantity.errors | keyvalue">{{errorMessages[error.key]}}</mat-error>
+<div class="error" *ngIf="quantityErrors">
+	<mat-error *ngFor="let error of quantityErrors | keyvalue">{{errorMessages[error.key]}}</mat-error>
 </div>
 <div class="footer" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="5rem">
 	<div class="price">{{product.price | currency:'PLN':'symbol':'1.2-2':'pl'}}</div>
-	<div fxLayout="row" fxLayoutAlign="center center">
-		<div class="quantity" fxLayout="row">
-			<button mat-flat-button class="btn-step" tabindex="-1" (click)="input.stepDown(); quantity.setValue(input.value)" [disabled]="input.value <= input.min || quantity.disabled">
-				<mat-icon>remove</mat-icon>
-			</button>
-			<input #input matInput type="number" [formControl]="quantity" [valueAsNumber]="quantity.value" tabindex="-1" min="1" [max]="product.quantity">
-			<button mat-flat-button class="btn-step" tabindex="-1" (click)="input.stepUp(); quantity.setValue(input.value)" [disabled]="input.value >= input.max || quantity.disabled">
-				<mat-icon>add</mat-icon>
-			</button>
-		</div>
-		<span *ngIf="!quantity.disabled" class="in-stock"> / {{product.quantity}}</span>
-	</div>
+	<quantity-panel [min]="1" [max]="product.quantity" (valueChanged)="changeQuantity($event)" (onError)="quantityErrors=$event"></quantity-panel>
 	<div>
-		<button mat-flat-button color="primary" class="btn-addToCart" [disabled]="quantity.disabled" (click)="addProductToCart()">
+		<button mat-flat-button color="primary" class="btn-addToCart" [matDialogClose]="true" [disabled]="quantityErrors != null" (click)="addProductToCart()">
 			<mat-icon>add_shopping_cart</mat-icon>
 			Add to cart
 		</button>

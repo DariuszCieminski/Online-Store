@@ -7,7 +7,6 @@ a
 {
 	text-decoration: none;
 	padding: .7rem;
-	margin-left: 1rem;
 	color: white;
 }
 
@@ -15,4 +14,9 @@ a:hover
 {
 	background-color: mediumpurple;
 	cursor: pointer;
+}
+
+mat-icon
+{
+	vertical-align: text-bottom;
 }

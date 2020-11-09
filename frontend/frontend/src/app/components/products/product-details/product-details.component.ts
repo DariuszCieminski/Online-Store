@@ -1,16 +1,18 @@
-import { AfterContentInit, Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormControl, Validators } from "@angular/forms";
 import { Product } from "../../../models/product";
+import { ValidationErrors } from "@angular/forms";
+import { CartService } from "../../../services/cart.service";
 
 @Component({
     selector: 'app-product-details',
     templateUrl: './product-details.component.html',
     styleUrls: ['./product-details.component.css']
 })
-export class ProductDetailsComponent implements OnInit, AfterContentInit {
-    quantity: FormControl;
+export class ProductDetailsComponent {
     imageIndex: number = 0;
+    selectedQuantity: number = 1;
+    quantityErrors: ValidationErrors;
     readonly errorMessages: object = {
         'required': 'Product quantity was not specified!',
         'min': 'You have to buy at least one product!',
@@ -18,19 +20,7 @@ export class ProductDetailsComponent implements OnInit, AfterContentInit {
         'empty': 'Product is out of stock!'
     };
 
-    constructor(@Inject(MAT_DIALOG_DATA) public product: Product) {
-    }
-
-    ngOnInit(): void {
-        this.quantity = new FormControl(1,
-            [Validators.required, Validators.min(1), Validators.max(this.product.quantity)]);
-    }
-
-    ngAfterContentInit(): void {
-        if (!this.product.quantity) {
-            this.quantity.disable();
-            this.quantity.setErrors({'empty': true});
-        }
+    constructor(@Inject(MAT_DIALOG_DATA) public product: Product, private cartService: CartService) {
     }
 
     changeImage(index: number): void {
@@ -39,7 +29,12 @@ export class ProductDetailsComponent implements OnInit, AfterContentInit {
         this.imageIndex = Math.max(this.imageIndex, 0);
     }
 
-    addProductToCart(): void {
+    changeQuantity(quantity: number): void {
+        this.selectedQuantity = quantity;
+        this.quantityErrors = null;
+    }
 
+    addProductToCart(): void {
+        this.cartService.addProduct(this.product, this.selectedQuantity);
     }
 }

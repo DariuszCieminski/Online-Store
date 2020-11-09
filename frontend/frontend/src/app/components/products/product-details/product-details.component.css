@@ -56,41 +56,7 @@ img
 	padding: .33rem 1rem;
 }
 
-.quantity
-{
-	border: 2px solid #ddd;
-}
-
-.in-stock
-{
-	font-size: large;
-	font-weight: bold;
-	margin-left: .5rem;
-}
-
-.btn-step
-{
-	min-width: 2.5rem;
-	max-width: 2.5rem;
-	max-height: 2.5rem;
-	padding: 0;
-	background-color: transparent;
-}
-
 .btn-arrow
 {
 	transform: scale(1.5);
-}
-
-input
-{
-	-webkit-appearance: textfield;
-	-moz-appearance: textfield;
-	min-width: 3rem;
-	max-width: 3rem;
-	font-weight: bold;
-	font-size: x-large;
-	text-align: center;
-	border: solid #ddd;
-	border-width: 0 2px;
 }

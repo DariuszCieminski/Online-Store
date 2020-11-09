@@ -1,0 +1,45 @@
+.container
+{
+	display: flex;
+	align-content: center;
+	justify-content: center;
+}
+
+.summary
+{
+	margin-top: 1rem;
+	padding: 1rem;
+	background-color: lightgoldenrodyellow;
+}
+
+h2
+{
+	margin: 0;
+}
+
+img
+{
+	max-width: 6rem;
+}
+
+.item
+{
+	display: grid;
+	grid-template-columns: repeat(4, max-content);
+	grid-column-gap: 3rem;
+	place-items: center;
+}
+
+.product-name
+{
+	font-size: larger;
+	font-weight: bold;
+	width: 20vw;
+	text-align: center;
+	place-self: center;
+}
+
+quantity-panel
+{
+	width: 12rem;
+}
