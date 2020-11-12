@@ -15,6 +15,7 @@ import { CartComponent } from './components/cart/cart.component';
 import { FilterPanelComponent } from './components/filter-panel/filter-panel.component';
 import { ProductDeleteComponent } from './components/products/product-delete.component';
 import { QuantityPanelComponent } from './components/products/quantity-panel/quantity-panel.component';
+import { NewOrderComponent } from './components/new-order/new-order.component';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -35,6 +36,7 @@ import { AuthenticationGuard } from "./security/authentication.guard";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { registerLocaleData } from "@angular/common";
 import { MatBadgeModule } from "@angular/material/badge";
+import { MatRadioModule } from "@angular/material/radio";
 
 registerLocaleData(localePl);
 
@@ -51,7 +53,8 @@ registerLocaleData(localePl);
         ProductDataComponent,
         FilterPanelComponent,
         ProductDeleteComponent,
-        QuantityPanelComponent
+        QuantityPanelComponent,
+        NewOrderComponent
     ],
     imports: [
         BrowserModule,
@@ -86,6 +89,12 @@ registerLocaleData(localePl);
                 component: CartComponent,
                 canActivate: [NgxPermissionsGuard, AuthenticationGuard],
                 data: {permissions: {except: 'GUEST', redirectTo: '/login'}}
+            },
+            {
+                path: "newOrder",
+                component: NewOrderComponent,
+                canActivate: [NgxPermissionsGuard, AuthenticationGuard],
+                data: {permissions: {except: 'GUEST', redirectTo: '/login'}}
             }
         ]),
         NgxPermissionsModule.forRoot(),
@@ -105,7 +114,8 @@ registerLocaleData(localePl);
         MatDialogModule,
         FlexLayoutModule,
         MatExpansionModule,
-        MatBadgeModule
+        MatBadgeModule,
+        MatRadioModule
     ],
     providers: [
         {

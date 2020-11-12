@@ -46,7 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 		
 		CorsConfiguration corsConfig = new CorsConfiguration();
 		corsConfig.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
-		corsConfig.setAllowedMethods(Arrays.asList("GET", "HEAD", "POST", "OPTIONS"));
+		corsConfig.setAllowedMethods(Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"));
 		corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
 		corsConfig.setMaxAge(1800L);
 		corsConfig.setAllowCredentials(true);
