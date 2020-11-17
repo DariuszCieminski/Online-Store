@@ -8,7 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User.UserBuilder;
 import org.springframework.test.web.servlet.MockMvc;
-import pl.swaggerexample.model.Role;
+import pl.swaggerexample.model.enums.Role;
 import pl.swaggerexample.security.JwtManager;
 
 import javax.servlet.http.Cookie;

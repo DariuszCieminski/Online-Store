@@ -1,4 +1,4 @@
-package pl.swaggerexample.model;
+package pl.swaggerexample.model.enums;
 
 import io.swagger.annotations.ApiModel;
 

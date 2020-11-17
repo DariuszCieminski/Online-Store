@@ -7,23 +7,23 @@
 	</div>
 	<mat-horizontal-stepper linear>
 		<form [formGroup]="shippingData">
-			<mat-step [stepControl]="shippingData.get('address')" formGroupName="address">
+			<mat-step [stepControl]="shippingData.get('deliveryAddress')" formGroupName="deliveryAddress">
 				<ng-template matStepLabel>Delivery address</ng-template>
 				<div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="2rem">
 					<mat-form-field>
 						<mat-label>Street</mat-label>
 						<input matInput formControlName="street">
-						<mat-error *ngIf="shippingData.get('address.street').invalid">Must not be empty</mat-error>
+						<mat-error *ngIf="shippingData.get('deliveryAddress.street').invalid">Must not be empty</mat-error>
 					</mat-form-field>
 					<mat-form-field>
 						<mat-label>Post code</mat-label>
 						<input matInput formControlName="postCode">
-						<mat-error *ngIf="shippingData.get('address.postCode').invalid">Invalid postcode</mat-error>
+						<mat-error *ngIf="shippingData.get('deliveryAddress.postCode').invalid">Invalid postcode</mat-error>
 					</mat-form-field>
 					<mat-form-field>
 						<mat-label>City</mat-label>
 						<input matInput formControlName="city">
-						<mat-error *ngIf="shippingData.get('address.city').invalid">Must not be empty</mat-error>
+						<mat-error *ngIf="shippingData.get('deliveryAddress.city').invalid">Must not be empty</mat-error>
 					</mat-form-field>
 				</div>
 				<div fxLayoutAlign="center center">
@@ -50,7 +50,7 @@
 				</mat-form-field>
 				<div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="2rem">
 					<button class="btn-step" mat-raised-button matStepperPrevious>Previous step</button>
-					<button class="btn-step" mat-raised-button color="primary"><mat-icon>receipt</mat-icon> Make order</button>
+					<button class="btn-step" mat-raised-button color="primary" (click)="createOrder()"><mat-icon>receipt</mat-icon> Make order</button>
 				</div>
 			</mat-step>
 		</form>

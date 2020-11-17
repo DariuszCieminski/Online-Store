@@ -6,8 +6,8 @@ import org.springframework.security.authentication.dao.AbstractUserDetailsAuthen
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import pl.swaggerexample.model.Role;
 import pl.swaggerexample.model.User;
+import pl.swaggerexample.model.enums.Role;
 import pl.swaggerexample.service.AuthenticationService;
 
 import java.util.Arrays;

@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
-import pl.swaggerexample.model.Role;
+import pl.swaggerexample.model.enums.Role;
 import pl.swaggerexample.security.*;
 import pl.swaggerexample.service.AuthenticationService;
 

@@ -5,11 +5,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.CreationTimestamp;
+import pl.swaggerexample.model.enums.PaymentMethod;
+import pl.swaggerexample.util.AddressConverter;
 
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Set;
@@ -37,8 +40,23 @@ public class Order
 	@JsonIgnoreProperties("order")
 	private Set<@Valid OrderItem> items;
 	
+	@Valid
+	@NotNull(message = "Delivery address cannot be null.")
+	@Convert(converter = AddressConverter.class)
+	@ApiModelProperty(value = "Address the order should be delivered to.", required = true, position = 3)
+	private Address deliveryAddress;
+	
+	@NotNull(message = "Payment method was not set.")
+	@Enumerated(EnumType.STRING)
+	@ApiModelProperty(value = "Chosen method of payment for the order.", required = true, position = 4)
+	private PaymentMethod paymentMethod;
+	
+	@Size(max = 150)
+	@ApiModelProperty(value = "Additional information to the order.", allowableValues = "range[-infinity, 150]", position = 5)
+	private String information;
+	
 	@CreationTimestamp
-	@ApiModelProperty(value = "Time of making order. Will be set automatically when posting order to DB.", readOnly = true, position = 3)
+	@ApiModelProperty(value = "Time of making order. Will be set automatically when posting order to DB.", readOnly = true, position = 6)
 	private OffsetDateTime time;
 	
 	public Long getId()
@@ -73,6 +91,36 @@ public class Order
 		{
 			item.setOrder(this);
 		}
+	}
+	
+	public Address getDeliveryAddress()
+	{
+		return deliveryAddress;
+	}
+	
+	public void setDeliveryAddress(Address deliveryAddress)
+	{
+		this.deliveryAddress = deliveryAddress;
+	}
+	
+	public PaymentMethod getPaymentMethod()
+	{
+		return paymentMethod;
+	}
+	
+	public void setPaymentMethod(PaymentMethod paymentMethod)
+	{
+		this.paymentMethod = paymentMethod;
+	}
+	
+	public String getInformation()
+	{
+		return information;
+	}
+	
+	public void setInformation(String information)
+	{
+		this.information = information;
 	}
 	
 	public OffsetDateTime getTime()

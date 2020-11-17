@@ -86,6 +86,7 @@ export class AuthenticationService {
 
     private loadUser(response: object): void {
         this.user = response["user"];
+        this.user.id = this.readTokenClaim(response[this.accessToken], 'userId');
         this.setRolesFromToken(response[this.accessToken]);
         sessionStorage.setItem(this.userItem, JSON.stringify(this.user));
         sessionStorage.setItem(this.accessToken, response[this.accessToken]);

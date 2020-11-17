@@ -11,8 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import pl.swaggerexample.exception.JwtTokenParsingException;
-import pl.swaggerexample.model.Role;
 import pl.swaggerexample.model.User;
+import pl.swaggerexample.model.enums.Role;
 import pl.swaggerexample.util.JsonViews;
 
 import javax.servlet.FilterChain;

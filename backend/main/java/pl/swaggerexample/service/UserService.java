@@ -5,8 +5,8 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import pl.swaggerexample.dao.UserDao;
 import pl.swaggerexample.exception.NotFoundException;
-import pl.swaggerexample.model.Role;
 import pl.swaggerexample.model.User;
+import pl.swaggerexample.model.enums.Role;
 
 import java.util.ArrayList;
 import java.util.Collections;

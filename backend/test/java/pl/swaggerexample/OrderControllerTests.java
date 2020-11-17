@@ -13,7 +13,11 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
-import pl.swaggerexample.model.*;
+import pl.swaggerexample.model.Order;
+import pl.swaggerexample.model.OrderItem;
+import pl.swaggerexample.model.Product;
+import pl.swaggerexample.model.User;
+import pl.swaggerexample.model.enums.Role;
 import pl.swaggerexample.security.JwtAuthorizationFilter;
 
 import java.math.BigDecimal;

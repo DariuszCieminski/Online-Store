@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import pl.swaggerexample.model.enums.Role;
 import pl.swaggerexample.util.AddressConverter;
 import pl.swaggerexample.util.JsonViews;
 import pl.swaggerexample.util.ValidationGroups;

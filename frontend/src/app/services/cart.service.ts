@@ -31,6 +31,10 @@ export class CartService {
             .toNumber();
     }
 
+    clearCart(): void {
+        sessionStorage.removeItem('cart');
+    }
+
     addProduct(product: Product, quantity: number): void {
         let cartContent = this.getCartProducts();
         cartContent.push(new OrderItem(product, quantity));

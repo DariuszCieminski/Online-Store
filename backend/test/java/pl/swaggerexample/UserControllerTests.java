@@ -16,8 +16,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 import pl.swaggerexample.model.Address;
-import pl.swaggerexample.model.Role;
 import pl.swaggerexample.model.User;
+import pl.swaggerexample.model.enums.Role;
 import pl.swaggerexample.security.JwtAuthorizationFilter;
 
 import java.util.Collections;

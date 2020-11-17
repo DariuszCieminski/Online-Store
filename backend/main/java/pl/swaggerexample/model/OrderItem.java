@@ -32,7 +32,7 @@ public class OrderItem
 	
 	@NotNull(message = "Order is null.")
 	@ManyToOne
-	@JoinColumn(name = "order_id", nullable = false, updatable = false)
+	@JoinColumn(name = "order_id", updatable = false)
 	@ApiModelProperty(value = "Order, which this item is part of. Must not be null.", required = true)
 	private Order order;
 	
