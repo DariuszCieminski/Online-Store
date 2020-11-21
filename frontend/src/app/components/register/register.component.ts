@@ -3,6 +3,7 @@ import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from
 import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { Validator } from "../../util/validator";
+import { ApiUrls } from "../../util/api-urls";
 
 @Component({
     selector: 'app-register',
@@ -66,7 +67,7 @@ export class RegisterComponent implements OnInit {
             if (!address.street && !address.postCode && !address.city) data.address = null;
             else data.address = address;
 
-            this.httpClient.post('http://localhost:8080/api/users', data)
+            this.httpClient.post(ApiUrls.users, data)
                 .subscribe(() => {
                     this.router.navigateByUrl('/login', {state: {register: true}});
                 });

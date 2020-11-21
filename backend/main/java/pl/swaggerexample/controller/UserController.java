@@ -3,6 +3,7 @@ package pl.swaggerexample.controller;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.swaggerexample.model.User;
@@ -39,6 +40,13 @@ public class UserController
 	public User getUser(@PathVariable @ApiParam(value = "Unique ID of existing customer", example = "1") Long id)
 	{
 		return userService.getById(id);
+	}
+	
+	@GetMapping("/currentuser")
+	@ApiOperation(value = "Returns currently logged user")
+	public User getCurrentUser(Authentication authentication)
+	{
+		return userService.getById((Long) authentication.getDetails());
 	}
 	
 	@PostMapping

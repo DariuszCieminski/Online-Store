@@ -5,6 +5,7 @@ import { User } from "../models/user";
 import { Observable, of } from "rxjs";
 import { catchError, mapTo, tap } from "rxjs/operators";
 import { UserService } from "./user.service";
+import { ApiUrls } from "../util/api-urls";
 
 @Injectable({
     providedIn: 'root'
@@ -22,7 +23,7 @@ export class AuthenticationService {
             let userId = this.readTokenClaim(accessToken, "userId");
             if (userId) {
                 setTimeout(() =>
-                    this.userService.getUserById(userId)
+                    this.userService.getCurrentUser()
                         .subscribe(value => {
                             this.user = value;
                             this.permissions.loadPermissions(this.user.roles);
@@ -49,7 +50,7 @@ export class AuthenticationService {
     }
 
     login(loginData: object): Observable<boolean> {
-        return this.httpClient.post('http://localhost:8080/login', loginData)
+        return this.httpClient.post(ApiUrls.login, loginData)
             .pipe(
                 tap(value => this.loadUser(value)),
                 mapTo(true),
@@ -61,7 +62,7 @@ export class AuthenticationService {
         let refreshToken = sessionStorage.getItem(this.refreshToken);
         let tokens = {"access_token": accessToken, "refresh_token": refreshToken};
 
-        return this.httpClient.post('http://localhost:8080/login', tokens, {headers: {"reauth": "true"}})
+        return this.httpClient.post(ApiUrls.login, tokens, {headers: {"reauth": "true"}})
             .pipe(
                 tap(response => sessionStorage.setItem(this.accessToken, response[this.accessToken])),
                 mapTo(true),
@@ -72,7 +73,7 @@ export class AuthenticationService {
     }
 
     logout(): Observable<boolean> {
-        return this.httpClient.post('http://localhost:8080/logout', null)
+        return this.httpClient.post(ApiUrls.logout, null)
             .pipe(
                 tap(() => this.clearUserData()),
                 mapTo(true),

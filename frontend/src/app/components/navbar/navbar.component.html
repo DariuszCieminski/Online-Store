@@ -1,7 +1,7 @@
 <mat-toolbar color="primary" fxLayoutGap="1rem">
 	<span>Swagger Example</span>
 	<a routerLink="/">Home</a>
-	<a *ngxPermissionsOnly="'DEVELOPER'" href="http://localhost:8080/swagger-ui.html" target="_blank">Swagger UI</a>
+	<a *ngxPermissionsOnly="'DEVELOPER'" [href]="getSwaggerUrl()" target="_blank">Swagger UI</a>
 	<a *ngxPermissionsExcept="'GUEST'" routerLink="/products">Products</a>
 	<span class="fill-space"></span>
 	<a *ngxPermissionsExcept="'GUEST'" routerLink="/cart">

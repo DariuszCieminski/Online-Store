@@ -173,13 +173,13 @@ public class OrderControllerTests
 		MvcResult result = mockMvc.perform(post("/api/orders").with(authentication(USER)).content(mapper.writeValueAsString(order)).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andReturn();
 		order = mapper.readValue(result.getResponse().getContentAsString(), Order.class);
 		
-		mockMvc.perform(get("/api/orders/{id}", order.getId()).with(authentication(USER))).andDo(print()).andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.id").value(order.getId()));
+		mockMvc.perform(get("/api/orders/{id}", order.getId()).with(authentication(MANAGER))).andDo(print()).andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.id").value(order.getId()));
 	}
 	
 	@Test
 	public void getOrderByInvalidIdReturnNotFound() throws Exception
 	{
-		mockMvc.perform(get("/api/orders/{id}", 999L).with(authentication(USER))).andDo(print()).andExpect(status().isNotFound());
+		mockMvc.perform(get("/api/orders/{id}", 999L).with(authentication(MANAGER))).andDo(print()).andExpect(status().isNotFound());
 	}
 	
 	@Test
