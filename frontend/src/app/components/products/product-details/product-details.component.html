@@ -14,9 +14,9 @@
 </div>
 <div class="footer" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="5rem">
 	<div class="price">{{product.price | currency:'PLN':'symbol':'1.2-2':'pl'}}</div>
-	<quantity-panel [min]="1" [max]="product.quantity" (valueChanged)="changeQuantity($event)" (onError)="quantityErrors=$event"></quantity-panel>
+	<quantity-panel [min]="1" [max]="product.quantity" (valueChanged)="changeQuantity($event)" (onError)="getQuantityErrors($event)"></quantity-panel>
 	<div>
-		<button mat-flat-button color="primary" class="btn-addToCart" [matDialogClose]="true" [disabled]="quantityErrors != null" (click)="addProductToCart()">
+		<button mat-flat-button color="primary" class="btn-addToCart" [disabled]="quantityErrors != null" (click)="addProductToCart()">
 			<mat-icon>add_shopping_cart</mat-icon>
 			Add to cart
 		</button>

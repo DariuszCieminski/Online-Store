@@ -40,6 +40,11 @@ public class ProductService implements EntityService<Product>
 		return productDao.findAll(productSpecification);
 	}
 	
+	public Iterable<Product> getProductsByIds(Iterable<Long> ids)
+	{
+		return productDao.findAllById(ids);
+	}
+	
 	@Override
 	public Product add(Product object)
 	{

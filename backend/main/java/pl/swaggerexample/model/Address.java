@@ -1,7 +1,9 @@
 package pl.swaggerexample.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import pl.swaggerexample.util.JsonViews;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -10,14 +12,17 @@ import javax.validation.constraints.Pattern;
 public class Address
 {
 	@NotBlank
+	@JsonView(JsonViews.UserAuthentication.class)
 	private String street;
 	
 	@NotBlank
 	@Pattern(regexp = "^[0-9]{2}-[0-9]{3}$")
 	@ApiModelProperty(example = "01-234")
+	@JsonView(JsonViews.UserAuthentication.class)
 	private String postCode;
 	
 	@NotBlank
+	@JsonView(JsonViews.UserAuthentication.class)
 	private String city;
 	
 	public Address()

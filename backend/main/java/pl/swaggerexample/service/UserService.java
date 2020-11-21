@@ -1,6 +1,8 @@
 package pl.swaggerexample.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import pl.swaggerexample.dao.UserDao;
@@ -47,16 +49,18 @@ public class UserService implements EntityService<User>
 	public User add(User object)
 	{
 		object.setPassword(BCrypt.hashpw(object.getPassword(), BCrypt.gensalt()));
-		object.setRoles(Collections.singleton(Role.USER));
+		if (!SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_" + Role.MANAGER.name())))
+		{
+			object.setRoles(Collections.singleton(Role.USER));
+		}
 		return userDao.save(object);
 	}
 	
 	@Override
 	public User update(User object)
 	{
-		User user = getById(object.getId());
 		if (object.getPassword() != null) object.setPassword(BCrypt.hashpw(object.getPassword(), BCrypt.gensalt()));
-		else object.setPassword(user.getPassword());
+		else object.setPassword(getById(object.getId()).getPassword());
 		return userDao.save(object);
 	}
 	

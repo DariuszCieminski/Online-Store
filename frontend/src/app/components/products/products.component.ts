@@ -52,9 +52,11 @@ export class ProductsComponent {
             data: product,
             scrollStrategy: new NoopScrollStrategy()
         }).afterClosed()
-            .subscribe(value => {
-                if (value) {
+            .subscribe(isAddedToCart => {
+                if (isAddedToCart === true) {
                     this.showSnackBar(`Product '${product.name}' was added to the cart.`);
+                } else if (isAddedToCart === false) {
+                    this.showSnackBar(`Product '${product.name}' is already in the cart!`);
                 }
             });
     }

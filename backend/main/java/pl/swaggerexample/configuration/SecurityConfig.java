@@ -52,6 +52,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 		corsConfig.setAllowCredentials(true);
 		
 		http.cors().configurationSource(source -> corsConfig);
-		http.authorizeRequests().antMatchers(HttpMethod.DELETE).hasRole(Role.MANAGER.name()).antMatchers(HttpMethod.GET, "/api/users", "/api/orders").hasRole(Role.MANAGER.name()).antMatchers(HttpMethod.POST, "/api/products").hasRole(Role.MANAGER.name()).antMatchers(HttpMethod.POST, "/api/users").permitAll().anyRequest().authenticated().and().csrf().disable().logout().deleteCookies("swagger_id").logoutSuccessHandler(new CustomLogoutSuccessHandler()).and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().exceptionHandling().authenticationEntryPoint(new JwtAuthenticationEntryPoint());
+		http.authorizeRequests().antMatchers(HttpMethod.DELETE).hasRole(Role.MANAGER.name()).antMatchers(HttpMethod.GET, "/api/users", "/api/orders").hasRole(Role.MANAGER.name()).antMatchers(HttpMethod.POST, "/api/products").hasRole(Role.MANAGER.name()).antMatchers(HttpMethod.PUT, "/api/products").hasRole(Role.MANAGER.name()).antMatchers(HttpMethod.POST, "/api/users").permitAll().anyRequest().authenticated().and().csrf().disable().logout().deleteCookies("swagger_id").logoutSuccessHandler(new CustomLogoutSuccessHandler()).and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().exceptionHandling().authenticationEntryPoint(new JwtAuthenticationEntryPoint());
 	}
 }

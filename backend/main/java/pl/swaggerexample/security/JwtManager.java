@@ -87,7 +87,7 @@ public class JwtManager
 			return true;
 		}
 		
-		catch (ExpiredJwtException | SignatureException e)
+		catch (ExpiredJwtException | SignatureException | MalformedJwtException e)
 		{
 			return false;
 		}

@@ -2,6 +2,7 @@ package pl.swaggerexample;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -68,6 +69,26 @@ class UserControllerTests
 		client.setAddress(address);
 		
 		mockMvc.perform(post("/api/users").with(user(USER.build())).content(mapper.writeValueAsString(client)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isCreated());
+	}
+	
+	@Test
+	public void addUserWithDeveloperRoleWithPermissionReturnOk() throws Exception
+	{
+		User client = new User("Użytkownik", "Testowy", "test@test.com", "test-test", Collections.singleton(Role.DEVELOPER));
+		MvcResult postResult = mockMvc.perform(post("/api/users").with(user(MANAGER.build())).content(mapper.writeValueAsString(client)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isCreated()).andReturn();
+		
+		User readClient = mapper.readValue(postResult.getResponse().getContentAsString(), User.class);
+		Assertions.assertTrue(readClient.getRoles().contains(Role.DEVELOPER), "Added user doesn't have DEVELOPER role!");
+	}
+	
+	@Test
+	public void addUserWithDeveloperRoleWithoutPermissionReturnUserWithStandardRole() throws Exception
+	{
+		User client = new User("Użytkownik", "Testowy", "test@test.com", "test-test", Collections.singleton(Role.DEVELOPER));
+		MvcResult postResult = mockMvc.perform(post("/api/users").with(user(USER.build())).content(mapper.writeValueAsString(client)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isCreated()).andReturn();
+		
+		User readClient = mapper.readValue(postResult.getResponse().getContentAsString(), User.class);
+		Assertions.assertFalse(readClient.getRoles().contains(Role.DEVELOPER), "Added user has not allowed DEVELOPER role!");
 	}
 	
 	@Test

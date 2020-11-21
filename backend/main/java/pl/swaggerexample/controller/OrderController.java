@@ -3,9 +3,12 @@ package pl.swaggerexample.controller;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import pl.swaggerexample.model.Order;
 import pl.swaggerexample.service.OrderService;
+import pl.swaggerexample.service.ProductService;
+import pl.swaggerexample.validation.OrderValidator;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -16,11 +19,13 @@ import java.util.List;
 public class OrderController
 {
 	private final OrderService orderService;
+	private final ProductService productService;
 	
 	@Autowired
-	public OrderController(OrderService orderService)
+	public OrderController(OrderService orderService, ProductService productService)
 	{
 		this.orderService = orderService;
+		this.productService = productService;
 	}
 	
 	@GetMapping
@@ -54,5 +59,11 @@ public class OrderController
 	public void deleteOrder(@PathVariable @ApiParam(value = "Unique ID of existing order", example = "1") Long id)
 	{
 		orderService.delete(id);
+	}
+	
+	@InitBinder
+	public void addCustomOrderValidator(WebDataBinder webDataBinder)
+	{
+		webDataBinder.addValidators(new OrderValidator(productService));
 	}
 }

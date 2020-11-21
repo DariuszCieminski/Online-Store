@@ -79,6 +79,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		response.flushBuffer();
 	}
 	
+	@Override
+	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException
+	{
+		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		response.getWriter().print(failed.getMessage());
+		response.flushBuffer();
+	}
+	
 	private Authentication reauthenticate(JsonNode requestBody)
 	{
 		String accessToken = requestBody.get("access_token").textValue();

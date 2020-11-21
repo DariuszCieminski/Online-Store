@@ -157,7 +157,17 @@ public class ProductControllerTests
 		Product p = new Product("Product", "Description", Collections.singleton("https://picsum.photos/200"), BigDecimal.valueOf(3.99D), 1);
 		p.setId(333L);
 		
-		mockMvc.perform(put("/api/products").with(user(USER.build())).content(mapper.writeValueAsString(p)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isNotFound());
+		mockMvc.perform(put("/api/products").with(user(MANAGER.build())).content(mapper.writeValueAsString(p)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isNotFound());
+	}
+	
+	@Test
+	public void updateProductWithoutAuthorizationReturnForbidden() throws Exception
+	{
+		MvcResult result = mockMvc.perform(get("/api/products/1").with(user(USER.build()))).andReturn();
+		Product p = mapper.readValue(result.getResponse().getContentAsString(), Product.class);
+		p.setName("Updated product name");
+		
+		mockMvc.perform(put("/api/products").with(user(USER.build())).content(mapper.writeValueAsString(p)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isForbidden());
 	}
 	
 	@Test

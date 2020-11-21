@@ -16,5 +16,9 @@ public interface ProductDao extends CrudRepository<Product, Long>, JpaSpecificat
 	
 	@Override
 	@EntityGraph(attributePaths = "images")
+	Iterable<Product> findAllById(Iterable<Long> longs);
+	
+	@Override
+	@EntityGraph(attributePaths = "images")
 	List<Product> findAll(Specification<Product> spec);
 }

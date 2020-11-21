@@ -13,9 +13,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import pl.swaggerexample.model.User;
 import pl.swaggerexample.model.enums.Role;
+import pl.swaggerexample.security.JwtAuthorizationFilter;
 
 import java.util.Collections;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -40,7 +42,7 @@ public class JwtTests
 	public void init() throws Exception
 	{
 		mockMvc.perform(post("/api/users").content(mapper.writeValueAsString(USER)).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated());
-		mockMvc.perform(post("/api/users").content(mapper.writeValueAsString(DEV)).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated());
+		mockMvc.perform(post("/api/users").with(user(SwaggerTests.MANAGER.build())).content(mapper.writeValueAsString(DEV)).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated());
 	}
 	
 	@Test
@@ -52,7 +54,7 @@ public class JwtTests
 	@Test
 	public void loginInvalidPasswordShouldReturnUnauthorized() throws Exception
 	{
-		mockMvc.perform(post("/login").content(String.format(LOGIN_TEMPLATE, USER.getEmail(), "wrong_password")).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnauthorized()).andExpect(status().reason("Unauthorized"));
+		mockMvc.perform(post("/login").content(String.format(LOGIN_TEMPLATE, USER.getEmail(), "wrong_password")).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnauthorized());
 	}
 	
 	@Test
@@ -74,7 +76,7 @@ public class JwtTests
 		String loginResponse = loginResult.getResponse().getContentAsString();
 		String refreshData = String.format(REFRESH_TEMPLATE, mapper.readTree(loginResponse).get("access_token"), mapper.readTree(loginResponse).get("refresh_token"));
 		
-		mockMvc.perform(post("/login").header("Authorization", "Bearer " + mapper.readTree(loginResponse).get("access_token")).content(refreshData).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andExpect(jsonPath("$.access_token").exists());
+		mockMvc.perform(post("/login").header(JwtAuthorizationFilter.AUTH_HEADER, JwtAuthorizationFilter.AUTH_PREFIX + mapper.readTree(loginResponse).get("access_token")).content(refreshData).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andExpect(jsonPath("$.access_token").exists());
 	}
 	
 	@Test
