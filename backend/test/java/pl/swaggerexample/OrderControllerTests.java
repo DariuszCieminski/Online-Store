@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 import pl.swaggerexample.model.*;
+import pl.swaggerexample.model.enums.OrderStatus;
 import pl.swaggerexample.model.enums.PaymentMethod;
 import pl.swaggerexample.model.enums.Role;
 
@@ -158,6 +159,13 @@ public class OrderControllerTests
 	}
 	
 	@Test
+	public void addOrderShouldHaveStatusCreated() throws Exception
+	{
+		Order order = createOrder();
+		mockMvc.perform(post("/api/orders").with(authentication(USER)).content(mapper.writeValueAsString(order)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isCreated()).andExpect(jsonPath("$.status").value(OrderStatus.CREATED.name()));
+	}
+	
+	@Test
 	public void addOrderWithTooLongInformationReturnUnprocessableEntity() throws Exception
 	{
 		Order order = createOrder();
@@ -185,13 +193,28 @@ public class OrderControllerTests
 	@Test
 	public void getOrdersByUserIdReturnOk() throws Exception
 	{
+		Order order = createOrder();
+		mockMvc.perform(post("/api/orders").with(authentication(USER)).content(mapper.writeValueAsString(order)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isCreated());
 		
+		mockMvc.perform(get("/api/orders/buyer/{id}", order.getBuyer().getId()).with(authentication(MANAGER))).andDo(print()).andExpect(status().isOk());
 	}
 	
 	@Test
 	public void getOrdersByOtherUserIdReturnForbidden() throws Exception
 	{
+		Order order = createOrder();
+		User otherUser = new User("Other", "User", "other@user.com", "other_user", Collections.singleton(Role.USER));
+		mockMvc.perform(post("/api/orders").with(authentication(USER)).content(mapper.writeValueAsString(order)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isCreated());
+		MvcResult addUserResult = mockMvc.perform(post("/api/users").content(mapper.writeValueAsString(otherUser)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isCreated()).andReturn();
+		otherUser = mapper.readValue(addUserResult.getResponse().getContentAsString(), User.class);
+		
+		mockMvc.perform(get("/api/orders/buyer/{id}", otherUser.getId()).with(authentication(USER))).andDo(print()).andExpect(status().isForbidden());
+	}
 	
+	@Test
+	public void getOrdersByInvalidUserIdReturnNotFound() throws Exception
+	{
+		mockMvc.perform(get("/api/orders/buyer/{id}", 999L).with(authentication(MANAGER))).andDo(print()).andExpect(status().isNotFound());
 	}
 	
 	@Test

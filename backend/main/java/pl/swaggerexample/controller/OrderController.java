@@ -38,9 +38,17 @@ public class OrderController
 	@GetMapping("/{id}")
 	@ApiOperation(value = "Returns a single order by its ID")
 	@ApiResponses(value = {@ApiResponse(code = 404, message = "Order with specified ID doesn't exist")})
-	public Order getOrder(@PathVariable @ApiParam(value = "Unique ID of existing order", example = "1") Long id)
+	public Order getOrderById(@PathVariable @ApiParam(value = "Unique ID of existing order", example = "1") Long id)
 	{
 		return orderService.getById(id);
+	}
+	
+	@GetMapping("/buyer/{id}")
+	@ApiOperation(value = "Returns list of orders made by user with given ID")
+	@ApiResponses(value = {@ApiResponse(code = 403, message = "Non-manager is trying to get orders of another user"), @ApiResponse(code = 404, message = "User with specified ID doesn't exist")})
+	public List<Order> getOrdersByBuyerId(@PathVariable @ApiParam(value = "Unique ID of existing user", example = "1") Long id)
+	{
+		return orderService.getOrdersByBuyerId(id);
 	}
 	
 	@PostMapping

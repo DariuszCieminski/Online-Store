@@ -37,7 +37,7 @@ public class UserController
 	@GetMapping("/{id}")
 	@ApiOperation(value = "Returns single registered customer by his ID")
 	@ApiResponses(value = {@ApiResponse(code = 404, message = "User with specified ID doesn't exist")})
-	public User getUser(@PathVariable @ApiParam(value = "Unique ID of existing customer", example = "1") Long id)
+	public User getUserById(@PathVariable @ApiParam(value = "Unique ID of existing customer", example = "1") Long id)
 	{
 		return userService.getById(id);
 	}

@@ -54,7 +54,7 @@ public class ProductController
 	@GetMapping("/{id}")
 	@ApiOperation(value = "Returns single product by its ID")
 	@ApiResponses(value = {@ApiResponse(code = 404, message = "Product with specified ID doesn't exist")})
-	public Product getProduct(@PathVariable @ApiParam(value = "Unique ID of existing product", example = "1") Long id)
+	public Product getProductById(@PathVariable @ApiParam(value = "Unique ID of existing product", example = "1") Long id)
 	{
 		return productService.getById(id);
 	}

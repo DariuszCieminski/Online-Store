@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.CreationTimestamp;
+import pl.swaggerexample.model.enums.OrderStatus;
 import pl.swaggerexample.model.enums.PaymentMethod;
 import pl.swaggerexample.util.AddressConverter;
 
@@ -55,8 +56,12 @@ public class Order
 	@ApiModelProperty(value = "Additional information to the order.", allowableValues = "range[-infinity, 150]", position = 5)
 	private String information;
 	
+	@Enumerated(EnumType.STRING)
+	@ApiModelProperty(value = "Current status of the order.", required = true, position = 6)
+	private OrderStatus status;
+	
 	@CreationTimestamp
-	@ApiModelProperty(value = "Time of making order. Will be set automatically when posting order to DB.", readOnly = true, position = 6)
+	@ApiModelProperty(value = "Time of making order. Will be set automatically when posting order to DB.", readOnly = true, position = 7)
 	private OffsetDateTime time;
 	
 	public Long getId()
@@ -121,6 +126,16 @@ public class Order
 	public void setInformation(String information)
 	{
 		this.information = information;
+	}
+	
+	public OrderStatus getStatus()
+	{
+		return status;
+	}
+	
+	public void setStatus(OrderStatus status)
+	{
+		this.status = status;
 	}
 	
 	public OffsetDateTime getTime()
