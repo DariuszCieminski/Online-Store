@@ -24,6 +24,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -58,7 +60,9 @@ public class ProductControllerTests
 		
 		for (Product product : products)
 		{
-			mockMvc.perform(post("/api/products").with(user(MANAGER.build())).content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated());
+			mockMvc.perform(post("/api/products").with(user(MANAGER.build()))
+					.content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON))
+					.andExpect(status().isCreated());
 		}
 	}
 	
@@ -66,49 +70,79 @@ public class ProductControllerTests
 	public void createProductReturnOk() throws Exception
 	{
 		Product product = new Product("Product 1", "Simple description of Product 1", Collections.singleton("https://picsum.photos/200"), BigDecimal.valueOf(11.99D), 3);
-		mockMvc.perform(post("/api/products").with(user(MANAGER.build())).content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isCreated()).andExpect(jsonPath("$.name").value(product.getName())).andExpect(jsonPath("$.price").value(product.getPrice()));
+		mockMvc.perform(post("/api/products").with(user(MANAGER.build()))
+				.content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$.name").value(product.getName()))
+				.andExpect(jsonPath("$.description").value(product.getDescription()))
+				.andExpect(jsonPath("$.images").isArray())
+				.andExpect(jsonPath("$.images", contains(product.getImages().toArray())))
+				.andExpect(jsonPath("$.price").value(product.getPrice()))
+				.andExpect(jsonPath("$.quantity").value(product.getQuantity()));
 	}
 	
 	@Test
 	public void createProductWithoutNameReturnUnprocessableEntity() throws Exception
 	{
 		Product product = new Product("", "Simple description of Product 1", Collections.singleton("https://picsum.photos/200"), BigDecimal.valueOf(11.99D), 1);
-		mockMvc.perform(post("/api/products").with(user(MANAGER.build())).content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isUnprocessableEntity());
+		mockMvc.perform(post("/api/products").with(user(MANAGER.build()))
+				.content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isUnprocessableEntity());
 	}
 	
 	@Test
 	public void createProductWithInvalidImageUrlReturnUnprocessableEntity() throws Exception
 	{
 		Product product = new Product("Product", "Simple description of Product 1", Collections.singleton("image_url"), BigDecimal.valueOf(11.99D), 1);
-		mockMvc.perform(post("/api/products").with(user(MANAGER.build())).content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isUnprocessableEntity());
+		mockMvc.perform(post("/api/products").with(user(MANAGER.build()))
+				.content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isUnprocessableEntity());
 	}
 	
 	@Test
-	public void createProductWithInvalidPriceReturnUnprocessableEntity() throws Exception
+	public void createProductWithNegativePriceReturnUnprocessableEntity() throws Exception
 	{
 		Product product = new Product("Product", "Description", Collections.singleton("https://picsum.photos/200"), BigDecimal.valueOf(-8.99D), 1);
-		mockMvc.perform(post("/api/products").with(user(MANAGER.build())).content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isUnprocessableEntity());
+		mockMvc.perform(post("/api/products").with(user(MANAGER.build()))
+				.content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isUnprocessableEntity());
+	}
+	
+	@Test
+	public void createProductWithPriceWithThreeDecimalPlacesReturnUnprocessableEntity() throws Exception
+	{
+		Product product = new Product("Product", "Description", Collections.singleton("https://picsum.photos/200"), BigDecimal.valueOf(8.999D), 1);
+		mockMvc.perform(post("/api/products").with(user(MANAGER.build()))
+				.content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isUnprocessableEntity());
 	}
 	
 	@Test
 	public void createProductWithNegativeQuantityReturnUnprocessableEntity() throws Exception
 	{
 		Product product = new Product("Product", "Description", Collections.singleton("https://picsum.photos/200"), BigDecimal.valueOf(-8.99D), -5);
-		mockMvc.perform(post("/api/products").with(user(MANAGER.build())).content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isUnprocessableEntity());
+		mockMvc.perform(post("/api/products").with(user(MANAGER.build()))
+				.content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isUnprocessableEntity());
 	}
 	
 	@Test
 	public void createProductByNonManagerReturnForbidden() throws Exception
 	{
 		Product product = new Product("Product", "Description", Collections.singleton("https://picsum.photos/200"), BigDecimal.valueOf(11.99D), 1);
-		mockMvc.perform(post("/api/products").with(user(USER.build())).content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isForbidden());
+		mockMvc.perform(post("/api/products").with(user(USER.build()))
+				.content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isForbidden());
 	}
 	
 	@Test
 	public void getProductByValidIdReturnOk() throws Exception
 	{
 		Long id = 1L;
-		mockMvc.perform(get("/api/products/{id}", id).with(user(USER.build()))).andDo(print()).andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.id").value(id));
+		mockMvc.perform(get("/api/products/{id}", id).with(user(USER.build()))).andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.id").value(id));
 	}
 	
 	@Test
@@ -121,7 +155,9 @@ public class ProductControllerTests
 	@MethodSource("getRequestParams")
 	public void getProductsFilteredByCustomPredicatesReturnOk(SimpleImmutableEntry<String, String> param) throws Exception
 	{
-		mockMvc.perform(get("/api/products").queryParam(param.getKey(), param.getValue()).with(user(USER.build()))).andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$", Matchers.hasSize(Matchers.greaterThanOrEqualTo(1))));
+		mockMvc.perform(get("/api/products").queryParam(param.getKey(), param.getValue()).with(user(USER.build()))).andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$", Matchers.hasSize(Matchers.greaterThanOrEqualTo(1))));
 	}
 	
 	private static List<SimpleImmutableEntry<String, String>> getRequestParams()
@@ -134,40 +170,137 @@ public class ProductControllerTests
 	}
 	
 	@Test
-	public void getProductsFilteredByCustomPredicatesReturnBadRequest400() throws Exception
+	public void getProductsFilteredByCustomPredicateWithWrongValueReturnBadRequest() throws Exception
 	{
-		mockMvc.perform(get("/api/products").queryParam("priceEqualTo", "price").with(user(USER.build()))).andDo(print()).andExpect(status().isBadRequest());
+		mockMvc.perform(get("/api/products").queryParam("priceEqualTo", "price").with(user(USER.build())))
+				.andDo(print())
+				.andExpect(status().isBadRequest());
 	}
 	
 	@Test
 	public void updateProductReturnOk() throws Exception
 	{
-		MvcResult result = mockMvc.perform(get("/api/products/1").with(user(USER.build()))).andReturn();
-		Product p = mapper.readValue(result.getResponse().getContentAsString(), Product.class);
-		p.setName("Updated product");
-		p.setDescription("Updated description");
-		p.setPrice(BigDecimal.valueOf(5.99D));
+		MvcResult getProduct = mockMvc.perform(get("/api/products/1").with(user(USER.build()))).andReturn();
+		Product product = mapper.readValue(getProduct.getResponse().getContentAsString(), Product.class);
+		product.setName("Updated product");
+		product.setDescription("Updated description");
+		product.setPrice(BigDecimal.valueOf(5.99D));
 		
-		mockMvc.perform(put("/api/products").with(user(MANAGER.build())).content(mapper.writeValueAsString(p)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$.name").value(p.getName())).andExpect(jsonPath("$.description").value(p.getDescription())).andExpect(jsonPath("$.price").value(p.getPrice()));
+		mockMvc.perform(put("/api/products").with(user(MANAGER.build()))
+				.content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.name").value(product.getName()))
+				.andExpect(jsonPath("$.description").value(product.getDescription()))
+				.andExpect(jsonPath("$.price").value(product.getPrice()));
 	}
 	
 	@Test
 	public void updateProductWithInvalidIdReturnNotFound() throws Exception
 	{
-		Product p = new Product("Product", "Description", Collections.singleton("https://picsum.photos/200"), BigDecimal.valueOf(3.99D), 1);
-		p.setId(333L);
+		Product product = new Product("Product", "Description", Collections.singleton("https://picsum.photos/200"), BigDecimal.valueOf(3.99D), 1);
+		product.setId(333L);
 		
-		mockMvc.perform(put("/api/products").with(user(MANAGER.build())).content(mapper.writeValueAsString(p)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isNotFound());
+		mockMvc.perform(put("/api/products").with(user(MANAGER.build()))
+				.content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isNotFound());
+	}
+	
+	@Test
+	public void updateProductWithEmptyNameReturnUnprocessableEntity() throws Exception
+	{
+		String getProduct = mockMvc.perform(get("/api/products/1").with(user(MANAGER.build())))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+		Product product = mapper.readValue(getProduct, Product.class);
+		product.setName(null);
+		
+		mockMvc.perform(put("/api/products").with(user(MANAGER.build()))
+				.content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isUnprocessableEntity())
+				.andExpect(jsonPath("$.errors").isArray())
+				.andExpect(jsonPath("$.errors", hasSize(1)))
+				.andExpect(jsonPath("$.errors[0].field").value("name"));
+	}
+	
+	@Test
+	public void updateProductWithInvalidImageUrlReturnUnprocessableEntity() throws Exception
+	{
+		String getProduct = mockMvc.perform(get("/api/products/1").with(user(MANAGER.build())))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+		Product product = mapper.readValue(getProduct, Product.class);
+		product.getImages().add("image_url");
+		
+		mockMvc.perform(put("/api/products").with(user(MANAGER.build()))
+				.content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isUnprocessableEntity())
+				.andExpect(jsonPath("$.errors").isArray())
+				.andExpect(jsonPath("$.errors", hasSize(1)))
+				.andExpect(jsonPath("$.errors[0].field").value("images[]"));
+	}
+	
+	@Test
+	public void updateProductWithNegativePriceReturnUnprocessableEntity() throws Exception
+	{
+		String getProduct = mockMvc.perform(get("/api/products/1").with(user(MANAGER.build())))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+		Product product = mapper.readValue(getProduct, Product.class);
+		product.setPrice(BigDecimal.valueOf(-8.99D));
+		
+		mockMvc.perform(put("/api/products").with(user(MANAGER.build()))
+				.content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isUnprocessableEntity())
+				.andExpect(jsonPath("$.errors").isArray())
+				.andExpect(jsonPath("$.errors", hasSize(1)))
+				.andExpect(jsonPath("$.errors[0].field").value("price"));
+	}
+	
+	@Test
+	public void updateProductWithPriceWithThreeDecimalPlacesReturnUnprocessableEntity() throws Exception
+	{
+		String getProduct = mockMvc.perform(get("/api/products/1").with(user(MANAGER.build())))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+		Product product = mapper.readValue(getProduct, Product.class);
+		product.setPrice(BigDecimal.valueOf(5.999D));
+		
+		mockMvc.perform(put("/api/products").with(user(MANAGER.build()))
+				.content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isUnprocessableEntity())
+				.andExpect(jsonPath("$.errors").isArray())
+				.andExpect(jsonPath("$.errors", hasSize(1)))
+				.andExpect(jsonPath("$.errors[0].field").value("price"));
+	}
+	
+	@Test
+	public void updateProductWithNegativeQuantityReturnUnprocessableEntity() throws Exception
+	{
+		String getProduct = mockMvc.perform(get("/api/products/1").with(user(MANAGER.build())))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+		Product product = mapper.readValue(getProduct, Product.class);
+		product.setQuantity(-2);
+		
+		mockMvc.perform(put("/api/products").with(user(MANAGER.build()))
+				.content(mapper.writeValueAsString(product)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isUnprocessableEntity())
+				.andExpect(jsonPath("$.errors").isArray())
+				.andExpect(jsonPath("$.errors", hasSize(1)))
+				.andExpect(jsonPath("$.errors[0].field").value("quantity"));
 	}
 	
 	@Test
 	public void updateProductWithoutAuthorizationReturnForbidden() throws Exception
 	{
-		MvcResult result = mockMvc.perform(get("/api/products/1").with(user(USER.build()))).andReturn();
-		Product p = mapper.readValue(result.getResponse().getContentAsString(), Product.class);
+		String getProduct = mockMvc.perform(get("/api/products/1").with(user(USER.build())))
+				.andReturn().getResponse().getContentAsString();
+		Product p = mapper.readValue(getProduct, Product.class);
 		p.setName("Updated product name");
 		
-		mockMvc.perform(put("/api/products").with(user(USER.build())).content(mapper.writeValueAsString(p)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isForbidden());
+		mockMvc.perform(put("/api/products").with(user(USER.build()))
+				.content(mapper.writeValueAsString(p)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isForbidden());
 	}
 	
 	@Test

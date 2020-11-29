@@ -59,8 +59,21 @@ public class UserService implements EntityService<User>
 	@Override
 	public User update(User object)
 	{
-		if (object.getPassword() != null) object.setPassword(BCrypt.hashpw(object.getPassword(), BCrypt.gensalt()));
-		else object.setPassword(getById(object.getId()).getPassword());
+		if (getAll().stream().noneMatch(user -> user.getId().equals(object.getId())))
+		{
+			throw new NotFoundException("User doesn't exist.");
+		}
+		
+		if (object.getPassword() != null)
+		{
+			object.setPassword(BCrypt.hashpw(object.getPassword(), BCrypt.gensalt()));
+		}
+		
+		else
+		{
+			object.setPassword(getById(object.getId()).getPassword());
+		}
+		
 		return userDao.save(object);
 	}
 	

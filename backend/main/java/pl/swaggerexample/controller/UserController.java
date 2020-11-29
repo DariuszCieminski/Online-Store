@@ -1,5 +1,6 @@
 package pl.swaggerexample.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.swaggerexample.model.User;
 import pl.swaggerexample.service.UserService;
+import pl.swaggerexample.util.JsonViews;
 import pl.swaggerexample.util.ValidationGroups;
 
 import javax.validation.Valid;
@@ -29,6 +31,7 @@ public class UserController
 	
 	@GetMapping
 	@ApiOperation(value = "Returns list of all registered customers")
+	@JsonView(JsonViews.UserDetailed.class)
 	public List<User> getUsers()
 	{
 		return userService.getAll();
@@ -37,6 +40,7 @@ public class UserController
 	@GetMapping("/{id}")
 	@ApiOperation(value = "Returns single registered customer by his ID")
 	@ApiResponses(value = {@ApiResponse(code = 404, message = "User with specified ID doesn't exist")})
+	@JsonView(JsonViews.UserDetailed.class)
 	public User getUserById(@PathVariable @ApiParam(value = "Unique ID of existing customer", example = "1") Long id)
 	{
 		return userService.getById(id);
@@ -44,6 +48,7 @@ public class UserController
 	
 	@GetMapping("/currentuser")
 	@ApiOperation(value = "Returns currently logged user")
+	@JsonView(JsonViews.UserAuthentication.class)
 	public User getCurrentUser(Authentication authentication)
 	{
 		return userService.getById((Long) authentication.getDetails());
@@ -53,6 +58,7 @@ public class UserController
 	@ResponseStatus(HttpStatus.CREATED)
 	@ApiOperation(value = "Adds new user to the database")
 	@ApiResponses(value = {@ApiResponse(code = 422, message = "User has invalid data")})
+	@JsonView(JsonViews.UserAuthentication.class)
 	public User createUser(@Validated({Default.class, ValidationGroups.UserCreation.class}) @RequestBody @ApiParam(value = "Data of the new user") User user)
 	{
 		return userService.add(user);

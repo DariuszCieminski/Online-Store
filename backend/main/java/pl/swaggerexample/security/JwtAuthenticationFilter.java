@@ -2,7 +2,6 @@ package pl.swaggerexample.security;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,7 +32,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		this.manager = manager;
 		this.jwt = jwt;
 		this.mapper = new ObjectMapper();
-		this.mapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
 	}
 	
 	@Override
@@ -42,6 +40,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		try
 		{
 			JsonNode requestBody = mapper.readTree(request.getReader());
+			
 			if (isReAuthentication(requestBody))
 			{
 				if (request.getHeader("Authorization") == null)
@@ -51,6 +50,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			
 			User user = mapper.treeToValue(requestBody, User.class);
 			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), new HashSet<>());
+			
 			return manager.authenticate(authenticationToken);
 		}
 		
@@ -105,6 +105,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	private void setSwaggerCookie(HttpServletResponse response, Authentication authentication)
 	{
 		User user = ((AuthenticatedUser) authentication.getPrincipal()).getUser();
+		
 		if (user.getRoles().contains(Role.DEVELOPER))
 		{
 			Cookie cookie = new Cookie("swagger_id", jwt.generateSwaggerToken(authentication));

@@ -54,8 +54,11 @@ public class ProductService implements EntityService<Product>
 	@Override
 	public Product update(Product object)
 	{
-		if (getAll().stream().noneMatch(p -> p.getId().equals(object.getId())))
+		if (getAll().stream().noneMatch(product -> product.getId().equals(object.getId())))
+		{
 			throw new NotFoundException("Product doesn't exist.");
+		}
+		
 		return productDao.save(object);
 	}
 	

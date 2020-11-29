@@ -1,6 +1,7 @@
 package pl.swaggerexample;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -13,17 +14,22 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 import pl.swaggerexample.model.Address;
 import pl.swaggerexample.model.User;
 import pl.swaggerexample.model.enums.Role;
+import pl.swaggerexample.util.JsonViews;
 
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -49,62 +55,127 @@ class UserControllerTests
 	@BeforeAll
 	public void init() throws Exception
 	{
-		User client = new User("Jan", "Kowalski", "jan.kowalski@poczta.pl", "moje_haslo", Collections.singleton(Role.USER));
-		mockMvc.perform(post("/api/users").with(authentication(MANAGER)).content(mapper.writeValueAsString(client)).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated());
-		((UsernamePasswordAuthenticationToken) USER).setDetails(1L);
-		((UsernamePasswordAuthenticationToken) MANAGER).setDetails(2L);
+		User user = new User("Jan", "Kowalski", "jan.kowalski@poczta.pl", "moje_haslo", Collections.singleton(Role.USER));
+		mockMvc.perform(post("/api/users")
+				.content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isCreated());
 	}
 	
 	@Test
 	public void addUserReturnOk() throws Exception
 	{
-		User client = new User("Użytkownik", "Testowy", "test@test.com", "test-test", Collections.singleton(Role.USER));
+		User user = new User("Użytkownik", "Testowy", "test@test.com", "test-test", Collections.singleton(Role.USER));
 		Address address = new Address("ul. Testowa 1", "01-234", "Testowo");
-		client.setAddress(address);
+		user.setAddress(address);
 		
-		mockMvc.perform(post("/api/users").content(mapper.writeValueAsString(client)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isCreated());
+		mockMvc.perform(post("/api/users")
+				.content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isCreated());
 	}
 	
 	@Test
-	public void addUserWithDeveloperRoleWithPermissionReturnOk() throws Exception
+	public void addUserWithoutNameReturnUnprocessableEntity() throws Exception
 	{
-		User client = new User("Użytkownik", "Testowy", "test@test.com", "test-test", Collections.singleton(Role.DEVELOPER));
-		MvcResult postResult = mockMvc.perform(post("/api/users").with(authentication(MANAGER)).content(mapper.writeValueAsString(client)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isCreated()).andReturn();
-		
-		User readClient = mapper.readValue(postResult.getResponse().getContentAsString(), User.class);
-		Assertions.assertTrue(readClient.getRoles().contains(Role.DEVELOPER), "Added user doesn't have DEVELOPER role!");
+		User user = new User("", "Kowalski", "test@test.com", "moje_haslo", Collections.singleton(Role.USER));
+		mockMvc.perform(post("/api/users")
+				.content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isUnprocessableEntity());
 	}
 	
 	@Test
-	public void addUserWithDeveloperRoleWithoutPermissionReturnUserWithStandardRole() throws Exception
+	public void addUserWithoutSurnameReturnUnprocessableEntity() throws Exception
 	{
-		User client = new User("Użytkownik", "Testowy", "test@test.com", "test-test", Collections.singleton(Role.DEVELOPER));
-		MvcResult postResult = mockMvc.perform(post("/api/users").with(authentication(USER)).content(mapper.writeValueAsString(client)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isCreated()).andReturn();
-		
-		User readClient = mapper.readValue(postResult.getResponse().getContentAsString(), User.class);
-		Assertions.assertFalse(readClient.getRoles().contains(Role.DEVELOPER), "Added user has not allowed DEVELOPER role!");
+		User user = new User("Jan", "", "test@test.com", "moje_haslo", Collections.singleton(Role.USER));
+		mockMvc.perform(post("/api/users")
+				.content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isUnprocessableEntity());
 	}
 	
 	@Test
 	public void addUserWithoutEmailReturnUnprocessableEntity() throws Exception
 	{
-		User client = new User("Jan", "Kowalski", "", "moje_haslo", Collections.singleton(Role.USER));
-		mockMvc.perform(post("/api/users").with(authentication(USER)).content(mapper.writeValueAsString(client)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isUnprocessableEntity());
+		User user = new User("Jan", "Kowalski", "", "moje_haslo", Collections.singleton(Role.USER));
+		mockMvc.perform(post("/api/users")
+				.content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isUnprocessableEntity());
+	}
+	
+	@Test
+	public void addUserWithInvalidAddressReturnUnprocessableEntity() throws Exception
+	{
+		User user = new User("Jan", "Kowalski", "test@test.com", "moje_haslo", Collections.singleton(Role.USER));
+		user.setAddress(new Address("", "12345", "Miasto"));
+		
+		mockMvc.perform(post("/api/users")
+				.content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isUnprocessableEntity());
+	}
+	
+	@Test
+	public void addUserWithNoPasswordReturnUnprocessableEntity() throws Exception
+	{
+		User user = new User("Jan", "Kowalski", "test@test.com", "", Collections.singleton(Role.USER));
+		mockMvc.perform(post("/api/users")
+				.content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isUnprocessableEntity());
+	}
+	
+	@Test
+	public void addUserWithTooShortPasswordReturnUnprocessableEntity() throws Exception
+	{
+		User user = new User("Jan", "Kowalski", "test@test.com", "haslo", Collections.singleton(Role.USER));
+		mockMvc.perform(post("/api/users")
+				.content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isUnprocessableEntity());
+	}
+	
+	@Test
+	public void addUserWithDeveloperRoleWithPermissionReturnOk() throws Exception
+	{
+		User user = new User("Użytkownik", "Testowy", "test@test.com", "test-test", Collections.singleton(Role.DEVELOPER));
+		mockMvc.perform(post("/api/users").with(authentication(MANAGER))
+				.content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isCreated());
+		
+		String getAllUsers = mockMvc.perform(get("/api/users").with(authentication(MANAGER))).andReturn().getResponse().getContentAsString();
+		CollectionType userListType = mapper.getTypeFactory().constructCollectionType(List.class, User.class);
+		List<User> allUserList = mapper.readValue(getAllUsers, userListType);
+		Optional<User> addedUser = allUserList.stream().max(Comparator.comparingLong(User::getId));
+		
+		Assertions.assertTrue(addedUser.isPresent());
+		Assertions.assertTrue(addedUser.get().getRoles().contains(Role.DEVELOPER), "Added user doesn't have DEVELOPER role!");
+	}
+	
+	@Test
+	public void addUserWithDeveloperRoleWithoutPermissionReturnUserWithStandardRole() throws Exception
+	{
+		User user = new User("Użytkownik", "Testowy", "test@test.com", "test-test", Collections.singleton(Role.DEVELOPER));
+		mockMvc.perform(post("/api/users")
+				.content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isCreated());
+		
+		String getAllUsers = mockMvc.perform(get("/api/users").with(authentication(MANAGER))).andReturn().getResponse().getContentAsString();
+		CollectionType userListType = mapper.getTypeFactory().constructCollectionType(List.class, User.class);
+		List<User> userList = mapper.readValue(getAllUsers, userListType);
+		Optional<User> addedUser = userList.stream().max(Comparator.comparingLong(User::getId));
+		
+		Assertions.assertTrue(addedUser.isPresent());
+		Assertions.assertFalse(addedUser.get().getRoles().contains(Role.DEVELOPER), "Added user has not allowed DEVELOPER role!");
 	}
 	
 	@Test
 	public void getUserByValidIdReturnOk() throws Exception
 	{
-		mockMvc.perform(get("/api/users/1").with(authentication(MANAGER))).andDo(print()).andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.id").value(1));
+		mockMvc.perform(get("/api/users/1").with(authentication(MANAGER))).andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.id").value(1));
 	}
 	
 	@Test
 	public void getUserWithoutPermissionReturnForbidden() throws Exception
 	{
-		User user = new User("Jan", "Nowak", "jan.nowak@poczta.pl", "moje_haslo", Collections.singleton(Role.USER));
-		String addUserResponse = mockMvc.perform(post("/api/users").with(authentication(MANAGER)).content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
-		
-		mockMvc.perform(get("/api/users/{id}", mapper.readTree(addUserResponse).get("id").longValue()).with(authentication(USER))).andDo(print()).andExpect(status().isForbidden());
+		mockMvc.perform(get("/api/users/1").with(authentication(USER))).andDo(print()).andExpect(status().isForbidden());
 	}
 	
 	@Test
@@ -116,7 +187,45 @@ class UserControllerTests
 	@Test
 	public void getCurrentUserReturnOk() throws Exception
 	{
-		mockMvc.perform(get("/api/users/currentuser").with(authentication(USER))).andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(USER.getDetails()));
+		String getUserResponse = mockMvc.perform(get("/api/users/1").with(authentication(MANAGER)))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+		
+		User user = mapper.readValue(getUserResponse, User.class);
+		UsernamePasswordAuthenticationToken userAuth = new UsernamePasswordAuthenticationToken(user.getName(), user.getPassword(),
+				user.getRoles().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name())).collect(Collectors.toList()));
+		userAuth.setDetails(user.getId());
+		
+		mockMvc.perform(get("/api/users/currentuser").with(authentication(userAuth))).andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.name").value(user.getName()))
+				.andExpect(jsonPath("$.surname").value(user.getSurname()))
+				.andExpect(jsonPath("$.address").value(user.getAddress()))
+				.andExpect(jsonPath("$.email").value(user.getEmail()));
+	}
+	
+	@Test
+	public void getUserWithUserDetailedViewShouldContainIdAndRoles() throws Exception
+	{
+		String getUserResponse = mockMvc.perform(get("/api/users/1").with(authentication(MANAGER)))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+		User user = mapper.readerWithView(JsonViews.UserDetailed.class).readValue(getUserResponse, User.class);
+		
+		Assertions.assertNotNull(user.getId(), "User ID is null!");
+		Assertions.assertNotNull(user.getRoles(), "User roles are null!");
+	}
+	
+	@Test
+	public void getUserWithUserAuthenticationViewShouldNotContainIdAndRoles() throws Exception
+	{
+		String getUserResponse = mockMvc.perform(get("/api/users/1").with(authentication(MANAGER)))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+		User user = mapper.readerWithView(JsonViews.UserAuthentication.class).readValue(getUserResponse, User.class);
+		
+		Assertions.assertNull(user.getId(), "User ID is not null!");
+		Assertions.assertNull(user.getRoles(), "User roles are not null!");
 	}
 	
 	@Test
@@ -125,31 +234,123 @@ class UserControllerTests
 		int counter = 3;
 		for (int i = 1; i <= counter; i++)
 		{
-			User client = new User("Jan", "Kowalski", "jan.kowalski" + i + "@poczta.pl", "moje_haslo", Collections.singleton(Role.USER));
-			mockMvc.perform(post("/api/users").with(authentication(MANAGER)).content(mapper.writeValueAsString(client)).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated());
+			User user = new User("Jan", "Kowalski", "jan.kowalski" + i + "@poczta.pl", "moje_haslo", Collections.singleton(Role.USER));
+			mockMvc.perform(post("/api/users")
+					.content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON))
+					.andExpect(status().isCreated());
 		}
-		mockMvc.perform(get("/api/users").with(authentication(MANAGER))).andDo(print()).andExpect(jsonPath("$").isArray()).andExpect(jsonPath("$", hasSize(Matchers.greaterThanOrEqualTo(counter))));
+		mockMvc.perform(get("/api/users").with(authentication(MANAGER))).andDo(print())
+				.andExpect(jsonPath("$").isArray())
+				.andExpect(jsonPath("$", hasSize(Matchers.greaterThanOrEqualTo(counter))));
 	}
 	
 	@Test
-	public void updateUserReturnOk() throws Exception
+	public void updateUserSurnameReturnOk() throws Exception
 	{
-		MvcResult mvcResult = mockMvc.perform(get("/api/users/1").with(authentication(MANAGER))).andExpect(status().isOk()).andReturn();
-		User client = mapper.readValue(mvcResult.getResponse().getContentAsString(), User.class);
-		client.setSurname("Nowak");
+		String getUser = mockMvc.perform(get("/api/users/1").with(authentication(MANAGER)))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+		User parsedUser = mapper.readValue(getUser, User.class);
+		parsedUser.setSurname("Nowak");
 		
-		mockMvc.perform(put("/api/users").with(authentication(USER)).content(mapper.writeValueAsString(client)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$.surname").value(client.getSurname()));
+		mockMvc.perform(put("/api/users").with(authentication(MANAGER))
+				.content(mapper.writeValueAsString(parsedUser)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.surname").value(parsedUser.getSurname()));
 	}
 	
 	@Test
-	public void updateUserReturnUnprocessableEntity() throws Exception
+	public void updateUserWithInvalidIdReturnNotFound() throws Exception
 	{
-		MvcResult mvcResult = mockMvc.perform(get("/api/users/1").with(authentication(MANAGER))).andExpect(status().isOk()).andReturn();
-		User client = mapper.readValue(mvcResult.getResponse().getContentAsString(), User.class);
-		client.setEmail("testowy.email");
-		client.setPassword("hasło");
+		User user = new User("Jan", "Kowalski", "testowy.email@poczta.pl", "moje_haslo", Collections.singleton(Role.USER));
+		user.setId(333L);
 		
-		mockMvc.perform(put("/api/users").with(authentication(USER)).content(mapper.writeValueAsString(client)).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isUnprocessableEntity()).andExpect(jsonPath("$.errors").isArray()).andExpect(jsonPath("$.errors", hasSize(2)));
+		mockMvc.perform(put("/api/users").with(authentication(MANAGER))
+				.content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isNotFound());
+	}
+	
+	@Test
+	public void updateUserWithEmptyNameReturnUnprocessableEntity() throws Exception
+	{
+		String getUser = mockMvc.perform(get("/api/users/1").with(authentication(MANAGER)))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+		User parsedUser = mapper.readValue(getUser, User.class);
+		parsedUser.setName(null);
+		
+		mockMvc.perform(put("/api/users").with(authentication(MANAGER))
+				.content(mapper.writeValueAsString(parsedUser)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isUnprocessableEntity())
+				.andExpect(jsonPath("$.errors").isArray())
+				.andExpect(jsonPath("$.errors", hasSize(1)))
+				.andExpect(jsonPath("$.errors[0].field").value("name"));
+	}
+	
+	@Test
+	public void updateUserWithEmptySurnameReturnUnprocessableEntity() throws Exception
+	{
+		String getUser = mockMvc.perform(get("/api/users/1").with(authentication(MANAGER)))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+		User parsedUser = mapper.readValue(getUser, User.class);
+		parsedUser.setSurname(null);
+		
+		mockMvc.perform(put("/api/users").with(authentication(MANAGER))
+				.content(mapper.writeValueAsString(parsedUser)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isUnprocessableEntity())
+				.andExpect(jsonPath("$.errors").isArray())
+				.andExpect(jsonPath("$.errors", hasSize(1)))
+				.andExpect(jsonPath("$.errors[0].field").value("surname"));
+	}
+	
+	@Test
+	public void updateUserWithInvalidEmailAndPasswordReturnUnprocessableEntity() throws Exception
+	{
+		String getUser = mockMvc.perform(get("/api/users/1").with(authentication(MANAGER)))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+		User parsedUser = mapper.readValue(getUser, User.class);
+		parsedUser.setEmail("testowy.email");
+		parsedUser.setPassword("hasło");
+		
+		mockMvc.perform(put("/api/users").with(authentication(MANAGER))
+				.content(mapper.writeValueAsString(parsedUser)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isUnprocessableEntity())
+				.andExpect(jsonPath("$.errors").isArray())
+				.andExpect(jsonPath("$.errors", hasSize(2)))
+				.andExpect(jsonPath("$.errors", hasItems(hasEntry("field", "email"), hasEntry("field", "password"))));
+	}
+	
+	@Test
+	public void updateUserWithInvalidAddressReturnUnprocessableEntity() throws Exception
+	{
+		String getUser = mockMvc.perform(get("/api/users/1").with(authentication(MANAGER)))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+		User parsedUser = mapper.readValue(getUser, User.class);
+		parsedUser.setAddress(new Address("", "12345", "Miasto"));
+		
+		mockMvc.perform(put("/api/users").with(authentication(MANAGER))
+				.content(mapper.writeValueAsString(parsedUser)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isUnprocessableEntity())
+				.andExpect(jsonPath("$.errors").isArray())
+				.andExpect(jsonPath("$.errors", hasSize(2)))
+				.andExpect(jsonPath("$.errors", hasItems(hasEntry("field", "address.street"), hasEntry("field", "address.postCode"))));
+	}
+	
+	@Test
+	public void updateUserWithoutAuthorizationReturnForbidden() throws Exception
+	{
+		String getUser = mockMvc.perform(get("/api/users/1").with(authentication(MANAGER)))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+		User parsedUser = mapper.readValue(getUser, User.class);
+		parsedUser.setEmail("testowy.email@poczta.pl");
+		
+		mockMvc.perform(put("/api/users").with(authentication(USER))
+				.content(mapper.writeValueAsString(parsedUser)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+				.andExpect(status().isForbidden());
 	}
 	
 	@Test

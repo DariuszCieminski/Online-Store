@@ -17,7 +17,7 @@ public class CustomAuthenticationProvider extends AbstractUserDetailsAuthenticat
 {
 	private final AuthenticationService service;
 	private final PasswordEncoder passwordEncoder;
-	private final AuthenticatedUser testUser = new AuthenticatedUser(new User("Użytkownik", "testowy", "test@test.com", "test", new HashSet<>(Arrays.asList(Role.USER, Role.MANAGER, Role.DEVELOPER))));
+	private final AuthenticatedUser ADMIN = new AuthenticatedUser(new User("Administrator", "", "admin@test.com", "admin", new HashSet<>(Arrays.asList(Role.USER, Role.MANAGER, Role.DEVELOPER))));
 	
 	public CustomAuthenticationProvider(AuthenticationService service, PasswordEncoder passwordEncoder)
 	{
@@ -28,21 +28,23 @@ public class CustomAuthenticationProvider extends AbstractUserDetailsAuthenticat
 	@Override
 	protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException
 	{
-		if (!userDetails.equals(testUser))
+		if (!userDetails.equals(ADMIN) && !passwordEncoder.matches((CharSequence) authentication.getCredentials(), userDetails.getPassword()))
 		{
-			if (!passwordEncoder.matches((CharSequence) authentication.getCredentials(), userDetails.getPassword()))
-				throw new BadCredentialsException("Invalid password");
+			throw new BadCredentialsException("Invalid password");
 		}
 	}
 	
 	@Override
 	protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException
 	{
-		if (testUser.getUsername().equals(authentication.getName()) && testUser.getPassword().equals(authentication.getCredentials()))
+		if (ADMIN.getUsername().equals(authentication.getName()) && ADMIN.getPassword().equals(authentication.getCredentials()))
 		{
-			return testUser;
+			return ADMIN;
 		}
 		
-		else return service.loadUserByUsername(username);
+		else
+		{
+			return service.loadUserByUsername(username);
+		}
 	}
 }

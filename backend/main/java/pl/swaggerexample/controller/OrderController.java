@@ -1,5 +1,6 @@
 package pl.swaggerexample.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.swaggerexample.model.Order;
 import pl.swaggerexample.service.OrderService;
 import pl.swaggerexample.service.ProductService;
+import pl.swaggerexample.util.JsonViews;
 import pl.swaggerexample.validation.OrderValidator;
 
 import javax.validation.Valid;
@@ -30,6 +32,7 @@ public class OrderController
 	
 	@GetMapping
 	@ApiOperation(value = "Returns list of all made orders")
+	@JsonView(JsonViews.OrderDetailed.class)
 	public List<Order> getOrders()
 	{
 		return orderService.getAll();
@@ -38,6 +41,7 @@ public class OrderController
 	@GetMapping("/{id}")
 	@ApiOperation(value = "Returns a single order by its ID")
 	@ApiResponses(value = {@ApiResponse(code = 404, message = "Order with specified ID doesn't exist")})
+	@JsonView(JsonViews.OrderDetailed.class)
 	public Order getOrderById(@PathVariable @ApiParam(value = "Unique ID of existing order", example = "1") Long id)
 	{
 		return orderService.getById(id);
@@ -46,6 +50,7 @@ public class OrderController
 	@GetMapping("/buyer/{id}")
 	@ApiOperation(value = "Returns list of orders made by user with given ID")
 	@ApiResponses(value = {@ApiResponse(code = 403, message = "Non-manager is trying to get orders of another user"), @ApiResponse(code = 404, message = "User with specified ID doesn't exist")})
+	@JsonView(JsonViews.OrderSimple.class)
 	public List<Order> getOrdersByBuyerId(@PathVariable @ApiParam(value = "Unique ID of existing user", example = "1") Long id)
 	{
 		return orderService.getOrdersByBuyerId(id);
@@ -55,6 +60,7 @@ public class OrderController
 	@ResponseStatus(HttpStatus.CREATED)
 	@ApiOperation(value = "Adds new order to database")
 	@ApiResponses(value = {@ApiResponse(code = 422, message = "Order has invalid data")})
+	@JsonView(JsonViews.OrderSimple.class)
 	public Order addOrder(@Valid @RequestBody @ApiParam(value = "Data of the new order") Order order)
 	{
 		return orderService.add(order);

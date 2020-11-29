@@ -17,6 +17,6 @@ public interface OrderDao extends CrudRepository<Order, Long>
 	@EntityGraph(attributePaths = {"buyer", "buyer.roles", "items", "items.product"})
 	Iterable<Order> findAll();
 	
-	@EntityGraph(attributePaths = {"items", "items.product"})
+	@EntityGraph(attributePaths = {"items", "items.product", "items.product.images"})
 	List<Order> getOrdersByBuyerId(Long buyerId);
 }

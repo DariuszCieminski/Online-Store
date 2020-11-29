@@ -12,17 +12,17 @@ import javax.validation.constraints.Pattern;
 public class Address
 {
 	@NotBlank
-	@JsonView(JsonViews.UserAuthentication.class)
+	@JsonView({JsonViews.UserAuthentication.class, JsonViews.OrderSimple.class})
 	private String street;
 	
 	@NotBlank
 	@Pattern(regexp = "^[0-9]{2}-[0-9]{3}$")
 	@ApiModelProperty(example = "01-234")
-	@JsonView(JsonViews.UserAuthentication.class)
+	@JsonView({JsonViews.UserAuthentication.class, JsonViews.OrderSimple.class})
 	private String postCode;
 	
 	@NotBlank
-	@JsonView(JsonViews.UserAuthentication.class)
+	@JsonView({JsonViews.UserAuthentication.class, JsonViews.OrderSimple.class})
 	private String city;
 	
 	public Address()

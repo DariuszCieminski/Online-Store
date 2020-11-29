@@ -2,12 +2,14 @@ package pl.swaggerexample.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.CreationTimestamp;
 import pl.swaggerexample.model.enums.OrderStatus;
 import pl.swaggerexample.model.enums.PaymentMethod;
 import pl.swaggerexample.util.AddressConverter;
+import pl.swaggerexample.util.JsonViews;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -26,6 +28,7 @@ public class Order
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "order_sequence")
 	@SequenceGenerator(name = "order_sequence", sequenceName = "order_sequence", allocationSize = 1)
 	@ApiModelProperty(value = "Unique order idenfifier", readOnly = true, example = "1")
+	@JsonView(JsonViews.OrderSimple.class)
 	private Long id;
 	
 	@Valid
@@ -33,35 +36,42 @@ public class Order
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "buyer_id", nullable = false, updatable = false)
 	@ApiModelProperty(value = "User that make order. Cannot be null", required = true, position = 1)
+	@JsonView(JsonViews.OrderDetailed.class)
 	private User buyer;
 	
 	@NotEmpty(message = "Product list is empty.")
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "order", orphanRemoval = true, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
 	@ApiModelProperty(value = "List of products that user purchased. Cannot be empty or null.", required = true, position = 2)
 	@JsonIgnoreProperties("order")
+	@JsonView(JsonViews.OrderSimple.class)
 	private Set<@Valid OrderItem> items;
 	
 	@Valid
 	@NotNull(message = "Delivery address cannot be null.")
 	@Convert(converter = AddressConverter.class)
 	@ApiModelProperty(value = "Address the order should be delivered to.", required = true, position = 3)
+	@JsonView(JsonViews.OrderSimple.class)
 	private Address deliveryAddress;
 	
 	@NotNull(message = "Payment method was not set.")
 	@Enumerated(EnumType.STRING)
 	@ApiModelProperty(value = "Chosen method of payment for the order.", required = true, position = 4)
+	@JsonView(JsonViews.OrderSimple.class)
 	private PaymentMethod paymentMethod;
 	
 	@Size(max = 150)
 	@ApiModelProperty(value = "Additional information to the order.", allowableValues = "range[-infinity, 150]", position = 5)
+	@JsonView(JsonViews.OrderSimple.class)
 	private String information;
 	
 	@Enumerated(EnumType.STRING)
 	@ApiModelProperty(value = "Current status of the order.", required = true, position = 6)
+	@JsonView(JsonViews.OrderSimple.class)
 	private OrderStatus status;
 	
 	@CreationTimestamp
 	@ApiModelProperty(value = "Time of making order. Will be set automatically when posting order to DB.", readOnly = true, position = 7)
+	@JsonView(JsonViews.OrderSimple.class)
 	private OffsetDateTime time;
 	
 	public Long getId()
@@ -150,6 +160,7 @@ public class Order
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@ApiModelProperty(readOnly = true, value = "Total cost of the order.")
+	@JsonView(JsonViews.OrderSimple.class)
 	public BigDecimal getCost()
 	{
 		return items.stream().map(orderItem -> orderItem.getProduct().getPrice().multiply(new BigDecimal(orderItem.getQuantity()))).reduce(BigDecimal.ZERO, BigDecimal::add);

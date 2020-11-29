@@ -1,7 +1,9 @@
 package pl.swaggerexample.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import pl.swaggerexample.util.JsonViews;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -16,6 +18,7 @@ public class OrderItem
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "order_item_sequence")
 	@SequenceGenerator(name = "order_item_sequence", sequenceName = "order_item_sequence", allocationSize = 1)
 	@ApiModelProperty(value = "Unique order item identifier.", readOnly = true, example = "1")
+	@JsonView(JsonViews.OrderDetailed.class)
 	private Long id;
 	
 	@Valid
@@ -23,11 +26,13 @@ public class OrderItem
 	@OneToOne
 	@JoinColumn(name = "product_id", nullable = false, updatable = false)
 	@ApiModelProperty(value = "Product from stock. Must not be null.", required = true)
+	@JsonView(JsonViews.OrderSimple.class)
 	private Product product;
 	
 	@NotNull(message = "Product quantity is null.")
 	@Positive(message = "Product quantity must be greater than zero.")
 	@ApiModelProperty(value = "Quantity of given product purchased by user.", required = true, example = "5")
+	@JsonView(JsonViews.OrderSimple.class)
 	private Integer quantity;
 	
 	@NotNull(message = "Order is null.")

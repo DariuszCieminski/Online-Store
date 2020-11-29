@@ -6,4 +6,19 @@ public class JsonViews
 	{
 	
 	}
+	
+	public interface UserDetailed extends UserAuthentication
+	{
+	
+	}
+	
+	public interface OrderSimple
+	{
+	
+	}
+	
+	public interface OrderDetailed extends OrderSimple
+	{
+	
+	}
 }

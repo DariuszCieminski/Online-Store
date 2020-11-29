@@ -26,28 +26,29 @@ public class User
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
 	@SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
 	@ApiModelProperty(value = "A unique user identifier", readOnly = true, example = "1")
+	@JsonView({JsonViews.UserDetailed.class, JsonViews.OrderDetailed.class})
 	private Long id;
 	
 	@NotBlank(message = "User's name cannot be empty.")
 	@ApiModelProperty(value = "User's name", required = true, example = "John", position = 1)
-	@JsonView(JsonViews.UserAuthentication.class)
+	@JsonView({JsonViews.UserAuthentication.class, JsonViews.OrderDetailed.class})
 	private String name;
 	
 	@NotBlank(message = "User's surname cannot be empty.")
 	@ApiModelProperty(value = "User's surname", required = true, example = "Smith", position = 2)
-	@JsonView(JsonViews.UserAuthentication.class)
+	@JsonView({JsonViews.UserAuthentication.class, JsonViews.OrderDetailed.class})
 	private String surname;
 	
 	@Valid
 	@Convert(converter = AddressConverter.class)
 	@ApiModelProperty(notes = "Home address of the user", position = 4)
-	@JsonView(JsonViews.UserAuthentication.class)
+	@JsonView({JsonViews.UserAuthentication.class, JsonViews.OrderDetailed.class})
 	private Address address;
 	
 	@NotBlank(message = "E-Mail address cannot be empty.")
 	@Email
 	@ApiModelProperty(value = "E-Mail address of the user", required = true, example = "john.smith@myemail.com", position = 3)
-	@JsonView(JsonViews.UserAuthentication.class)
+	@JsonView({JsonViews.UserAuthentication.class, JsonViews.OrderDetailed.class})
 	private String email;
 	
 	@NotBlank(message = "User password cannot be empty.", groups = ValidationGroups.UserCreation.class)
@@ -58,11 +59,12 @@ public class User
 	@ElementCollection
 	@Enumerated(EnumType.STRING)
 	@ApiModelProperty(value = "All roles that user has. Must not be empty or null.", required = true, position = 6)
+	@JsonView(JsonViews.UserDetailed.class)
 	private Set<Role> roles;
 	
-	@JsonIgnore
 	@OneToMany(mappedBy = "buyer", cascade = CascadeType.REMOVE)
 	@ApiModelProperty(value = "All orders made by user.", position = 7)
+	@JsonIgnore
 	private Set<Order> orders;
 	
 	public User()
