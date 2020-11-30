@@ -49,8 +49,12 @@ class UserControllerTests
 	@Autowired
 	private ObjectMapper mapper;
 	
-	private static final Authentication USER = new UsernamePasswordAuthenticationToken(SwaggerTests.USER.build().getUsername(), SwaggerTests.USER.build().getPassword(), SwaggerTests.USER.build().getAuthorities());
-	private static final Authentication MANAGER = new UsernamePasswordAuthenticationToken(SwaggerTests.MANAGER.build().getUsername(), SwaggerTests.MANAGER.build().getPassword(), SwaggerTests.MANAGER.build().getAuthorities());
+	private static final Authentication USER = new UsernamePasswordAuthenticationToken(SwaggerTests.USER.build().getUsername(),
+																					   SwaggerTests.USER.build().getPassword(),
+																					   SwaggerTests.USER.build().getAuthorities());
+	private static final Authentication MANAGER = new UsernamePasswordAuthenticationToken(SwaggerTests.MANAGER.build().getUsername(),
+																						  SwaggerTests.MANAGER.build().getPassword(),
+																						  SwaggerTests.MANAGER.build().getAuthorities());
 	
 	@BeforeAll
 	public void init() throws Exception

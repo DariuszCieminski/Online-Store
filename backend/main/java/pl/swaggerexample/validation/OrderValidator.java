@@ -40,8 +40,10 @@ public class OrderValidator implements Validator
 		}
 		
 		int itemIndex = 0;
-		Set<Long> orderedProductsIds = order.getItems().stream().filter(item -> item.getProduct().getId() != null).map(item -> item.getProduct().getId()).collect(Collectors.toSet());
-		Map<Long, Integer> productQuantitiesFetchedFromDb = StreamSupport.stream(productService.getProductsByIds(orderedProductsIds).spliterator(), false).collect(Collectors.toMap(Product::getId, Product::getQuantity));
+		Set<Long> orderedProductsIds = order.getItems().stream().filter(item -> item.getProduct().getId() != null)
+																.map(item -> item.getProduct().getId()).collect(Collectors.toSet());
+		Map<Long, Integer> productQuantitiesFetchedFromDb = StreamSupport.stream(productService.getProductsByIds(orderedProductsIds).spliterator(), false)
+		                                                                 .collect(Collectors.toMap(Product::getId, Product::getQuantity));
 		
 		if (orderedProductsIds.size() != order.getItems().size())
 		{
@@ -59,7 +61,8 @@ public class OrderValidator implements Validator
 			
 			else if (orderItem.getQuantity() > productQuantityFromDb)
 			{
-				String error = String.format("Product '%s' is ordered in more quantity (%d) than is in stock (%d).", orderItem.getProduct().getName(), orderItem.getQuantity(), productQuantityFromDb);
+				String error = String.format("Product '%s' is ordered in more quantity (%d) than is in stock (%d).",
+											 orderItem.getProduct().getName(), orderItem.getQuantity(), productQuantityFromDb);
 				errors.rejectValue("items[" + itemIndex + "].quantity", "", error);
 			}
 			

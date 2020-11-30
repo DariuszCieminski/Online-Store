@@ -7,8 +7,9 @@ import pl.swaggerexample.util.JsonViews;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.util.Objects;
 
-@ApiModel(description = "Home address of shop's customer. Needed for sending user's purchases.")
+@ApiModel(description = "Delivery address of shop's customer. Needed for sending user orders.")
 public class Address
 {
 	@NotBlank
@@ -64,6 +65,12 @@ public class Address
 	public void setCity(String city)
 	{
 		this.city = city;
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(getStreet(), getPostCode(), getCity());
 	}
 	
 	@Override

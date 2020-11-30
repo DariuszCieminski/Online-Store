@@ -58,7 +58,7 @@ public class User
 	
 	@ElementCollection
 	@Enumerated(EnumType.STRING)
-	@ApiModelProperty(value = "All roles that user has. Must not be empty or null.", required = true, position = 6)
+	@ApiModelProperty(value = "All roles the user has. Will be set automatically to USER when registering new account.", required = true, position = 6)
 	@JsonView(JsonViews.UserDetailed.class)
 	private Set<Role> roles;
 	

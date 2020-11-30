@@ -17,7 +17,7 @@ export class ApiUrls {
     }
 
     public static get swagger(): string {
-        return this.BASE_URL + "/swagger-ui.html";
+        return this.BASE_URL + "/swagger-ui/index.html";
     }
 
     public static get users(): string {

@@ -17,7 +17,8 @@ public class CustomAuthenticationProvider extends AbstractUserDetailsAuthenticat
 {
 	private final AuthenticationService service;
 	private final PasswordEncoder passwordEncoder;
-	private final AuthenticatedUser ADMIN = new AuthenticatedUser(new User("Administrator", "", "admin@test.com", "admin", new HashSet<>(Arrays.asList(Role.USER, Role.MANAGER, Role.DEVELOPER))));
+	private final AuthenticatedUser ADMIN = new AuthenticatedUser(new User("Administrator", "", "admin@test.com", "admin",
+																			new HashSet<>(Arrays.asList(Role.USER, Role.MANAGER, Role.DEVELOPER))));
 	
 	public CustomAuthenticationProvider(AuthenticationService service, PasswordEncoder passwordEncoder)
 	{

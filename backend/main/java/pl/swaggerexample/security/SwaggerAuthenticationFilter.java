@@ -20,7 +20,7 @@ import java.util.Optional;
 
 public class SwaggerAuthenticationFilter extends OncePerRequestFilter
 {
-	private static final List<String> requestURIs = Arrays.asList("/swagger-ui.html", "/v2/api-docs", "/webjars/", "/swagger-resources");
+	private static final List<String> swaggerURIs = Arrays.asList("/swagger-ui/", "/v2/api-docs", "/webjars/", "/swagger-resources");
 	private final JwtManager jwt;
 	
 	public SwaggerAuthenticationFilter(JwtManager jwt)
@@ -31,7 +31,7 @@ public class SwaggerAuthenticationFilter extends OncePerRequestFilter
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException
 	{
-		if (requestURIs.stream().anyMatch(uri -> request.getRequestURI().contains(uri)))
+		if (swaggerURIs.stream().anyMatch(swaggerUri -> request.getRequestURI().contains(swaggerUri)))
 		{
 			SecurityContextHolder.clearContext();
 			if (request.getCookies() != null)

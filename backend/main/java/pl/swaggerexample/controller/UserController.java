@@ -11,6 +11,7 @@ import pl.swaggerexample.model.User;
 import pl.swaggerexample.service.UserService;
 import pl.swaggerexample.util.JsonViews;
 import pl.swaggerexample.util.ValidationGroups;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import javax.validation.groups.Default;
@@ -49,7 +50,7 @@ public class UserController
 	@GetMapping("/currentuser")
 	@ApiOperation(value = "Returns currently logged user")
 	@JsonView(JsonViews.UserAuthentication.class)
-	public User getCurrentUser(Authentication authentication)
+	public User getCurrentUser(@ApiIgnore Authentication authentication)
 	{
 		return userService.getById((Long) authentication.getDetails());
 	}

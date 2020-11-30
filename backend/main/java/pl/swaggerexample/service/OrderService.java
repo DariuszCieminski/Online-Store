@@ -66,7 +66,8 @@ public class OrderService implements EntityService<Order>
 	@Override
 	public Order add(Order object)
 	{
-		Map<Long, Integer> orderedProductsQuantities = object.getItems().stream().collect(Collectors.toMap(orderItem -> orderItem.getProduct().getId(), OrderItem::getQuantity));
+		Map<Long, Integer> orderedProductsQuantities = object.getItems().stream()
+		                                                     .collect(Collectors.toMap(orderItem -> orderItem.getProduct().getId(), OrderItem::getQuantity));
 		Iterable<Product> orderedProducts = productDao.findAllById(orderedProductsQuantities.keySet());
 		
 		orderedProducts.forEach(product -> product.setQuantity(product.getQuantity() - orderedProductsQuantities.get(product.getId())));

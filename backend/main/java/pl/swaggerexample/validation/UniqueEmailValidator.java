@@ -28,7 +28,8 @@ public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, Us
 			if (!user.get().getId().equals(value.getId()))
 			{
 				context.disableDefaultConstraintViolation();
-				context.buildConstraintViolationWithTemplate("There is already a user with e-mail address: " + user.get().getEmail()).addPropertyNode("email").addConstraintViolation();
+				context.buildConstraintViolationWithTemplate("There is already a user with e-mail address: " + user.get().getEmail())
+						.addPropertyNode("email").addConstraintViolation();
 				return false;
 			}
 		}
