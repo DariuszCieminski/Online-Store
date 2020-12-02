@@ -33,7 +33,7 @@
 			<mat-step [stepControl]="shippingData">
 				<ng-template matStepLabel>Payment method</ng-template>
 				<mat-radio-group formControlName="paymentMethod" [value]="shippingData.get('paymentMethod').value" fxLayout="column" fxLayoutAlign="center baseline" fxLayoutGap="1rem">
-					<mat-radio-button *ngFor="let method of paymentMethods" [value]="method">
+					<mat-radio-button color="primary" *ngFor="let method of paymentMethods" [value]="method">
 						{{getPaymentName(method)}}
 					</mat-radio-button>
 				</mat-radio-group>

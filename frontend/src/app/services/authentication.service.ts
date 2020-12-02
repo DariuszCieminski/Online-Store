@@ -26,7 +26,8 @@ export class AuthenticationService {
                     this.userService.getCurrentUser()
                         .subscribe(value => {
                             this.user = value;
-                            this.permissions.loadPermissions(this.user.roles);
+                            this.user.id = userId;
+                            this.setRolesFromToken(accessToken);
                         }, () => this.clearUserData()));
             } else {
                 this.user = JSON.parse(sessionStorage.getItem(this.userItem));

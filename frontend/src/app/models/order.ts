@@ -2,6 +2,7 @@ import { User } from "./user";
 import { OrderItem } from "./order-item";
 import { Address } from "./address";
 import { PaymentMethod } from "./payment-method.enum";
+import { OrderStatus } from "./order-status.enum";
 import Big from "big.js";
 
 export class Order {
@@ -11,6 +12,7 @@ export class Order {
     deliveryAddress: Address;
     paymentMethod: PaymentMethod;
     information: string;
+    status: OrderStatus;
     readonly time: string;
     readonly cost: Big
 

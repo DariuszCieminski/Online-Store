@@ -16,6 +16,7 @@ import { FilterPanelComponent } from './components/filter-panel/filter-panel.com
 import { ProductDeleteComponent } from './components/products/product-delete.component';
 import { QuantityPanelComponent } from './components/products/quantity-panel/quantity-panel.component';
 import { NewOrderComponent } from './components/new-order/new-order.component';
+import { OrdersComponent } from './components/orders/orders.component';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -37,6 +38,9 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 import { registerLocaleData } from "@angular/common";
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatRadioModule } from "@angular/material/radio";
+import { MatTableModule } from "@angular/material/table";
+import { MatSortModule } from "@angular/material/sort";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 registerLocaleData(localePl);
 
@@ -54,7 +58,8 @@ registerLocaleData(localePl);
         FilterPanelComponent,
         ProductDeleteComponent,
         QuantityPanelComponent,
-        NewOrderComponent
+        NewOrderComponent,
+        OrdersComponent
     ],
     imports: [
         BrowserModule,
@@ -95,6 +100,12 @@ registerLocaleData(localePl);
                 component: NewOrderComponent,
                 canActivate: [NgxPermissionsGuard, AuthenticationGuard],
                 data: {permissions: {except: 'GUEST', redirectTo: '/login'}}
+            },
+            {
+                path: "orders",
+                component: OrdersComponent,
+                canActivate: [NgxPermissionsGuard, AuthenticationGuard],
+                data: {permissions: {except: 'GUEST', redirectTo: '/login'}}
             }
         ]),
         NgxPermissionsModule.forRoot(),
@@ -115,7 +126,10 @@ registerLocaleData(localePl);
         FlexLayoutModule,
         MatExpansionModule,
         MatBadgeModule,
-        MatRadioModule
+        MatRadioModule,
+        MatTableModule,
+        MatSortModule,
+        MatProgressSpinnerModule
     ],
     providers: [
         {

@@ -1,0 +1,52 @@
+table
+{
+	width: 95%;
+}
+
+th.mat-header-cell
+{
+	text-align: center;
+	font-size: medium;
+}
+
+td.mat-cell
+{
+	text-align: center;
+	word-break: break-word;
+}
+
+img
+{
+	width: 5rem;
+	max-width: 5rem;
+}
+
+::ng-deep .mat-sort-header-container
+{
+	justify-content: center;
+}
+
+.products
+{
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+
+.search-field
+{
+	position: absolute;
+	max-width: 15vw;
+	margin-left: 40vw;
+	margin-top: .1rem;
+}
+
+.product-name
+{
+	width: 10vw;
+	max-width: 10vw;
+}
+
+.order-information
+{
+	max-width: 12vw;
+}
