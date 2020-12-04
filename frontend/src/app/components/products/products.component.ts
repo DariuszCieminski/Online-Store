@@ -1,14 +1,14 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { Product } from "../../models/product";
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { HttpErrorResponse } from "@angular/common/http";
+import { NoopScrollStrategy } from "@angular/cdk/overlay";
 import { MatDialog } from '@angular/material/dialog';
-import { ProductDetailsComponent } from './product-details/product-details.component';
-import { ProductDataComponent } from "./product-data/product-data.component";
-import { ProductDeleteComponent } from "./product-delete.component";
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { Product } from "../../models/product";
 import { ProductService } from "../../services/product.service";
 import { SnackbarService } from "../../services/snackbar.service";
-import { NoopScrollStrategy } from "@angular/cdk/overlay";
-import { HttpErrorResponse } from "@angular/common/http";
+import { ProductDataComponent } from "./product-data/product-data.component";
+import { ProductDeleteComponent } from "./product-delete.component";
+import { ProductDetailsComponent } from './product-details/product-details.component';
 
 @Component({
     selector: 'app-products',
@@ -18,6 +18,7 @@ import { HttpErrorResponse } from "@angular/common/http";
 export class ProductsComponent {
     allProducts: Product[] = [];
     paginated: Product[] = [];
+    isLoading: boolean = false;
     @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
     @ViewChild('search_box', {static: false}) searchBox: ElementRef;
 
@@ -36,12 +37,14 @@ export class ProductsComponent {
         if (productName.toString().trim() !== '') {
             filters["nameContains"] = productName;
         }
+        this.isLoading = true;
 
         this.productService.getProducts(filters)
             .subscribe(response => {
                 this.allProducts = response;
                 this.paginated = this.allProducts;
                 this.paginator.length = this.paginated.length;
+                this.isLoading = false;
             }, error => this.handleError(error));
     }
 
