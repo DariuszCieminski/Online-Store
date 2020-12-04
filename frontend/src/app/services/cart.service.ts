@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Product } from "../models/product";
-import { OrderItem } from "../models/order-item";
 import Big from "big.js";
+import { OrderItem } from "../models/order-item";
+import { Product } from "../models/product";
 
 @Injectable({
     providedIn: 'root'
@@ -26,9 +26,9 @@ export class CartService {
 
     getCartValue(): number {
         return this.getCartProducts()
-            .map(item => Big(item.product.price).times(item.quantity))
-            .reduce((previousValue, currentValue) => previousValue.plus(currentValue), Big(0))
-            .toNumber();
+                   .map(item => Big(item.product.price).times(item.quantity))
+                   .reduce((previousValue, currentValue) => previousValue.plus(currentValue), Big(0))
+                   .toNumber();
     }
 
     clearCart(): void {

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { AuthenticationService } from "../../services/authentication.service";
 import { Router } from "@angular/router";
+import { AuthenticationService } from "../../services/authentication.service";
 import { SnackbarService } from "../../services/snackbar.service";
 
 @Component({
@@ -30,7 +30,8 @@ export class LoginComponent implements OnInit {
         if (this.form.valid) {
             this.authService.login(this.form.value)
                 .subscribe(success => {
-                    (success) ? this.router.navigateByUrl('/') : this.snackBar.showSnackbar("Invalid email or password", "Close");
+                    (success) ? this.router.navigateByUrl('/')
+                              : this.snackBar.showSnackbar("Invalid email or password", "Close");
                 });
         }
     }

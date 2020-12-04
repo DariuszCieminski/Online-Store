@@ -1,29 +1,25 @@
-.header
-{
-	font-size: x-large;
-	font-weight: bold;
-	text-align: center;
-	padding: 1rem 0;
-	border-bottom: 2px solid black;
-	background-color: blueviolet;
-	color: white;
+.header {
+  font-size: x-large;
+  font-weight: bold;
+  text-align: center;
+  padding: 1rem 0;
+  border-bottom: 2px solid black;
+  background-color: blueviolet;
+  color: white;
 }
 
-.controls
-{
-	margin: 1rem auto;
+.controls {
+  margin: 1rem auto;
 }
 
-.footer
-{
-	margin-top: 1rem;
-	padding: 1rem 0;
-	border-top: 2px solid black;
-	background-color: palegoldenrod;
+.footer {
+  margin-top: 1rem;
+  padding: 1rem 0;
+  border-top: 2px solid black;
+  background-color: palegoldenrod;
 }
 
-.btn-addImageField
-{
-	position: absolute;
-	transform: translateX(12rem);
+.btn-addImageField {
+  position: absolute;
+  transform: translateX(12rem);
 }

@@ -3,23 +3,23 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FilterPanelComponent } from './filter-panel.component';
 
 describe('FilterPanelComponent', () => {
-  let component: FilterPanelComponent;
-  let fixture: ComponentFixture<FilterPanelComponent>;
+    let component: FilterPanelComponent;
+    let fixture: ComponentFixture<FilterPanelComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ FilterPanelComponent ]
-    })
-    .compileComponents();
-  }));
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            declarations: [FilterPanelComponent]
+        })
+               .compileComponents();
+    }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(FilterPanelComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(FilterPanelComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

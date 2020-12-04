@@ -1,58 +1,63 @@
 <div fxLayout="column" fxLayoutAlign="center center">
-	<div class="buyer-data" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="1rem">
-		<h2>Buyer's data</h2>
-		<span>Name and surname: {{user.name + ' ' + user.surname}}</span>
-		<span>E-mail address: {{user.email}}</span>
-		<span>The amount to be paid: {{cartValue | currency:'PLN':'symbol':'1.2-2':'pl'}}</span>
-	</div>
-	<mat-horizontal-stepper linear>
-		<form [formGroup]="shippingData">
-			<mat-step [stepControl]="shippingData.get('deliveryAddress')" formGroupName="deliveryAddress">
-				<ng-template matStepLabel>Delivery address</ng-template>
-				<div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="2rem">
-					<mat-form-field>
-						<mat-label>Street</mat-label>
-						<input matInput formControlName="street">
-						<mat-error *ngIf="shippingData.get('deliveryAddress.street').invalid">Must not be empty</mat-error>
-					</mat-form-field>
-					<mat-form-field>
-						<mat-label>Post code</mat-label>
-						<input matInput formControlName="postCode">
-						<mat-error *ngIf="shippingData.get('deliveryAddress.postCode').invalid">Invalid postcode</mat-error>
-					</mat-form-field>
-					<mat-form-field>
-						<mat-label>City</mat-label>
-						<input matInput formControlName="city">
-						<mat-error *ngIf="shippingData.get('deliveryAddress.city').invalid">Must not be empty</mat-error>
-					</mat-form-field>
-				</div>
-				<div fxLayoutAlign="center center">
-					<button class="btn-step" mat-raised-button matStepperNext>Next step</button>
-				</div>
-			</mat-step>
-			<mat-step [stepControl]="shippingData">
-				<ng-template matStepLabel>Payment method</ng-template>
-				<mat-radio-group formControlName="paymentMethod" [value]="shippingData.get('paymentMethod').value" fxLayout="column" fxLayoutAlign="center baseline" fxLayoutGap="1rem">
-					<mat-radio-button color="primary" *ngFor="let method of paymentMethods" [value]="method">
-						{{getPaymentName(method)}}
-					</mat-radio-button>
-				</mat-radio-group>
-				<div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="2rem">
-					<button class="btn-step" mat-raised-button matStepperPrevious>Previous step</button>
-					<button class="btn-step" mat-raised-button matStepperNext>Next step</button>
-				</div>
-			</mat-step>
-			<mat-step [stepControl]="shippingData">
-				<ng-template matStepLabel>Additional information to the order</ng-template>
-				<mat-form-field fxLayoutAlign="center center" style="margin-top: 1rem;">
-					<textarea matInput #information cdkTextareaAutosize formControlName="information" maxlength="150"></textarea>
-					<span class="char-remaining">{{information.textLength + ' / ' + information.maxLength}}</span>
-				</mat-form-field>
-				<div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="2rem">
-					<button class="btn-step" mat-raised-button matStepperPrevious>Previous step</button>
-					<button class="btn-step" mat-raised-button color="primary" (click)="createOrder()"><mat-icon>receipt</mat-icon> Make order</button>
-				</div>
-			</mat-step>
-		</form>
-	</mat-horizontal-stepper>
+    <div class="buyer-data" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="1rem">
+        <h2>Buyer's data</h2>
+        <span>Name and surname: {{user.name + ' ' + user.surname}}</span>
+        <span>E-mail address: {{user.email}}</span>
+        <span>The amount to be paid: {{cartValue | currency:'PLN':'symbol':'1.2-2':'pl'}}</span>
+    </div>
+    <mat-horizontal-stepper linear>
+        <form [formGroup]="shippingData">
+            <mat-step [stepControl]="shippingData.get('deliveryAddress')" formGroupName="deliveryAddress">
+                <ng-template matStepLabel>Delivery address</ng-template>
+                <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="2rem">
+                    <mat-form-field>
+                        <mat-label>Street</mat-label>
+                        <input matInput formControlName="street">
+                        <mat-error *ngIf="shippingData.get('deliveryAddress.street').invalid">Must not be empty</mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Post code</mat-label>
+                        <input matInput formControlName="postCode">
+                        <mat-error *ngIf="shippingData.get('deliveryAddress.postCode').invalid">Invalid postcode</mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>City</mat-label>
+                        <input matInput formControlName="city">
+                        <mat-error *ngIf="shippingData.get('deliveryAddress.city').invalid">Must not be empty</mat-error>
+                    </mat-form-field>
+                </div>
+                <div fxLayoutAlign="center center">
+                    <button class="btn-step" mat-raised-button matStepperNext>Next step</button>
+                </div>
+            </mat-step>
+            <mat-step [stepControl]="shippingData">
+                <ng-template matStepLabel>Payment method</ng-template>
+                <mat-radio-group formControlName="paymentMethod" [value]="shippingData.get('paymentMethod').value"
+                                 fxLayout="column" fxLayoutAlign="center baseline" fxLayoutGap="1rem">
+                    <mat-radio-button color="primary" *ngFor="let method of paymentMethods" [value]="method">
+                        {{getPaymentName(method)}}
+                    </mat-radio-button>
+                </mat-radio-group>
+                <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="2rem">
+                    <button class="btn-step" mat-raised-button matStepperPrevious>Previous step</button>
+                    <button class="btn-step" mat-raised-button matStepperNext>Next step</button>
+                </div>
+            </mat-step>
+            <mat-step [stepControl]="shippingData">
+                <ng-template matStepLabel>Additional information to the order</ng-template>
+                <mat-form-field fxLayoutAlign="center center" style="margin-top: 1rem;">
+                    <textarea matInput #information cdkTextareaAutosize formControlName="information"
+                              maxlength="150"></textarea>
+                    <span class="char-remaining">{{information.textLength + ' / ' + information.maxLength}}</span>
+                </mat-form-field>
+                <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="2rem">
+                    <button class="btn-step" mat-raised-button matStepperPrevious>Previous step</button>
+                    <button class="btn-step" mat-raised-button color="primary" (click)="createOrder()">
+                        <mat-icon>receipt</mat-icon>
+                        Make order
+                    </button>
+                </div>
+            </mat-step>
+        </form>
+    </mat-horizontal-stepper>
 </div>

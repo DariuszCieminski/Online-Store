@@ -1,23 +1,19 @@
-.buyer-data
-{
-	background-color: lightgoldenrodyellow;
-	margin: 2rem auto 3rem;
-	padding: 1rem;
-	font-size: large;
+.buyer-data {
+  background-color: lightgoldenrodyellow;
+  margin: 2rem auto 3rem;
+  padding: 1rem;
+  font-size: large;
 }
 
-.btn-step
-{
-	margin-top: 2rem;
+.btn-step {
+  margin-top: 2rem;
 }
 
-mat-radio-group
-{
-	margin: 1rem 40%;
+mat-radio-group {
+  margin: 1rem 40%;
 }
 
-.char-remaining
-{
-	float: right;
-	font-size: smaller;
+.char-remaining {
+  float: right;
+  font-size: smaller;
 }

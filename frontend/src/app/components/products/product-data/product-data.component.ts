@@ -1,8 +1,8 @@
 import { Component, ElementRef, Inject, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { Validator } from "../../../util/validator";
 import { Product } from "../../../models/product";
+import { Validator } from "../../../util/validator";
 
 @Component({
     selector: 'app-add-product',
@@ -13,7 +13,8 @@ export class ProductDataComponent implements OnInit {
     productForm: FormGroup;
     @ViewChild('content') dialogContent: ElementRef;
 
-    constructor(@Inject(MAT_DIALOG_DATA) public product: Product, private builder: FormBuilder, private dialogRef: MatDialogRef<ProductDataComponent>, private renderer: Renderer2) {
+    constructor(@Inject(MAT_DIALOG_DATA) public product: Product, private builder: FormBuilder,
+                private dialogRef: MatDialogRef<ProductDataComponent>, private renderer: Renderer2) {
     }
 
     ngOnInit(): void {

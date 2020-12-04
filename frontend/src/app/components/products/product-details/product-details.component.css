@@ -1,62 +1,53 @@
-.header
-{
-	font-size: x-large;
-	font-weight: bold;
-	text-align: center;
-	padding: 1rem 0;
-	border-bottom: 2px solid black;
-	background-color: var(--primary);
-	color: white;
+.header {
+  font-size: x-large;
+  font-weight: bold;
+  text-align: center;
+  padding: 1rem 0;
+  border-bottom: 2px solid black;
+  background-color: var(--primary);
+  color: white;
 }
 
-.images
-{
-	margin-top: 1rem;
-	text-align: center;
+.images {
+  margin-top: 1rem;
+  text-align: center;
 }
 
-img
-{
-	max-height: 400px;
+img {
+  max-height: 400px;
 }
 
-.description
-{
-	margin-top: 1rem;
-	padding: 0 1rem;
-	text-align: justify;
+.description {
+  margin-top: 1rem;
+  padding: 0 1rem;
+  text-align: justify;
 }
 
-.error
-{
-	font-size: large;
-	font-weight: bold;
-	text-align: center;
+.error {
+  font-size: large;
+  font-weight: bold;
+  text-align: center;
 }
 
-.footer
-{
-	margin-bottom: 1rem;
-	padding-top: .75rem;
-	border-top: 1px solid black;
+.footer {
+  margin-bottom: 1rem;
+  padding-top: .75rem;
+  border-top: 1px solid black;
 }
 
-.price
-{
-	padding: 1rem 1.75rem;
-	border-radius: 25px;
-	background-color: var(--primary);
-	color: white;
-	font-size: larger;
-	font-weight: bold;
+.price {
+  padding: 1rem 1.75rem;
+  border-radius: 25px;
+  background-color: var(--primary);
+  color: white;
+  font-size: larger;
+  font-weight: bold;
 }
 
-.btn-addToCart
-{
-	padding: .33rem 1rem;
+.btn-addToCart {
+  padding: .33rem 1rem;
 }
 
-.btn-arrow
-{
-	transform: scale(1.5);
+.btn-arrow {
+  transform: scale(1.5);
 }

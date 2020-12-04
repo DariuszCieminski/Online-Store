@@ -1,7 +1,7 @@
 import { OrderItem } from './order-item';
 
 describe('OrderItem', () => {
-  it('should create an instance', () => {
-    expect(new OrderItem()).toBeTruthy();
-  });
+    it('should create an instance', () => {
+        expect(new OrderItem()).toBeTruthy();
+    });
 });

@@ -1,5 +1,6 @@
 package pl.swaggerexample.service;
 
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -8,20 +9,20 @@ import org.springframework.stereotype.Service;
 import pl.swaggerexample.model.User;
 import pl.swaggerexample.security.AuthenticatedUser;
 
-import java.util.Optional;
-
 @Service
-public class AuthenticationService implements UserDetailsService
-{
-	private final UserService userService;
-	
-	@Autowired
-	public AuthenticationService(UserService userService) {this.userService = userService;}
-	
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
-	{
-		Optional<User> user = userService.getUserByEmail(username);
-		return new AuthenticatedUser(user.orElseThrow(() -> new UsernameNotFoundException("There is no user with e-mail address: " + username)));
-	}
+public class AuthenticationService implements UserDetailsService {
+
+    private final UserService userService;
+
+    @Autowired
+    public AuthenticationService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> user = userService.getUserByEmail(username);
+        return new AuthenticatedUser(
+            user.orElseThrow(() -> new UsernameNotFoundException("There is no user with e-mail address: " + username)));
+    }
 }

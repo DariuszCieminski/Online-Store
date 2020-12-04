@@ -45,7 +45,8 @@ export class RegisterComponent implements OnInit {
             .subscribe(value => {
                 if (value.street || value.postCode || value.city) {
                     this.formArray.get([2]).get('street').setValidators(Validators.required);
-                    this.formArray.get([2]).get('postCode').setValidators([Validators.required, Validators.pattern("^[0-9]{2}-[0-9]{3}$")]);
+                    this.formArray.get([2]).get('postCode').setValidators([Validators.required,
+                                                                           Validators.pattern("^[0-9]{2}-[0-9]{3}$")]);
                     this.formArray.get([2]).get('city').setValidators(Validators.required);
                 } else {
                     this.formArray.get([2]).get('street').clearValidators();

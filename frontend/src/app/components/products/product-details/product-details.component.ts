@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
+import { ValidationErrors } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Product } from "../../../models/product";
-import { ValidationErrors } from "@angular/forms";
 import { CartService } from "../../../services/cart.service";
 
 @Component({
@@ -20,7 +20,8 @@ export class ProductDetailsComponent {
         'empty': 'Product is out of stock!'
     };
 
-    constructor(@Inject(MAT_DIALOG_DATA) public product: Product, private cartService: CartService, private dialogRef: MatDialogRef<ProductDetailsComponent>) {
+    constructor(@Inject(MAT_DIALOG_DATA) public product: Product, private cartService: CartService,
+                private dialogRef: MatDialogRef<ProductDetailsComponent>) {
     }
 
     changeImage(index: number): void {

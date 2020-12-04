@@ -1,22 +1,18 @@
-.fill-space
-{
-	flex: 1 1 auto;
+.fill-space {
+  flex: 1 1 auto;
 }
 
-a
-{
-	text-decoration: none;
-	padding: .7rem;
-	color: white;
+a {
+  text-decoration: none;
+  padding: .7rem;
+  color: white;
 }
 
-a:hover
-{
-	background-color: mediumpurple;
-	cursor: pointer;
+a:hover {
+  background-color: mediumpurple;
+  cursor: pointer;
 }
 
-mat-icon
-{
-	vertical-align: text-bottom;
+mat-icon {
+  vertical-align: text-bottom;
 }

@@ -1,50 +1,55 @@
 <div class="header">
-	{{product ? 'Modify product' : 'Add new product'}}
+    {{product ? 'Modify product' : 'Add new product'}}
 </div>
 <div #content matDialogContent class="controls">
-	<form [formGroup]="productForm" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="1rem">
-		<mat-form-field>
-			<mat-label>Product name</mat-label>
-			<input matInput formControlName="name">
-			<mat-error *ngIf="productForm.get('name').invalid">This field cannot be empty</mat-error>
-		</mat-form-field>
-		<mat-form-field>
-			<mat-label>Product description</mat-label>
-			<textarea matInput cdkTextareaAutosize formControlName="description"></textarea>
-		</mat-form-field>
-		<mat-form-field>
-			<mat-label>Price</mat-label>
-			<input matInput formControlName="price">
-			<mat-error *ngIf="productForm.get('price').hasError('required')">This field cannot be empty</mat-error>
-			<mat-error *ngIf="productForm.get('price').hasError('min')">Price must be greater than zero</mat-error>
-			<mat-error *ngIf="productForm.get('price').hasError('price')">Price can have a precision of 2 decimal places at most
-			</mat-error>
-		</mat-form-field>
-		<mat-form-field>
-			<mat-label>Quantity</mat-label>
-			<input matInput formControlName="quantity" min="0" type="number">
-			<mat-error *ngIf="productForm.get('quantity').hasError('required')">This field cannot be empty</mat-error>
-			<mat-error *ngIf="productForm.get('quantity').hasError('min')">Quantity must not be less than zero
-			</mat-error>
-		</mat-form-field>
-		<div *ngIf="getImageFields().length; let arrayLength" formArrayName="images">
-			<div *ngFor="let image of getImageFields().controls; let i = index" [fxLayout]="i === arrayLength - 1 ? 'row':'column'" style="position: relative">
-				<mat-form-field>
-					<mat-label>Path to image {{i + 1}}</mat-label>
-					<input matInput #text (focusout)="(text.value.trim() == '' && arrayLength > 1) ? removeImageField(i) : ''" [formControlName]="i">
-					<mat-error *ngIf="getImageFields().at(i).invalid">Not a valid path or URL</mat-error>
-				</mat-form-field>
-				<button *ngIf="i === arrayLength - 1" mat-icon-button class="btn-addImageField" color="primary" (click)="addImageFieldToForm()">
-					<mat-icon>add_circle</mat-icon>
-				</button>
-			</div>
-		</div>
-	</form>
+    <form [formGroup]="productForm" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="1rem">
+        <mat-form-field>
+            <mat-label>Product name</mat-label>
+            <input matInput formControlName="name">
+            <mat-error *ngIf="productForm.get('name').invalid">This field cannot be empty</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Product description</mat-label>
+            <textarea matInput cdkTextareaAutosize formControlName="description"></textarea>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Price</mat-label>
+            <input matInput formControlName="price">
+            <mat-error *ngIf="productForm.get('price').hasError('required')">This field cannot be empty</mat-error>
+            <mat-error *ngIf="productForm.get('price').hasError('min')">Price must be greater than zero</mat-error>
+            <mat-error *ngIf="productForm.get('price').hasError('price')">Price can have a precision of 2 decimal places at
+                most
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Quantity</mat-label>
+            <input matInput formControlName="quantity" min="0" type="number">
+            <mat-error *ngIf="productForm.get('quantity').hasError('required')">This field cannot be empty</mat-error>
+            <mat-error *ngIf="productForm.get('quantity').hasError('min')">Quantity must not be less than zero
+            </mat-error>
+        </mat-form-field>
+        <div *ngIf="getImageFields().length; let arrayLength" formArrayName="images">
+            <div *ngFor="let image of getImageFields().controls; let i = index"
+                 [fxLayout]="i === arrayLength - 1 ? 'row':'column'" style="position: relative">
+                <mat-form-field>
+                    <mat-label>Path to image {{i + 1}}</mat-label>
+                    <input matInput #text
+                           (focusout)="(text.value.trim() == '' && arrayLength > 1) ? removeImageField(i) : ''"
+                           [formControlName]="i">
+                    <mat-error *ngIf="getImageFields().at(i).invalid">Not a valid path or URL</mat-error>
+                </mat-form-field>
+                <button *ngIf="i === arrayLength - 1" mat-icon-button class="btn-addImageField" color="primary"
+                        (click)="addImageFieldToForm()">
+                    <mat-icon>add_circle</mat-icon>
+                </button>
+            </div>
+        </div>
+    </form>
 </div>
 <div class="footer" fxLayout="row" fxLayoutAlign="space-evenly center">
-	<button color="primary" mat-flat-button (click)="onSubmit()">
-		<mat-icon matPrefix>{{product ? 'edit' : 'add_box'}}</mat-icon>
-		{{product ? 'Save changes' : 'Add product'}}
-	</button>
-	<button mat-flat-button matDialogClose color="warn">Cancel</button>
+    <button color="primary" mat-flat-button (click)="onSubmit()">
+        <mat-icon matPrefix>{{product ? 'edit' : 'add_box'}}</mat-icon>
+        {{product ? 'Save changes' : 'Add product'}}
+    </button>
+    <button mat-flat-button matDialogClose color="warn">Cancel</button>
 </div>

@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
+import { Injectable } from '@angular/core';
 import { NgxPermissionsService } from 'ngx-permissions';
-import { User } from "../models/user";
 import { Observable, of } from "rxjs";
 import { catchError, mapTo, tap } from "rxjs/operators";
-import { UserService } from "./user.service";
+import { User } from "../models/user";
 import { ApiUrls } from "../util/api-urls";
+import { UserService } from "./user.service";
 
 @Injectable({
     providedIn: 'root'
@@ -52,10 +52,10 @@ export class AuthenticationService {
 
     login(loginData: object): Observable<boolean> {
         return this.httpClient.post(ApiUrls.login, loginData)
-            .pipe(
-                tap(value => this.loadUser(value)),
-                mapTo(true),
-                catchError(() => of(false)));
+                   .pipe(
+                       tap(value => this.loadUser(value)),
+                       mapTo(true),
+                       catchError(() => of(false)));
     }
 
     reAuthentication(): Observable<boolean> {
@@ -64,21 +64,21 @@ export class AuthenticationService {
         let tokens = {"access_token": accessToken, "refresh_token": refreshToken};
 
         return this.httpClient.post(ApiUrls.login, tokens, {headers: {"reauth": "true"}})
-            .pipe(
-                tap(response => sessionStorage.setItem(this.accessToken, response[this.accessToken])),
-                mapTo(true),
-                catchError(() => {
-                    this.clearUserData();
-                    return of(false);
-                }));
+                   .pipe(
+                       tap(response => sessionStorage.setItem(this.accessToken, response[this.accessToken])),
+                       mapTo(true),
+                       catchError(() => {
+                           this.clearUserData();
+                           return of(false);
+                       }));
     }
 
     logout(): Observable<boolean> {
         return this.httpClient.post(ApiUrls.logout, null)
-            .pipe(
-                tap(() => this.clearUserData()),
-                mapTo(true),
-                catchError(() => of(false)));
+                   .pipe(
+                       tap(() => this.clearUserData()),
+                       mapTo(true),
+                       catchError(() => of(false)));
     }
 
     private readTokenClaim(token: string, claim: string): any {
@@ -96,7 +96,8 @@ export class AuthenticationService {
     }
 
     private setRolesFromToken(accessToken: string): void {
-        this.user.roles = this.readTokenClaim(accessToken, "roles").map((role: string) => role.startsWith('ROLE_') ? role.substring(5) : role);
+        this.user.roles = this.readTokenClaim(accessToken, "roles")
+                              .map((role: string) => role.startsWith('ROLE_') ? role.substring(5) : role);
         this.permissions.loadPermissions(this.user.roles);
     }
 

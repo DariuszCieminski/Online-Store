@@ -1,58 +1,49 @@
-mat-card:hover
-{
-	background-color: cornsilk;
-	cursor: pointer;
+mat-card:hover {
+  background-color: cornsilk;
+  cursor: pointer;
 }
 
-mat-card:hover .edit-remove
-{
-	opacity: 1;
+mat-card:hover .edit-remove {
+  opacity: 1;
 }
 
-mat-card-footer
-{
-	color: var(--primary);
-	text-align: center;
-	font-weight: bold;
-	font-size: large;
-	padding-bottom: 10px;
+mat-card-footer {
+  color: var(--primary);
+  text-align: center;
+  font-weight: bold;
+  font-size: large;
+  padding-bottom: 10px;
 }
 
-mat-toolbar
-{
-	border: 1px solid black;
-	margin-bottom: 1rem;
+mat-toolbar {
+  border: 1px solid black;
+  margin-bottom: 1rem;
 }
 
-mat-paginator
-{
-	background-color: whitesmoke;
+mat-paginator {
+  background-color: whitesmoke;
 }
 
-filter-panel
-{
-	margin-top: .45rem;
-	align-self: baseline;
-	z-index: 1;
+filter-panel {
+  margin-top: .45rem;
+  align-self: baseline;
+  z-index: 1;
 }
 
-img
-{
-	max-height: 250px;
+img {
+  max-height: 250px;
 }
 
-.search-box
-{
-	background-color: white;
-	border: 1px solid black;
-	padding: 5px;
+.search-box {
+  background-color: white;
+  border: 1px solid black;
+  padding: 5px;
 }
 
-.edit-remove
-{
-	position: absolute;
-	right: 1%;
-	bottom: 1%;
-	opacity: 0;
-	transition: opacity 0.3s ease-in-out;
+.edit-remove {
+  position: absolute;
+  right: 1%;
+  bottom: 1%;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
 }

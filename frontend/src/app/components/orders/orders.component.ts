@@ -1,13 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { OrderService } from "../../services/order.service";
-import { Order } from "../../models/order";
-import { AuthenticationService } from "../../services/authentication.service";
-import { PaymentMethod } from "../../models/payment-method.enum";
-import { OrderStatus } from "../../models/order-status.enum";
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { interval } from "rxjs";
+import { Order } from "../../models/order";
+import { OrderStatus } from "../../models/order-status.enum";
+import { PaymentMethod } from "../../models/payment-method.enum";
+import { AuthenticationService } from "../../services/authentication.service";
+import { OrderService } from "../../services/order.service";
 
 @Component({
     selector: 'app-orders',

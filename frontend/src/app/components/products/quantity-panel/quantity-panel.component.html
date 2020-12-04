@@ -1,12 +1,15 @@
 <div fxLayout="row" fxLayoutAlign="center center">
-	<div class="quantity" fxLayout="row">
-		<button mat-flat-button class="btn-step" tabindex="-1" (click)="input.stepDown(); onValueChanged(input.valueAsNumber)" [disabled]="+input.value <= +input.min || quantity.disabled">
-			<mat-icon>remove</mat-icon>
-		</button>
-		<input #input matInput type="number" tabindex="-1" [ngClass]="{'mat-form-field-invalid': quantity.errors}" [formControl]="quantity" [min]="min" [max]="max" (keyup)="onValueChanged()">
-		<button mat-flat-button class="btn-step" tabindex="-1" (click)="input.stepUp(); onValueChanged(input.valueAsNumber)" [disabled]="+input.value >= +input.max || quantity.disabled">
-			<mat-icon>add</mat-icon>
-		</button>
-	</div>
-	<span *ngIf="!quantity.disabled" class="in-stock"> / {{max}}</span>
+    <div class="quantity" fxLayout="row">
+        <button mat-flat-button class="btn-step" tabindex="-1" (click)="input.stepDown(); onValueChanged(input.valueAsNumber)"
+                [disabled]="+input.value <= +input.min || quantity.disabled">
+            <mat-icon>remove</mat-icon>
+        </button>
+        <input #input matInput type="number" tabindex="-1" [ngClass]="{'mat-form-field-invalid': quantity.errors}"
+               [formControl]="quantity" [min]="min" [max]="max" (keyup)="onValueChanged()">
+        <button mat-flat-button class="btn-step" tabindex="-1" (click)="input.stepUp(); onValueChanged(input.valueAsNumber)"
+                [disabled]="+input.value >= +input.max || quantity.disabled">
+            <mat-icon>add</mat-icon>
+        </button>
+    </div>
+    <span *ngIf="!quantity.disabled" class="in-stock"> / {{max}}</span>
 </div>

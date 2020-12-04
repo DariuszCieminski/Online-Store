@@ -1,32 +1,38 @@
 <mat-toolbar fxLayout="row" fxLayoutGap="1rem">
-	<button mat-flat-button *ngxPermissionsOnly="'MANAGER'" color="primary" (click)="showProductDataDialog()">Add product</button>
-	<span style="flex: 1 1 auto"></span>
-	<input matInput #search_box class="search-box" fxFlex="1 1 30vw" placeholder="Product name">
-	<button (click)="searchProducts()" color="primary" mat-flat-button><mat-icon>search</mat-icon>Search</button>
-	<filter-panel (onFilter)="searchProducts($event)"></filter-panel>
-	<mat-paginator (page)="onPageChange($event)" [pageSizeOptions]="[10,50,100]"
-	               [pageSize]=10></mat-paginator>
+    <button mat-flat-button *ngxPermissionsOnly="'MANAGER'" color="primary" (click)="showProductDataDialog()">
+        Add product
+    </button>
+    <span style="flex: 1 1 auto"></span>
+    <input matInput #search_box class="search-box" fxFlex="1 1 30vw" placeholder="Product name">
+    <button mat-flat-button (click)="searchProducts()" color="primary">
+        <mat-icon>search</mat-icon>
+        Search
+    </button>
+    <filter-panel (onFilter)="searchProducts($event)"></filter-panel>
+    <mat-paginator (page)="onPageChange($event)" [pageSizeOptions]="[10,50,100]" [pageSize]=10></mat-paginator>
 </mat-toolbar>
 <div fxLayout="row wrap" fxLayout.lt-md="column" fxLayoutGap="20px grid">
-	<div *ngFor="let product of paginated" fxFlex="0 1 calc(20%-5px)" fxFlex.lt-md="0 1 calc(50%-5px)"
-	     fxFlex.md="0 1 calc(100/3-5px)">
-		<mat-card fxLayout="column" fxLayoutAlign="center center" (click)="showProductDetails(product)">
-			<mat-card-title fxLayoutAlign="center center">
-				{{product.name}}
-				<mat-icon *ngIf="!product.quantity" color="warn" style="margin-left: .5rem">warning</mat-icon>
-			</mat-card-title>
-			<img mat-card-image [src]="product.images[0]">
-			<mat-card-footer>
-				{{product.price | currency:'PLN':'symbol':'1.2-2':'pl'}}
-				<div class="edit-remove" fxLayoutGap="-.6rem" *ngxPermissionsOnly="'MANAGER'">
-					<button mat-icon-button color="primary" (click)="showProductDataDialog(product); $event.stopPropagation()">
-						<mat-icon>edit</mat-icon>
-					</button>
-					<button mat-icon-button color="warn" (click)="showProductDeleteDialog(product.id); $event.stopPropagation()">
-						<mat-icon>clear</mat-icon>
-					</button>
-				</div>
-			</mat-card-footer>
-		</mat-card>
-	</div>
+    <div *ngFor="let product of paginated" fxFlex="0 1 calc(20%-5px)" fxFlex.lt-md="0 1 calc(50%-5px)"
+         fxFlex.md="0 1 calc(100/3-5px)">
+        <mat-card fxLayout="column" fxLayoutAlign="center center" (click)="showProductDetails(product)">
+            <mat-card-title fxLayoutAlign="center center">
+                {{product.name}}
+                <mat-icon *ngIf="!product.quantity" color="warn" style="margin-left: .5rem">warning</mat-icon>
+            </mat-card-title>
+            <img mat-card-image [src]="product.images[0]">
+            <mat-card-footer>
+                {{product.price | currency:'PLN':'symbol':'1.2-2':'pl'}}
+                <div class="edit-remove" fxLayoutGap="-.6rem" *ngxPermissionsOnly="'MANAGER'">
+                    <button mat-icon-button color="primary"
+                            (click)="showProductDataDialog(product); $event.stopPropagation()">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button color="warn"
+                            (click)="showProductDeleteDialog(product.id); $event.stopPropagation()">
+                        <mat-icon>clear</mat-icon>
+                    </button>
+                </div>
+            </mat-card-footer>
+        </mat-card>
+    </div>
 </div>

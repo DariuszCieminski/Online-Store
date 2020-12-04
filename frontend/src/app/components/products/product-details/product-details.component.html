@@ -1,24 +1,32 @@
 <div class="header">
-	{{product.name}}
+    {{product.name}}
 </div>
 <div *ngIf="product.images.length > 0" class="images" fxLayout="row" fxLayoutAlign="space-around center">
-	<button mat-icon-button class="btn-arrow" color="primary" (click)="changeImage(-1)" [disabled]="imageIndex === 0" tabindex="-1"><mat-icon>arrow_back_ios</mat-icon></button>
-	<img [src]="product.images[imageIndex]">
-	<button mat-icon-button class="btn-arrow" color="primary" (click)="changeImage(1)" [disabled]="imageIndex === product.images.length - 1" tabindex="-1"><mat-icon>arrow_forward_ios</mat-icon></button>
+    <button mat-icon-button class="btn-arrow" color="primary" (click)="changeImage(-1)" [disabled]="imageIndex === 0"
+            tabindex="-1">
+        <mat-icon>arrow_back_ios</mat-icon>
+    </button>
+    <img [src]="product.images[imageIndex]">
+    <button mat-icon-button class="btn-arrow" color="primary" (click)="changeImage(1)"
+            [disabled]="imageIndex === product.images.length - 1" tabindex="-1">
+        <mat-icon>arrow_forward_ios</mat-icon>
+    </button>
 </div>
 <div class="description">
-	<h3>{{product.description}}</h3>
+    <h3>{{product.description}}</h3>
 </div>
 <div class="error" *ngIf="quantityErrors">
-	<mat-error *ngFor="let error of quantityErrors | keyvalue">{{errorMessages[error.key]}}</mat-error>
+    <mat-error *ngFor="let error of quantityErrors | keyvalue">{{errorMessages[error.key]}}</mat-error>
 </div>
 <div class="footer" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="5rem">
-	<div class="price">{{product.price | currency:'PLN':'symbol':'1.2-2':'pl'}}</div>
-	<quantity-panel [min]="1" [max]="product.quantity" (valueChanged)="changeQuantity($event)" (onError)="getQuantityErrors($event)"></quantity-panel>
-	<div>
-		<button mat-flat-button color="primary" class="btn-addToCart" [disabled]="quantityErrors != null" (click)="addProductToCart()">
-			<mat-icon>add_shopping_cart</mat-icon>
-			Add to cart
-		</button>
-	</div>
+    <div class="price">{{product.price | currency:'PLN':'symbol':'1.2-2':'pl'}}</div>
+    <quantity-panel [min]="1" [max]="product.quantity" (valueChanged)="changeQuantity($event)"
+                    (onError)="getQuantityErrors($event)"></quantity-panel>
+    <div>
+        <button mat-flat-button color="primary" class="btn-addToCart" [disabled]="quantityErrors != null"
+                (click)="addProductToCart()">
+            <mat-icon>add_shopping_cart</mat-icon>
+            Add to cart
+        </button>
+    </div>
 </div>

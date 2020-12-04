@@ -1,58 +1,59 @@
 <div class="centered" *ngIf="isLoading">
-	<mat-spinner></mat-spinner>
+    <mat-spinner></mat-spinner>
 </div>
 <div *ngIf="!isLoading" fxLayout="column" fxLayoutGap="1rem" fxLayoutAlign="stretch center" style="margin-top: 1rem">
-	<div fxLayout="row">
-		<mat-paginator [pageSizeOptions]="[5,10,20]" [pageSize]=5></mat-paginator>
-		<mat-form-field class="search-field">
-			<mat-label>Search</mat-label>
-			<mat-icon matPrefix>search</mat-icon>
-			<input matInput #search (input)="dataSource.filter = search.value">
-		</mat-form-field>
-	</div>
-	<table mat-table matSort [dataSource]="dataSource" matSortActive="time" matSortDirection="desc">
-		<ng-container matColumnDef="items">
-			<th mat-header-cell *matHeaderCellDef>Products</th>
-			<td class="products" mat-cell *matCellDef="let order" fxLayout="column" fxLayoutGap="1rem" [ngStyle]="order.items.length > 0 ? {'display': 'table-cell'} : {'display': 'flex'}">
-				<div *ngFor="let item of order.items" fxLayout="row" fxLayoutGap="1.5rem" fxLayoutAlign="baseline center">
-					<img [src]="item.product.images[0]">
-					<span class="product-name">{{item.product.name}}</span>
-					<span>{{item.quantity}}&emsp;x&emsp;{{item.product.price | currency:'PLN':'symbol':'1.2-2':'pl'}}</span>
-				</div>
-			</td>
-		</ng-container>
-		<ng-container matColumnDef="deliveryAddress">
-			<th mat-header-cell *matHeaderCellDef>Delivery address</th>
-			<td mat-cell *matCellDef="let order">
-				<div fxLayout="column" fxLayoutGap=".4rem">
-					<span>{{order.deliveryAddress.street}}</span>
-					<span>{{order.deliveryAddress.postCode}}</span>
-					<span>{{order.deliveryAddress.city}}</span>
-				</div>
-			</td>
-		</ng-container>
-		<ng-container matColumnDef="paymentMethod">
-			<th mat-header-cell *matHeaderCellDef mat-sort-header>Payment method</th>
-			<td mat-cell *matCellDef="let order">{{getPaymentMethod(order.paymentMethod)}}</td>
-		</ng-container>
-		<ng-container matColumnDef="status">
-			<th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
-			<td mat-cell *matCellDef="let order">{{getOrderStatus(order.status)}}</td>
-		</ng-container>
-		<ng-container matColumnDef="cost">
-			<th mat-header-cell *matHeaderCellDef mat-sort-header>Cost</th>
-			<td mat-cell *matCellDef="let order">{{order.cost | currency:'PLN':'symbol':'1.2-2':'pl'}}</td>
-		</ng-container>
-		<ng-container matColumnDef="time">
-			<th mat-header-cell *matHeaderCellDef mat-sort-header="time">Place order time</th>
-			<td mat-cell *matCellDef="let order">{{order.time | date:'dd/MM/yyyy HH:mm:ss'}}</td>
-		</ng-container>
-		<ng-container matColumnDef="information">
-			<th mat-header-cell *matHeaderCellDef mat-sort-header>Additional information</th>
-			<td mat-cell class="order-information" *matCellDef="let order">{{order.information}}</td>
-		</ng-container>
+    <div fxLayout="row">
+        <mat-paginator [pageSizeOptions]="[5,10,20]" [pageSize]=5></mat-paginator>
+        <mat-form-field class="search-field">
+            <mat-label>Search</mat-label>
+            <mat-icon matPrefix>search</mat-icon>
+            <input matInput #search (input)="dataSource.filter = search.value">
+        </mat-form-field>
+    </div>
+    <table mat-table matSort [dataSource]="dataSource" matSortActive="time" matSortDirection="desc">
+        <ng-container matColumnDef="items">
+            <th mat-header-cell *matHeaderCellDef>Products</th>
+            <td class="products" mat-cell *matCellDef="let order" fxLayout="column" fxLayoutGap="1rem"
+                [ngStyle]="order.items.length > 0 ? {'display': 'table-cell'} : {'display': 'flex'}">
+                <div *ngFor="let item of order.items" fxLayout="row" fxLayoutGap="1.5rem" fxLayoutAlign="baseline center">
+                    <img [src]="item.product.images[0]">
+                    <span class="product-name">{{item.product.name}}</span>
+                    <span>{{item.quantity}}&emsp;x&emsp;{{item.product.price | currency:'PLN':'symbol':'1.2-2':'pl'}}</span>
+                </div>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="deliveryAddress">
+            <th mat-header-cell *matHeaderCellDef>Delivery address</th>
+            <td mat-cell *matCellDef="let order">
+                <div fxLayout="column" fxLayoutGap=".4rem">
+                    <span>{{order.deliveryAddress.street}}</span>
+                    <span>{{order.deliveryAddress.postCode}}</span>
+                    <span>{{order.deliveryAddress.city}}</span>
+                </div>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="paymentMethod">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Payment method</th>
+            <td mat-cell *matCellDef="let order">{{getPaymentMethod(order.paymentMethod)}}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+            <td mat-cell *matCellDef="let order">{{getOrderStatus(order.status)}}</td>
+        </ng-container>
+        <ng-container matColumnDef="cost">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Cost</th>
+            <td mat-cell *matCellDef="let order">{{order.cost | currency:'PLN':'symbol':'1.2-2':'pl'}}</td>
+        </ng-container>
+        <ng-container matColumnDef="time">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="time">Place order time</th>
+            <td mat-cell *matCellDef="let order">{{order.time | date:'dd/MM/yyyy HH:mm:ss'}}</td>
+        </ng-container>
+        <ng-container matColumnDef="information">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Additional information</th>
+            <td mat-cell class="order-information" *matCellDef="let order">{{order.information}}</td>
+        </ng-container>
 
-		<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-		<tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-	</table>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
 </div>
