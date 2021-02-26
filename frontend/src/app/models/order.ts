@@ -1,9 +1,9 @@
-import { User } from "./user";
-import { OrderItem } from "./order-item";
-import { Address } from "./address";
-import { PaymentMethod } from "./payment-method.enum";
-import { OrderStatus } from "./order-status.enum";
 import Big from "big.js";
+import { Address } from "./address";
+import { OrderItem } from "./order-item";
+import { OrderStatus } from "./order-status.enum";
+import { PaymentMethod } from "./payment-method.enum";
+import { User } from "./user";
 
 export class Order {
     readonly id: number;
@@ -16,8 +16,7 @@ export class Order {
     readonly time: string;
     readonly cost: Big
 
-    constructor(buyer: User, items: OrderItem[], deliveryAddress: Address, paymentMethod: PaymentMethod, information: string) {
-        this.buyer = buyer;
+    constructor(items: OrderItem[], deliveryAddress: Address, paymentMethod: PaymentMethod, information: string) {
         this.items = items;
         this.deliveryAddress = deliveryAddress;
         this.paymentMethod = paymentMethod;

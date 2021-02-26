@@ -9,6 +9,12 @@ export class Validator {
         }
     }
 
+    static postCode(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            return RegExp("^[0-9]{2}-[0-9]{3}$").test(control.value) ? null : {'postCode': true};
+        };
+    }
+
     static price(): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
             if (control.value == null) return null;

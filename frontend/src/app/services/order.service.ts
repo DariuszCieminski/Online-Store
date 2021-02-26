@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
+import { Injectable } from '@angular/core';
 import { Observable } from "rxjs";
 import { Order } from "../models/order";
 import { ApiUrls } from "../util/api-urls";
@@ -18,6 +18,10 @@ export class OrderService {
 
     getOrdersByUserId(id: number): Observable<Order[]> {
         return this.http.get<Order[]>(ApiUrls.ordersForBuyer(id));
+    }
+
+    getOrdersByCurrentUser(): Observable<Order[]> {
+        return this.http.get<Order[]>(ApiUrls.ordersForCurrentUser());
     }
 
     createOrder(order: Order): Observable<Order> {

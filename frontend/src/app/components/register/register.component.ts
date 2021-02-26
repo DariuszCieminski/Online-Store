@@ -1,9 +1,9 @@
+import { HttpClient } from "@angular/common/http";
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
-import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
-import { Validator } from "../../util/validator";
 import { ApiUrls } from "../../util/api-urls";
+import { Validator } from "../../util/validator";
 
 @Component({
     selector: 'app-register',
@@ -45,8 +45,7 @@ export class RegisterComponent implements OnInit {
             .subscribe(value => {
                 if (value.street || value.postCode || value.city) {
                     this.formArray.get([2]).get('street').setValidators(Validators.required);
-                    this.formArray.get([2]).get('postCode').setValidators([Validators.required,
-                                                                           Validators.pattern("^[0-9]{2}-[0-9]{3}$")]);
+                    this.formArray.get([2]).get('postCode').setValidators([Validators.required, Validator.postCode()]);
                     this.formArray.get([2]).get('city').setValidators(Validators.required);
                 } else {
                     this.formArray.get([2]).get('street').clearValidators();

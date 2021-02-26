@@ -5,7 +5,6 @@ import { Observable, of } from "rxjs";
 import { catchError, mapTo, tap } from "rxjs/operators";
 import { User } from "../models/user";
 import { ApiUrls } from "../util/api-urls";
-import { UserService } from "./user.service";
 
 @Injectable({
     providedIn: 'root'
@@ -14,32 +13,21 @@ export class AuthenticationService {
     public readonly userItem: string = "app_user";
     public readonly accessToken: string = "access_token";
     public readonly refreshToken: string = "refresh_token";
-    private user: User;
+    private currentUser: User;
 
-    constructor(private httpClient: HttpClient, private permissions: NgxPermissionsService, private userService: UserService) {
+    constructor(private httpClient: HttpClient, private permissions: NgxPermissionsService) {
         let accessToken = sessionStorage.getItem(this.accessToken);
 
         if (accessToken && sessionStorage.getItem(this.refreshToken) && sessionStorage.getItem(this.userItem)) {
-            let userId = this.readTokenClaim(accessToken, "userId");
-            if (userId) {
-                setTimeout(() =>
-                    this.userService.getCurrentUser()
-                        .subscribe(value => {
-                            this.user = value;
-                            this.user.id = userId;
-                            this.setRolesFromToken(accessToken);
-                        }, () => this.clearUserData()));
-            } else {
-                this.user = JSON.parse(sessionStorage.getItem(this.userItem));
-                this.setRolesFromToken(accessToken);
-            }
+            this.currentUser = JSON.parse(sessionStorage.getItem(this.userItem));
+            this.setUserRolesFromToken(accessToken);
         } else {
             this.clearUserData();
         }
     }
 
-    get getUser(): User {
-        return this.user;
+    get getUser(): User | null {
+        return this.currentUser;
     }
 
     isTokenValid(): boolean {
@@ -87,23 +75,22 @@ export class AuthenticationService {
     }
 
     private loadUser(response: object): void {
-        this.user = response["user"];
-        this.user.id = this.readTokenClaim(response[this.accessToken], 'userId');
-        this.setRolesFromToken(response[this.accessToken]);
-        sessionStorage.setItem(this.userItem, JSON.stringify(this.user));
+        this.currentUser = response["user"];
+        this.setUserRolesFromToken(response[this.accessToken]);
+        sessionStorage.setItem(this.userItem, JSON.stringify(this.currentUser));
         sessionStorage.setItem(this.accessToken, response[this.accessToken]);
         sessionStorage.setItem(this.refreshToken, response[this.refreshToken]);
     }
 
-    private setRolesFromToken(accessToken: string): void {
-        this.user.roles = this.readTokenClaim(accessToken, "roles")
-                              .map((role: string) => role.startsWith('ROLE_') ? role.substring(5) : role);
-        this.permissions.loadPermissions(this.user.roles);
+    private setUserRolesFromToken(token: string): void {
+        let roles: string[] = this.readTokenClaim(token, "roles")
+                                  .map((role: string) => role.startsWith('ROLE_') ? role.substring(5) : role);
+        this.permissions.loadPermissions(roles);
     }
 
     private clearUserData(): void {
         sessionStorage.clear();
-        this.user = null;
+        this.currentUser = null;
         this.permissions.flushPermissions();
         this.permissions.addPermission('GUEST');
     }

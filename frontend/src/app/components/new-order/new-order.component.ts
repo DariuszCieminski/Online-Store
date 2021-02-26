@@ -9,6 +9,7 @@ import { AuthenticationService } from "../../services/authentication.service";
 import { CartService } from "../../services/cart.service";
 import { OrderService } from "../../services/order.service";
 import { SnackbarService } from "../../services/snackbar.service";
+import { Validator } from "../../util/validator";
 
 @Component({
     selector: 'app-new-order',
@@ -43,7 +44,7 @@ export class NewOrderComponent implements OnInit {
             deliveryAddress: new FormGroup({
                 street: new FormControl(this.user.address ? this.user.address.street : null, Validators.required),
                 postCode: new FormControl(this.user.address ? this.user.address.postCode : null,
-                           [Validators.required, Validators.pattern("^[0-9]{2}-[0-9]{3}$")]),
+                           [Validators.required, Validator.postCode()]),
                 city: new FormControl(this.user.address ? this.user.address.city : null, Validators.required)
             })
         });
@@ -54,7 +55,7 @@ export class NewOrderComponent implements OnInit {
     }
 
     createOrder(): void {
-        let order = new Order(this.user, this.cartContent, this.shippingData.get('deliveryAddress').value,
+        let order = new Order(this.cartContent, this.shippingData.get('deliveryAddress').value,
                               this.shippingData.get('paymentMethod').value, this.shippingData.get('information').value);
 
         this.orderService.createOrder(order)

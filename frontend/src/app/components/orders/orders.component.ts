@@ -33,16 +33,13 @@ export class OrdersComponent implements OnInit {
                     this.isLoading = false;
                     loadingSubscriber.unsubscribe();
 
-                    let id: number = this.auth.getUser.id;
-                    if (id) {
-                        this.orderService.getOrdersByUserId(id)
-                            .subscribe(value => {
-                                this.orders = value;
-                                this.dataSource = new MatTableDataSource<Order>(this.orders);
-                                this.dataSource.paginator = this.paginator;
-                                this.dataSource.sort = this.sort;
-                            });
-                    }
+                    this.orderService.getOrdersByCurrentUser()
+                        .subscribe(value => {
+                            this.orders = value;
+                            this.dataSource = new MatTableDataSource<Order>(this.orders);
+                            this.dataSource.paginator = this.paginator;
+                            this.dataSource.sort = this.sort;
+                        });
                 }
             });
     }

@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { Observable } from 'rxjs';
 import { switchMap } from "rxjs/operators";
 import { AuthenticationService } from "../services/authentication.service";
+import { ApiUrls } from "../util/api-urls";
 
 @Injectable()
 export class RequestInterceptor implements HttpInterceptor {
@@ -14,8 +15,8 @@ export class RequestInterceptor implements HttpInterceptor {
     intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
         let token = sessionStorage.getItem(this.auth.accessToken);
         let isReauth = request.headers.has("reauth");
-        let isLogin = request.url.includes('/login') && !isReauth;
-        let isRegister = request.url.includes('/api/users') && request.method == 'POST';
+        let isLogin = request.url.includes(ApiUrls.login) && !isReauth;
+        let isRegister = request.url.includes(ApiUrls.users) && request.method == 'POST';
         let reqHeaders = request.headers;
 
         if (this.auth.isTokenValid() || isReauth) {
