@@ -1,6 +1,6 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { HttpErrorResponse } from "@angular/common/http";
 import { NoopScrollStrategy } from "@angular/cdk/overlay";
+import { HttpErrorResponse } from "@angular/common/http";
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Product } from "../../models/product";
@@ -110,6 +110,6 @@ export class ProductsComponent {
     }
 
     private handleError(error: HttpErrorResponse): void {
-        this.showSnackBar(error.name + " with status " + error.status);
+        this.showSnackBar(`${error.name} (status ${error.status}): ${error.message}`);
     }
 }

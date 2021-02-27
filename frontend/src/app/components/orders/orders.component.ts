@@ -3,10 +3,10 @@ import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { interval } from "rxjs";
+import { AuthenticationService } from "../../../authentication/authentication.service";
 import { Order } from "../../models/order";
 import { OrderStatus } from "../../models/order-status.enum";
 import { PaymentMethod } from "../../models/payment-method.enum";
-import { AuthenticationService } from "../../services/authentication.service";
 import { OrderService } from "../../services/order.service";
 
 @Component({
@@ -29,7 +29,7 @@ export class OrdersComponent implements OnInit {
         //wait for AuthenticationService to initialize
         let loadingSubscriber = interval(50)
             .subscribe(() => {
-                if (this.auth.getUser !== undefined) {
+                if (this.auth.getUser() !== undefined) {
                     this.isLoading = false;
                     loadingSubscriber.unsubscribe();
 

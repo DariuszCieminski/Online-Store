@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
+import { AuthenticationService } from "../../../authentication/authentication.service";
 import { Order } from "../../models/order";
 import { OrderItem } from "../../models/order-item";
 import { PaymentMethod } from "../../models/payment-method.enum";
 import { User } from "../../models/user";
-import { AuthenticationService } from "../../services/authentication.service";
 import { CartService } from "../../services/cart.service";
 import { OrderService } from "../../services/order.service";
 import { SnackbarService } from "../../services/snackbar.service";
@@ -32,7 +32,7 @@ export class NewOrderComponent implements OnInit {
             this.router.navigateByUrl('/');
         }
 
-        this.user = this.auth.getUser;
+        this.user = this.auth.getUser();
         this.paymentMethods = Object.keys(PaymentMethod);
         this.cartValue = this.cartService.getCartValue();
         this.cartContent = this.cartService.getCartProducts();

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from "@angular/router";
-import { AuthenticationService } from "../../services/authentication.service";
+import { AuthenticationService } from "../../../authentication/authentication.service";
 import { CartService } from "../../services/cart.service";
 import { ApiUrls } from "../../util/api-urls";
 
@@ -15,7 +15,11 @@ export class NavbarComponent {
     }
 
     getUser(): string {
-        return this.auth.getUser ? this.auth.getUser.name + ' ' + this.auth.getUser.surname : "";
+        let user = this.auth.getUser();
+        if (user) {
+            return user.name + ' ' + user.surname;
+        }
+        return "";
     }
 
     getSwaggerUrl(): string {
