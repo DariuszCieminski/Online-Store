@@ -41,6 +41,8 @@ import { MatRadioModule } from "@angular/material/radio";
 import { MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { CurrencyPLNPipe } from './pipes/currency-pln.pipe';
+import { CustomDatePipe } from './pipes/custom-date.pipe';
 
 registerLocaleData(localePl);
 
@@ -59,7 +61,9 @@ registerLocaleData(localePl);
         ProductDeleteComponent,
         QuantityPanelComponent,
         NewOrderComponent,
-        OrdersComponent
+        OrdersComponent,
+        CurrencyPLNPipe,
+        CustomDatePipe
     ],
     imports: [
         BrowserModule,

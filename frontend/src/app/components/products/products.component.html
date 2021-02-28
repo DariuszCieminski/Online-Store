@@ -24,7 +24,7 @@
             </mat-card-title>
             <img mat-card-image [src]="product.images[0]">
             <mat-card-footer>
-                {{product.price | currency:'PLN':'symbol':'1.2-2':'pl'}}
+                {{product.price | currencyPLN}}
                 <div class="edit-remove" fxLayoutGap="-.6rem" *ngxPermissionsOnly="'MANAGER'">
                     <button mat-icon-button color="primary"
                             (click)="showProductDataDialog(product); $event.stopPropagation()">

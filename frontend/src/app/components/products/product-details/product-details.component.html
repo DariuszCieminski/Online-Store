@@ -19,7 +19,7 @@
     <mat-error *ngFor="let error of quantityErrors | keyvalue">{{errorMessages[error.key]}}</mat-error>
 </div>
 <div class="footer" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="5rem">
-    <div class="price">{{product.price | currency:'PLN':'symbol':'1.2-2':'pl'}}</div>
+    <div class="price">{{product.price | currencyPLN}}</div>
     <quantity-panel [min]="1" [max]="product.quantity" (valueChanged)="changeQuantity($event)"
                     (onError)="getQuantityErrors($event)"></quantity-panel>
     <div>

@@ -3,7 +3,7 @@
         <h2>Buyer's data</h2>
         <span>Name and surname: {{user.name + ' ' + user.surname}}</span>
         <span>E-mail address: {{user.email}}</span>
-        <span>The amount to be paid: {{cartValue | currency:'PLN':'symbol':'1.2-2':'pl'}}</span>
+        <span>The amount to be paid: {{cartValue | currencyPLN}}</span>
     </div>
     <mat-horizontal-stepper linear>
         <form [formGroup]="shippingData">
