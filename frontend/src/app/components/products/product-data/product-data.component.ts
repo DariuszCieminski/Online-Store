@@ -22,7 +22,7 @@ export class ProductDataComponent implements OnInit {
             id: new FormControl(),
             name: new FormControl(null, Validators.required),
             description: new FormControl(),
-            price: new FormControl(null, [Validators.required, Validators.min(0.01), Validator.price()]),
+            price: new FormControl(null, [Validators.required, Validators.min(0.01), Validator.price]),
             quantity: new FormControl(null, [Validators.required, Validators.min(0)]),
             images: new FormArray([this.createImageField()])
         });

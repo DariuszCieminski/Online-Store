@@ -9,13 +9,13 @@
         </mat-form-field>
         <mat-form-field [ngClass]="{'mat-form-field-invalid': form.hasError('priceFilter')}">
             <mat-label>Price greater than</mat-label>
-            <input formControlName="priceGreaterThan" matInput min="0" type="number">
+            <input formControlName="priceGreaterThan" matInput min="0" type="number" [readonly]="form.get('priceEqualTo').value">
             <mat-error
                 *ngFor="let error of form.get('priceGreaterThan').errors | keyvalue">{{ errorMessages[error.key] }}</mat-error>
         </mat-form-field>
         <mat-form-field [ngClass]="{'mat-form-field-invalid': form.hasError('priceFilter')}">
             <mat-label>Price less than</mat-label>
-            <input formControlName="priceLessThan" matInput min="0" type="number">
+            <input formControlName="priceLessThan" matInput min="0" type="number" [readonly]="form.get('priceEqualTo').value">
             <mat-error
                 *ngFor="let error of form.get('priceLessThan').errors | keyvalue">{{ errorMessages[error.key] }}</mat-error>
         </mat-form-field>

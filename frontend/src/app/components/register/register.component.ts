@@ -26,13 +26,13 @@ export class RegisterComponent implements OnInit {
                 this.builder.group({
                     name: new FormControl('', Validators.required),
                     surname: new FormControl('', Validators.required),
-                    email: new FormControl('', Validators.compose([Validators.email, Validators.required]))
+                    email: new FormControl('', [Validators.email, Validators.required])
                 }),
                 this.builder.group({
                         password: new FormControl('', [Validators.required, Validators.minLength(8)]),
                         repeatPassword: new FormControl('', Validators.required)
                     },
-                    {validators: Validator.passwordMatch()}),
+                    {validators: Validator.passwordMatch}),
                 this.builder.group({
                     street: new FormControl(''),
                     postCode: new FormControl(''),
@@ -45,7 +45,7 @@ export class RegisterComponent implements OnInit {
             .subscribe(value => {
                 if (value.street || value.postCode || value.city) {
                     this.formArray.get([2]).get('street').setValidators(Validators.required);
-                    this.formArray.get([2]).get('postCode').setValidators([Validators.required, Validator.postCode()]);
+                    this.formArray.get([2]).get('postCode').setValidators([Validators.required, Validator.postCode]);
                     this.formArray.get([2]).get('city').setValidators(Validators.required);
                 } else {
                     this.formArray.get([2]).get('street').clearValidators();

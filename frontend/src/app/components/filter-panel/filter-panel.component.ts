@@ -23,10 +23,10 @@ export class FilterPanelComponent implements OnInit {
     ngOnInit(): void {
         this.form = this.builder.group({
             descContains: new FormControl(),
-            priceGreaterThan: new FormControl(null, [Validators.min(0), Validator.price()]),
-            priceLessThan: new FormControl(null, [Validators.min(0), Validator.price()]),
-            priceEqualTo: new FormControl(null, [Validators.min(0), Validator.price()])
-        }, {validators: Validator.priceRange()});
+            priceGreaterThan: new FormControl(null, [Validators.min(0), Validator.price]),
+            priceLessThan: new FormControl(null, [Validators.min(0), Validator.price]),
+            priceEqualTo: new FormControl(null, [Validators.min(0), Validator.price])
+        }, {validators: Validator.priceRange});
     }
 
     onFilterSubmit(): void {

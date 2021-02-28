@@ -37,13 +37,10 @@
                 </mat-error>
             </mat-form-field>
             <mat-form-field
-                [ngClass]="{'mat-form-field-invalid': formArray.get([1]).errors || formArray.get([1]).get('repeatPassword').errors}">
+                [ngClass]="{'mat-form-field-invalid': formArray.get([1]).errors || formArray.get([1]).get('password').errors}">
                 <mat-label>Repeat your password</mat-label>
                 <input formControlName="repeatPassword" matInput type="password">
                 <mat-icon matSuffix>lock</mat-icon>
-                <mat-error
-                    *ngIf="formArray.get([1]).get('repeatPassword').value !== formArray.get([1]).get('password').value && !formArray.get([1]).get('repeatPassword').pristine">
-                </mat-error>
             </mat-form-field>
             <mat-error *ngIf="formArray.get([1]).getError('password_mismatch') && !formArray.get([1]).pristine"
                        style="margin-bottom: .75rem; margin-top: .5rem">

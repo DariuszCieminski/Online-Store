@@ -44,7 +44,7 @@ export class NewOrderComponent implements OnInit {
             deliveryAddress: new FormGroup({
                 street: new FormControl(this.user.address ? this.user.address.street : null, Validators.required),
                 postCode: new FormControl(this.user.address ? this.user.address.postCode : null,
-                           [Validators.required, Validator.postCode()]),
+                           [Validators.required, Validator.postCode]),
                 city: new FormControl(this.user.address ? this.user.address.city : null, Validators.required)
             })
         });
