@@ -5,39 +5,37 @@ import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import pl.swaggerexample.model.enums.Role;
-import pl.swaggerexample.security.CustomAuthenticationProvider;
 import pl.swaggerexample.security.CustomLogoutSuccessHandler;
 import pl.swaggerexample.security.JwtAuthenticationEntryPoint;
 import pl.swaggerexample.security.JwtAuthenticationFilter;
 import pl.swaggerexample.security.JwtAuthorizationFilter;
 import pl.swaggerexample.security.JwtManager;
 import pl.swaggerexample.security.SwaggerAuthenticationFilter;
-import pl.swaggerexample.service.AuthenticationService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final AuthenticationService authenticationService;
+    private final AuthenticationProvider authenticationProvider;
     private final JwtManager jwtManager;
 
     @Autowired
-    public SecurityConfig(AuthenticationService authenticationService, JwtManager jwtManager) {
-        this.authenticationService = authenticationService;
+    public SecurityConfig(AuthenticationProvider authenticationProvider, JwtManager jwtManager) {
+        this.authenticationProvider = authenticationProvider;
         this.jwtManager = jwtManager;
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(new CustomAuthenticationProvider(authenticationService, new BCryptPasswordEncoder()));
+        auth.authenticationProvider(authenticationProvider);
     }
 
     @Override

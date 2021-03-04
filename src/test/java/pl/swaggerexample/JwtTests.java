@@ -48,6 +48,9 @@ public class JwtTests {
     public void init() {
         userDao.save(USER);
         userDao.save(DEV);
+
+        USER.setPassword("myP@ssw0rd");
+        DEV.setPassword("myP@ssw0rd");
     }
 
     @AfterAll

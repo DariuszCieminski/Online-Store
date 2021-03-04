@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.swaggerexample.dao.UserDao;
 import pl.swaggerexample.exception.NotFoundException;
@@ -19,10 +19,12 @@ import pl.swaggerexample.model.enums.Role;
 public class UserService implements EntityService<User> {
 
     private final UserDao userDao;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserDao userDao) {
+    public UserService(UserDao userDao, PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Optional<User> getUserByEmail(String email) {
@@ -47,7 +49,7 @@ public class UserService implements EntityService<User> {
         if (auth == null || !auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_" + Role.MANAGER.name()))) {
             object.setRoles(Collections.singleton(Role.USER));
         }
-        object.setPassword(BCrypt.hashpw(object.getPassword(), BCrypt.gensalt()));
+        object.setPassword(passwordEncoder.encode(object.getPassword()));
         return userDao.save(object);
     }
 
@@ -58,7 +60,7 @@ public class UserService implements EntityService<User> {
         }
 
         if (object.getPassword() != null) {
-            object.setPassword(BCrypt.hashpw(object.getPassword(), BCrypt.gensalt()));
+            object.setPassword(passwordEncoder.encode(object.getPassword()));
         } else {
             object.setPassword(getById(object.getId()).getPassword());
         }
