@@ -1,4 +1,4 @@
-package pl.swaggerexample.security;
+package pl.swaggerexample.security.jwt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import pl.swaggerexample.exception.JwtTokenParsingException;
 import pl.swaggerexample.model.User;
 import pl.swaggerexample.model.enums.Role;
+import pl.swaggerexample.security.AuthenticatedUser;
 import pl.swaggerexample.util.JsonViews;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {

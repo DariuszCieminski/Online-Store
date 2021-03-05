@@ -1,4 +1,4 @@
-package pl.swaggerexample.security;
+package pl.swaggerexample.security.jwt;
 
 import java.io.IOException;
 import javax.servlet.FilterChain;

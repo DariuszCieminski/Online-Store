@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import pl.swaggerexample.dao.UserDao;
 import pl.swaggerexample.model.User;
 import pl.swaggerexample.model.enums.Role;
-import pl.swaggerexample.security.JwtAuthorizationFilter;
+import pl.swaggerexample.security.jwt.JwtAuthorizationFilter;
 
 @SpringBootTest(classes = SwaggerExampleApplication.class)
 @AutoConfigureTestDatabase

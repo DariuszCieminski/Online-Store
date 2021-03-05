@@ -1,4 +1,4 @@
-package pl.swaggerexample.security;
+package pl.swaggerexample.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
