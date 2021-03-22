@@ -1,7 +1,10 @@
 package pl.swaggerexample.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,22 +13,32 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import pl.swaggerexample.security.CustomAuthenticationEntryPoint;
 import pl.swaggerexample.security.CustomLogoutSuccessHandler;
-import pl.swaggerexample.security.SwaggerAuthenticationFilter;
 import pl.swaggerexample.security.jwt.JwtAuthenticationFilter;
 import pl.swaggerexample.security.jwt.JwtAuthorizationFilter;
-import pl.swaggerexample.security.jwt.JwtManager;
+import pl.swaggerexample.security.jwt.SwaggerAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@Profile("jwt")
+public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final AuthenticationProvider authenticationProvider;
-    private final JwtManager jwtManager;
+    private final JwtAuthorizationFilter authorizationFilter;
+    private final SwaggerAuthenticationFilter swaggerFilter;
+    private JwtAuthenticationFilter authenticationFilter;
 
     @Autowired
-    public SecurityConfig(AuthenticationProvider authenticationProvider, JwtManager jwtManager) {
+    public JwtSecurityConfig(AuthenticationProvider authenticationProvider,
+                             JwtAuthorizationFilter authorizationFilter,
+                             SwaggerAuthenticationFilter swaggerFilter) {
         this.authenticationProvider = authenticationProvider;
-        this.jwtManager = jwtManager;
+        this.authorizationFilter = authorizationFilter;
+        this.swaggerFilter = swaggerFilter;
+    }
+
+    @Autowired
+    public void setAuthenticationFilter(JwtAuthenticationFilter authenticationFilter) {
+        this.authenticationFilter = authenticationFilter;
     }
 
     @Override
@@ -35,15 +48,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.addFilter(new JwtAuthenticationFilter(this.authenticationManagerBean(), jwtManager));
-        http.addFilterBefore(new SwaggerAuthenticationFilter(jwtManager), JwtAuthenticationFilter.class);
-        http.addFilterBefore(new JwtAuthorizationFilter(jwtManager), SwaggerAuthenticationFilter.class);
-
         http.authorizeRequests(new RequestAuthorizationConfigurer())
             .cors(new CorsConfig())
             .csrf().disable()
+            .addFilter(authenticationFilter)
+            .addFilterBefore(swaggerFilter, authenticationFilter.getClass())
+            .addFilterBefore(authorizationFilter, swaggerFilter.getClass())
             .logout().deleteCookies("swagger_id").logoutSuccessHandler(new CustomLogoutSuccessHandler()).and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }

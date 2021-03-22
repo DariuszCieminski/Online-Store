@@ -2,9 +2,9 @@ package pl.swaggerexample.util;
 
 public class JsonViews {
 
-    public interface UserAuthentication {}
+    public interface UserSimple {}
 
-    public interface UserDetailed extends UserAuthentication {}
+    public interface UserDetailed extends UserSimple {}
 
     public interface OrderSimple {}
 

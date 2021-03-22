@@ -23,7 +23,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.swaggerexample.model.User;
 import pl.swaggerexample.service.UserService;
-import pl.swaggerexample.util.JsonViews;
+import pl.swaggerexample.util.JsonViews.UserDetailed;
+import pl.swaggerexample.util.JsonViews.UserSimple;
 import pl.swaggerexample.util.ValidationGroups;
 
 @RestController
@@ -41,7 +42,7 @@ public class UserController {
     @GetMapping
     @ApiOperation(value = "Returns list of all registered customers")
     @ApiResponses(value = {@ApiResponse(code = 403, message = "Non-manager is trying to get all users")})
-    @JsonView(JsonViews.UserDetailed.class)
+    @JsonView(UserDetailed.class)
     public List<User> getUsers() {
         return userService.getAll();
     }
@@ -50,7 +51,7 @@ public class UserController {
     @ApiOperation(value = "Returns single registered customer by his ID")
     @ApiResponses(value = {@ApiResponse(code = 403, message = "Non-manager is trying to get a user"),
                            @ApiResponse(code = 404, message = "User with specified ID doesn't exist")})
-    @JsonView(JsonViews.UserDetailed.class)
+    @JsonView(UserDetailed.class)
     public User getUserById(@PathVariable @ApiParam(value = "Unique ID of existing customer", example = "1") Long id) {
         return userService.getById(id);
     }
@@ -59,7 +60,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Adds new user to the database")
     @ApiResponses(value = {@ApiResponse(code = 422, message = "User has invalid data")})
-    @JsonView(JsonViews.UserAuthentication.class)
+    @JsonView(UserSimple.class)
     public User createUser(@Validated({Default.class, ValidationGroups.UserCreation.class})
                            @RequestBody @ApiParam(value = "Data of the new user") User user) {
         return userService.add(user);

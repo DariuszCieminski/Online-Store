@@ -9,7 +9,11 @@ import pl.swaggerexample.model.Address;
 @Converter
 public class AddressConverter implements AttributeConverter<Address, String> {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper;
+
+    public AddressConverter(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public String convertToDatabaseColumn(Address attribute) {

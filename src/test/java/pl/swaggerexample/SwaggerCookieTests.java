@@ -14,13 +14,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User.UserBuilder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.swaggerexample.model.enums.Role;
 import pl.swaggerexample.security.jwt.JwtManager;
 
-@SpringBootTest(classes = SwaggerExampleApplication.class)
+@SpringBootTest
+@ActiveProfiles("jwt")
 @AutoConfigureMockMvc
-public class SwaggerTests {
+public class SwaggerCookieTests {
 
     private static final UserBuilder USER = builder().username("user").password("user").roles(Role.USER.name());
     private static final UserBuilder DEVELOPER = builder().username("dev").password("dev").roles(Role.DEVELOPER.name());

@@ -5,32 +5,57 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
-import java.util.HashSet;
-import javax.servlet.FilterChain;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
+import pl.swaggerexample.exception.InvalidAuthenticationAttemptException;
 import pl.swaggerexample.exception.JwtTokenParsingException;
 import pl.swaggerexample.model.User;
 import pl.swaggerexample.model.enums.Role;
 import pl.swaggerexample.security.AuthenticatedUser;
-import pl.swaggerexample.util.JsonViews;
+import pl.swaggerexample.util.JsonViews.UserSimple;
 
+@Component
+@Profile("jwt")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private final AuthenticationManager manager;
     private final JwtManager jwt;
     private final ObjectMapper mapper;
 
-    public JwtAuthenticationFilter(AuthenticationManager manager, JwtManager jwt) {
-        this.manager = manager;
+    @Autowired
+    public JwtAuthenticationFilter(JwtManager jwt, ObjectMapper mapper) {
         this.jwt = jwt;
-        this.mapper = new ObjectMapper();
+        this.mapper = mapper;
+
+        setAuthenticationSuccessHandler((request, response, authentication) -> {
+            if (authentication.getPrincipal() instanceof AuthenticatedUser) {
+                setSwaggerCookie(response, authentication);
+                response.getWriter().print(writeAuthentication(authentication));
+            } else {
+                response.getWriter().print(writeReauthentication(authentication));
+            }
+            response.flushBuffer();
+        });
+
+        setAuthenticationFailureHandler((request, response, exception) -> {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().print(exception.getMessage());
+            response.flushBuffer();
+        });
+    }
+
+    @Autowired
+    @Override
+    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+        super.setAuthenticationManager(authenticationManager);
     }
 
     @Override
@@ -41,41 +66,24 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             if (isReAuthentication(requestBody)) {
                 if (request.getHeader("Authorization") == null) {
-                    throw new AuthenticationException("Missing 'Authorization' header.") {};
+                    throw new InvalidAuthenticationAttemptException("Missing 'Authorization' header.");
                 }
-
                 return doReauthentication(requestBody);
             }
 
-            User user = mapper.treeToValue(requestBody, User.class);
-            Authentication authenticationToken =
-                new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), new HashSet<>());
+            JsonNode username = requestBody.get("email");
+            JsonNode password = requestBody.get("password");
 
-            return manager.authenticate(authenticationToken);
+            if (username == null || password == null) {
+                throw new IOException();
+            }
+
+            Authentication authentication = new UsernamePasswordAuthenticationToken(username.asText(), password.asText());
+
+            return getAuthenticationManager().authenticate(authentication);
         } catch (IOException e) {
-            throw new JwtTokenParsingException(e.getLocalizedMessage());
+            throw new InvalidAuthenticationAttemptException("Invalid login data.");
         }
-    }
-
-    @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-                                            Authentication authResult) throws IOException {
-        if (authResult.getPrincipal() instanceof AuthenticatedUser) {
-            setSwaggerCookie(response, authResult);
-            response.getWriter().print(writeAuthentication(authResult));
-        } else {
-            response.getWriter().print(writeReauthentication(authResult));
-        }
-
-        response.flushBuffer();
-    }
-
-    @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-                                              AuthenticationException failed) throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().print(failed.getMessage());
-        response.flushBuffer();
     }
 
     private Authentication doReauthentication(JsonNode requestBody) {
@@ -126,6 +134,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         node.put("access_token", jwt.generateAccessToken(authentication));
         node.put("refresh_token", jwt.generateRefreshToken(authentication));
 
-        return mapper.writerWithView(JsonViews.UserAuthentication.class).writeValueAsString(node);
+        return mapper.writerWithView(UserSimple.class).writeValueAsString(node);
     }
 }

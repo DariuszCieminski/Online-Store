@@ -15,7 +15,7 @@ public class CorsConfig implements Customizer<CorsConfigurer<HttpSecurity>> {
             CorsConfiguration corsConfig = new CorsConfiguration();
             corsConfig.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
             corsConfig.setAllowedMethods(Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"));
-            corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+            corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-XSRF-TOKEN"));
             corsConfig.setMaxAge(1800L);
             corsConfig.setAllowCredentials(true);
 

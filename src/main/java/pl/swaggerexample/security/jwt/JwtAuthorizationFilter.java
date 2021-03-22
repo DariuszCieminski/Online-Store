@@ -5,16 +5,22 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+@Component
+@Profile("jwt")
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
-    public static final String AUTH_HEADER = "Authorization";
-    public static final String AUTH_PREFIX = "Bearer ";
+    private static final String AUTH_HEADER = "Authorization";
+    private static final String AUTH_PREFIX = "Bearer ";
 
     private final JwtManager jwt;
 
+    @Autowired
     public JwtAuthorizationFilter(JwtManager jwt) {
         this.jwt = jwt;
     }

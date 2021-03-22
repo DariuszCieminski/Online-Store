@@ -24,7 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.swaggerexample.model.Order;
 import pl.swaggerexample.service.OrderService;
 import pl.swaggerexample.service.ProductService;
-import pl.swaggerexample.util.JsonViews;
+import pl.swaggerexample.util.JsonViews.OrderDetailed;
+import pl.swaggerexample.util.JsonViews.OrderSimple;
 import pl.swaggerexample.validation.OrderValidator;
 
 @RestController
@@ -44,7 +45,7 @@ public class OrderController {
     @GetMapping
     @ApiOperation(value = "Returns list of all made orders")
     @ApiResponses(value = {@ApiResponse(code = 403, message = "Non-manager is trying to get orders")})
-    @JsonView(JsonViews.OrderDetailed.class)
+    @JsonView(OrderDetailed.class)
     public List<Order> getOrders() {
         return orderService.getAll();
     }
@@ -53,7 +54,7 @@ public class OrderController {
     @ApiOperation(value = "Returns a single order by its ID")
     @ApiResponses(value = {@ApiResponse(code = 403, message = "Non-manager is trying to get an order"),
                            @ApiResponse(code = 404, message = "Order with specified ID doesn't exist")})
-    @JsonView(JsonViews.OrderDetailed.class)
+    @JsonView(OrderDetailed.class)
     public Order getOrderById(@PathVariable @ApiParam(value = "Unique ID of existing order", example = "1") Long id) {
         return orderService.getById(id);
     }
@@ -63,7 +64,7 @@ public class OrderController {
                           + "orders made by the currently logged user.")
     @ApiResponses(value = {@ApiResponse(code = 403, message = "Non-manager is trying to get orders of specified user"),
                            @ApiResponse(code = 404, message = "User with specified ID doesn't exist")})
-    @JsonView(JsonViews.OrderSimple.class)
+    @JsonView(OrderSimple.class)
     public List<Order> getOrdersByBuyer(@PathVariable
                                         @ApiParam(value = "Unique ID of existing user", example = "1") Optional<Long> id) {
         return id.isPresent() ? orderService.getByBuyerId(id.get()) : orderService.getByCurrentUser();
@@ -73,7 +74,7 @@ public class OrderController {
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Adds new order to database")
     @ApiResponses(value = {@ApiResponse(code = 422, message = "Order has invalid data")})
-    @JsonView(JsonViews.OrderSimple.class)
+    @JsonView(OrderSimple.class)
     public Order addOrder(@Valid @RequestBody @ApiParam(value = "Data of the new order") Order order) {
         return orderService.add(order);
     }

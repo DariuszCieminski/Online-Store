@@ -10,28 +10,37 @@ import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import pl.swaggerexample.model.enums.Role;
 
+@Component
+@Profile("jwt")
 public class SwaggerAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final List<String> swaggerUriList = Arrays.asList("/swagger-ui/", "/v2/api-docs", "/webjars/",
-                                                                     "/swagger-resources");
+    public static final List<String> SWAGGER_PATH_MATCHERS =
+        Collections.unmodifiableList(Arrays.asList("/swagger-ui/**", "/v2/api-docs", "/swagger-resources/**"));
     private final JwtManager jwt;
+    private final AntPathMatcher pathMatcher;
 
+    @Autowired
     public SwaggerAuthenticationFilter(JwtManager jwt) {
         this.jwt = jwt;
+        this.pathMatcher = new AntPathMatcher();
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
         throws ServletException, IOException {
 
-        if (swaggerUriList.stream().anyMatch(swaggerUri -> request.getRequestURI().contains(swaggerUri))) {
+        if (SWAGGER_PATH_MATCHERS.stream().anyMatch(swaggerUri -> pathMatcher.match(swaggerUri, request.getRequestURI()))) {
             SecurityContextHolder.clearContext();
             if (request.getCookies() != null) {
                 Optional<Cookie> swaggerCookie = Arrays.stream(request.getCookies())

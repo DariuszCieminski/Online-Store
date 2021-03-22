@@ -14,7 +14,8 @@ import javax.persistence.SequenceGenerator;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import pl.swaggerexample.util.JsonViews;
+import pl.swaggerexample.util.JsonViews.OrderDetailed;
+import pl.swaggerexample.util.JsonViews.OrderSimple;
 
 @Entity
 @ApiModel(description = "Product inside the cart.")
@@ -24,7 +25,7 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "order_item_sequence")
     @SequenceGenerator(name = "order_item_sequence", sequenceName = "order_item_sequence", allocationSize = 1)
     @ApiModelProperty(value = "Unique order item identifier.", readOnly = true, example = "1")
-    @JsonView(JsonViews.OrderDetailed.class)
+    @JsonView(OrderDetailed.class)
     private Long id;
 
     @Valid
@@ -32,13 +33,13 @@ public class OrderItem {
     @OneToOne
     @JoinColumn(name = "product_id", nullable = false, updatable = false)
     @ApiModelProperty(value = "Product from stock. Must not be null.", required = true)
-    @JsonView(JsonViews.OrderSimple.class)
+    @JsonView(OrderSimple.class)
     private Product product;
 
     @NotNull(message = "Product quantity is null.")
     @Positive(message = "Product quantity must be greater than zero.")
     @ApiModelProperty(value = "Quantity of given product purchased by user.", required = true, example = "5")
-    @JsonView(JsonViews.OrderSimple.class)
+    @JsonView(OrderSimple.class)
     private Integer quantity;
 
     @NotNull(message = "Order is null.")

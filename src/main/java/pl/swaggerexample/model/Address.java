@@ -6,23 +6,24 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import pl.swaggerexample.util.JsonViews;
+import pl.swaggerexample.util.JsonViews.OrderSimple;
+import pl.swaggerexample.util.JsonViews.UserSimple;
 
 @ApiModel(description = "Delivery address of shop's customer. Needed for sending user orders.")
 public class Address {
 
     @NotBlank
-    @JsonView({JsonViews.UserAuthentication.class, JsonViews.OrderSimple.class})
+    @JsonView({UserSimple.class, OrderSimple.class})
     private String street;
 
     @NotBlank
     @Pattern(regexp = "^[0-9]{2}-[0-9]{3}$")
     @ApiModelProperty(example = "01-234")
-    @JsonView({JsonViews.UserAuthentication.class, JsonViews.OrderSimple.class})
+    @JsonView({UserSimple.class, OrderSimple.class})
     private String postCode;
 
     @NotBlank
-    @JsonView({JsonViews.UserAuthentication.class, JsonViews.OrderSimple.class})
+    @JsonView({UserSimple.class, OrderSimple.class})
     private String city;
 
     public Address() {
@@ -65,12 +66,12 @@ public class Address {
 
     @Override
     public boolean equals(Object o) {
-			if (this == o) {
-				return true;
-			}
-			if (!(o instanceof Address)) {
-				return false;
-			}
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Address)) {
+            return false;
+        }
         Address address = (Address) o;
         return getStreet().equals(address.getStreet()) &&
                getPostCode().equals(address.getPostCode()) &&

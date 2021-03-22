@@ -22,7 +22,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import pl.swaggerexample.model.enums.Role;
 import pl.swaggerexample.util.AddressConverter;
-import pl.swaggerexample.util.JsonViews;
+import pl.swaggerexample.util.JsonViews.OrderDetailed;
+import pl.swaggerexample.util.JsonViews.UserDetailed;
+import pl.swaggerexample.util.JsonViews.UserSimple;
 import pl.swaggerexample.util.ValidationGroups;
 import pl.swaggerexample.validation.UniqueEmail;
 
@@ -35,29 +37,29 @@ public class User {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
     @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
     @ApiModelProperty(value = "A unique user identifier", readOnly = true, example = "1")
-    @JsonView({JsonViews.UserDetailed.class, JsonViews.OrderDetailed.class})
+    @JsonView({UserDetailed.class, OrderDetailed.class})
     private Long id;
 
     @NotBlank(message = "User's name cannot be empty.")
     @ApiModelProperty(value = "User's name", required = true, example = "John", position = 1)
-    @JsonView({JsonViews.UserAuthentication.class, JsonViews.OrderDetailed.class})
+    @JsonView({UserSimple.class, OrderDetailed.class})
     private String name;
 
     @NotBlank(message = "User's surname cannot be empty.")
     @ApiModelProperty(value = "User's surname", required = true, example = "Smith", position = 2)
-    @JsonView({JsonViews.UserAuthentication.class, JsonViews.OrderDetailed.class})
+    @JsonView({UserSimple.class, OrderDetailed.class})
     private String surname;
 
     @Valid
     @Convert(converter = AddressConverter.class)
     @ApiModelProperty(notes = "Home address of the user", position = 4)
-    @JsonView({JsonViews.UserAuthentication.class, JsonViews.OrderDetailed.class})
+    @JsonView({UserSimple.class, OrderDetailed.class})
     private Address address;
 
     @NotBlank(message = "E-Mail address cannot be empty.")
     @Email
     @ApiModelProperty(value = "E-Mail address of the user", required = true, example = "john.smith@myemail.com", position = 3)
-    @JsonView({JsonViews.UserAuthentication.class, JsonViews.OrderDetailed.class})
+    @JsonView({UserSimple.class, OrderDetailed.class})
     private String email;
 
     @NotBlank(message = "User password cannot be empty.", groups = ValidationGroups.UserCreation.class)
@@ -70,7 +72,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     @ApiModelProperty(value = "All roles the user has. Will be set automatically to USER when registering new account.",
                       required = true, position = 6)
-    @JsonView(JsonViews.UserDetailed.class)
+    @JsonView(UserDetailed.class)
     private Set<Role> roles;
 
     @OneToMany(mappedBy = "buyer", cascade = CascadeType.REMOVE)

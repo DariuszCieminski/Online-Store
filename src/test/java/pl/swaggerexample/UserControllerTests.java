@@ -9,10 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.anonymous;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -35,18 +32,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import pl.swaggerexample.configuration.CustomRequest;
 import pl.swaggerexample.dao.UserDao;
 import pl.swaggerexample.model.Address;
 import pl.swaggerexample.model.User;
 import pl.swaggerexample.model.enums.Role;
-import pl.swaggerexample.util.JsonViews.UserAuthentication;
+import pl.swaggerexample.util.JsonViews.UserSimple;
 import pl.swaggerexample.util.JsonViews.UserDetailed;
 
-@SpringBootTest(classes = SwaggerExampleApplication.class)
+@SpringBootTest
+@ComponentScan
 @AutoConfigureTestDatabase
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -64,6 +65,9 @@ public class UserControllerTests {
 
     @Autowired
     private ObjectMapper mapper;
+
+    @Autowired
+    private CustomRequest request;
 
     @BeforeAll
     public void init() {
@@ -90,8 +94,8 @@ public class UserControllerTests {
         Address address = new Address("ul. Testowa 1", "01-234", "Testowo");
         user.setAddress(address);
 
-        mockMvc.perform(post("/api/users")
-               .content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+        mockMvc.perform(request.builder(HttpMethod.POST, "/api/users")
+               .content(mapper.writeValueAsString(user))).andDo(print())
                .andExpect(status().isCreated());
     }
 
@@ -99,8 +103,8 @@ public class UserControllerTests {
     public void addUserWithoutNameReturnUnprocessableEntity() throws Exception {
         User user = new User("", "Kowalski", "test@test.com", "moje_haslo", Collections.singleton(Role.USER));
 
-        mockMvc.perform(post("/api/users")
-               .content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+        mockMvc.perform(request.builder(HttpMethod.POST, "/api/users")
+               .content(mapper.writeValueAsString(user))).andDo(print())
                .andExpect(status().isUnprocessableEntity());
     }
 
@@ -108,8 +112,8 @@ public class UserControllerTests {
     public void addUserWithoutSurnameReturnUnprocessableEntity() throws Exception {
         User user = new User("Jan", "", "test@test.com", "moje_haslo", Collections.singleton(Role.USER));
 
-        mockMvc.perform(post("/api/users")
-               .content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+        mockMvc.perform(request.builder(HttpMethod.POST, "/api/users")
+               .content(mapper.writeValueAsString(user))).andDo(print())
                .andExpect(status().isUnprocessableEntity());
     }
 
@@ -117,8 +121,8 @@ public class UserControllerTests {
     public void addUserWithoutEmailReturnUnprocessableEntity() throws Exception {
         User user = new User("Jan", "Kowalski", "", "moje_haslo", Collections.singleton(Role.USER));
 
-        mockMvc.perform(post("/api/users")
-               .content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+        mockMvc.perform(request.builder(HttpMethod.POST, "/api/users")
+               .content(mapper.writeValueAsString(user))).andDo(print())
                .andExpect(status().isUnprocessableEntity());
     }
 
@@ -127,8 +131,8 @@ public class UserControllerTests {
         User user = new User("Jan", "Kowalski", "test@test.com", "moje_haslo", Collections.singleton(Role.USER));
         user.setAddress(new Address("", "12345", "Miasto"));
 
-        mockMvc.perform(post("/api/users")
-               .content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+        mockMvc.perform(request.builder(HttpMethod.POST, "/api/users")
+               .content(mapper.writeValueAsString(user))).andDo(print())
                .andExpect(status().isUnprocessableEntity());
     }
 
@@ -136,8 +140,8 @@ public class UserControllerTests {
     public void addUserWithNoPasswordReturnUnprocessableEntity() throws Exception {
         User user = new User("Jan", "Kowalski", "test@test.com", "", Collections.singleton(Role.USER));
 
-        mockMvc.perform(post("/api/users")
-               .content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+        mockMvc.perform(request.builder(HttpMethod.POST, "/api/users")
+               .content(mapper.writeValueAsString(user))).andDo(print())
                .andExpect(status().isUnprocessableEntity());
     }
 
@@ -145,18 +149,18 @@ public class UserControllerTests {
     public void addUserWithTooShortPasswordReturnUnprocessableEntity() throws Exception {
         User user = new User("Jan", "Kowalski", "test@test.com", "haslo", Collections.singleton(Role.USER));
 
-        mockMvc.perform(post("/api/users")
-               .content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+        mockMvc.perform(request.builder(HttpMethod.POST, "/api/users")
+               .content(mapper.writeValueAsString(user))).andDo(print())
                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
     @WithUserDetails("manager@test.pl")
-    public void addUserWithDeveloperRoleWithPermissionReturnOk() throws Exception {
+    public void addUserWithDeveloperRoleWithPermissionReturnUserWithDeveloperRole() throws Exception {
         User user = new User("Użytkownik", "Testowy", "test@test.com", "test-test", Collections.singleton(Role.DEVELOPER));
 
-        mockMvc.perform(post("/api/users")
-               .content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+        mockMvc.perform(request.builder(HttpMethod.POST, "/api/users")
+               .content(mapper.writeValueAsString(user))).andDo(print())
                .andExpect(status().isCreated());
 
         CollectionType userListCollectionType = mapper.getTypeFactory().constructCollectionType(List.class, User.class);
@@ -173,8 +177,8 @@ public class UserControllerTests {
     public void addUserWithDeveloperRoleWithoutPermissionReturnUserWithStandardRole() throws Exception {
         User user = new User("Użytkownik", "Testowy", "test@test.com", "test-test", Collections.singleton(Role.DEVELOPER));
 
-        mockMvc.perform(post("/api/users").with(anonymous())
-               .content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+        mockMvc.perform(request.builder(HttpMethod.POST, "/api/users").with(anonymous())
+               .content(mapper.writeValueAsString(user))).andDo(print())
                .andExpect(status().isCreated());
 
         CollectionType userListCollectionType = mapper.getTypeFactory().constructCollectionType(List.class, User.class);
@@ -245,7 +249,7 @@ public class UserControllerTests {
                                         .andExpect(status().isOk())
                                         .andReturn().getResponse().getContentAsString();
 
-        User user = mapper.readerWithView(UserAuthentication.class).readValue(userListJson, User.class);
+        User user = mapper.readerWithView(UserSimple.class).readValue(userListJson, User.class);
 
         assertNull(user.getId(), "User ID is not null!");
         assertNull(user.getRoles(), "User roles are not null!");
@@ -259,8 +263,8 @@ public class UserControllerTests {
             User user = new User("Jan", "Kowalski", "jan.kowalski" + i + "@poczta.pl", "moje_haslo",
                                  Collections.singleton(Role.USER));
 
-            mockMvc.perform(post("/api/users").with(anonymous())
-                   .content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON))
+            mockMvc.perform(request.builder(HttpMethod.POST, "/api/users").with(anonymous())
+                   .content(mapper.writeValueAsString(user)))
                    .andExpect(status().isCreated());
         }
 
@@ -279,8 +283,8 @@ public class UserControllerTests {
         User parsedUser = mapper.readValue(userJson, User.class);
         parsedUser.setSurname("Nowak");
 
-        mockMvc.perform(put("/api/users")
-               .content(mapper.writeValueAsString(parsedUser)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+        mockMvc.perform(request.builder(HttpMethod.PUT, "/api/users")
+               .content(mapper.writeValueAsString(parsedUser))).andDo(print())
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.surname").value(parsedUser.getSurname()));
     }
@@ -291,8 +295,8 @@ public class UserControllerTests {
         User user = new User("Jan", "Kowalski", "testowy.email@poczta.pl", "moje_haslo", Collections.singleton(Role.USER));
         user.setId(333L);
 
-        mockMvc.perform(put("/api/users")
-               .content(mapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+        mockMvc.perform(request.builder(HttpMethod.PUT, "/api/users")
+               .content(mapper.writeValueAsString(user))).andDo(print())
                .andExpect(status().isNotFound());
     }
 
@@ -306,8 +310,8 @@ public class UserControllerTests {
         User parsedUser = mapper.readValue(userJson, User.class);
         parsedUser.setName(null);
 
-        mockMvc.perform(put("/api/users")
-               .content(mapper.writeValueAsString(parsedUser)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+        mockMvc.perform(request.builder(HttpMethod.PUT, "/api/users")
+               .content(mapper.writeValueAsString(parsedUser))).andDo(print())
                .andExpect(status().isUnprocessableEntity())
                .andExpect(jsonPath("$.errors").isArray())
                .andExpect(jsonPath("$.errors", hasSize(1)))
@@ -324,8 +328,8 @@ public class UserControllerTests {
         User parsedUser = mapper.readValue(userJson, User.class);
         parsedUser.setSurname(null);
 
-        mockMvc.perform(put("/api/users")
-               .content(mapper.writeValueAsString(parsedUser)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+        mockMvc.perform(request.builder(HttpMethod.PUT, "/api/users")
+               .content(mapper.writeValueAsString(parsedUser))).andDo(print())
                .andExpect(status().isUnprocessableEntity())
                .andExpect(jsonPath("$.errors").isArray())
                .andExpect(jsonPath("$.errors", hasSize(1)))
@@ -343,8 +347,8 @@ public class UserControllerTests {
         parsedUser.setEmail("testowy.email");
         parsedUser.setPassword("hasło");
 
-        mockMvc.perform(put("/api/users")
-               .content(mapper.writeValueAsString(parsedUser)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+        mockMvc.perform(request.builder(HttpMethod.PUT, "/api/users")
+               .content(mapper.writeValueAsString(parsedUser))).andDo(print())
                .andExpect(status().isUnprocessableEntity())
                .andExpect(jsonPath("$.errors").isArray())
                .andExpect(jsonPath("$.errors", hasSize(2)))
@@ -361,8 +365,8 @@ public class UserControllerTests {
         User parsedUser = mapper.readValue(userJson, User.class);
         parsedUser.setAddress(new Address("", "12345", "Miasto"));
 
-        mockMvc.perform(put("/api/users")
-               .content(mapper.writeValueAsString(parsedUser)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+        mockMvc.perform(request.builder(HttpMethod.PUT, "/api/users")
+               .content(mapper.writeValueAsString(parsedUser))).andDo(print())
                .andExpect(status().isUnprocessableEntity())
                .andExpect(jsonPath("$.errors").isArray())
                .andExpect(jsonPath("$.errors", hasSize(2)))
@@ -380,29 +384,29 @@ public class UserControllerTests {
         User parsedUser = mapper.readValue(userJson, User.class);
         parsedUser.setEmail("testowy.email@poczta.pl");
 
-        mockMvc.perform(put("/api/users").with(user("user"))
-               .content(mapper.writeValueAsString(parsedUser)).contentType(MediaType.APPLICATION_JSON)).andDo(print())
+        mockMvc.perform(request.builder(HttpMethod.PUT, "/api/users").with(user("user"))
+               .content(mapper.writeValueAsString(parsedUser))).andDo(print())
                .andExpect(status().isForbidden());
     }
 
     @Test
     @WithUserDetails("manager@test.pl")
     public void deleteUserWithAuthorizationReturnNoContent() throws Exception {
-        mockMvc.perform(delete("/api/users/{id}", 1L)).andDo(print())
+        mockMvc.perform(request.builder(HttpMethod.DELETE, "/api/users/{id}", 1L)).andDo(print())
                .andExpect(status().isNoContent());
     }
 
     @Test
     @WithUserDetails("user@test.pl")
     public void deleteUserWithoutAuthorizationReturnForbidden() throws Exception {
-        mockMvc.perform(delete("/api/users/{id}", 1L)).andDo(print())
+        mockMvc.perform(request.builder(HttpMethod.DELETE, "/api/users/{id}", 1L)).andDo(print())
                .andExpect(status().isForbidden());
     }
 
     @Test
     @WithUserDetails("manager@test.pl")
     public void deleteUserWithInvalidIdReturnNotFound() throws Exception {
-        mockMvc.perform(delete("/api/users/{id}", 999L)).andDo(print())
+        mockMvc.perform(request.builder(HttpMethod.DELETE, "/api/users/{id}", 999L)).andDo(print())
                .andExpect(status().isNotFound());
     }
 }
