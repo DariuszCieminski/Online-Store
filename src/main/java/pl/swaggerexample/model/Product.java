@@ -23,7 +23,7 @@ import pl.swaggerexample.util.JsonViews.OrderDetailed;
 import pl.swaggerexample.util.JsonViews.OrderSimple;
 
 @Entity
-@ApiModel(description = "Product, which is offered to buy on the shop.")
+@ApiModel(description = "Product, that is offered to buy in the store.")
 public class Product {
 
     @Id

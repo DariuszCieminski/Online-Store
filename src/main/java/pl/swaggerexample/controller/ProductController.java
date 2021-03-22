@@ -28,7 +28,8 @@ import pl.swaggerexample.service.ProductService;
 
 @RestController
 @RequestMapping("/api/products")
-@Api(description = "Endpoints for getting, creating, editing and removing products offered for sale.")
+@Api(tags = "Product controller",
+     description = "Endpoints for getting, creating, editing and removing products offered for sale.")
 public class ProductController {
 
     private final ProductService productService;
@@ -39,7 +40,7 @@ public class ProductController {
     }
 
     @GetMapping
-    @ApiOperation(value = "Returns list of all products in the shop. Can be filtered by request parameters.")
+    @ApiOperation(value = "Returns list of all products in the store. Can be filtered by request parameters.")
     @ApiResponses(value = {@ApiResponse(code = 400, message = "Price parameter is not a number")})
     public List<Product> getProducts(
         @RequestParam(value = "nameContains", required = false)
@@ -83,7 +84,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    @ApiOperation(value = "Returns single product by its ID")
+    @ApiOperation(value = "Returns a single product by its ID")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Product with specified ID doesn't exist")})
     public Product getProductById(@PathVariable @ApiParam(value = "Unique ID of existing product", example = "1") Long id) {
         return productService.getById(id);

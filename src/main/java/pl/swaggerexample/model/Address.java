@@ -9,7 +9,7 @@ import javax.validation.constraints.Pattern;
 import pl.swaggerexample.util.JsonViews.OrderSimple;
 import pl.swaggerexample.util.JsonViews.UserSimple;
 
-@ApiModel(description = "Delivery address of shop's customer. Needed for sending user orders.")
+@ApiModel(description = "Default delivery address for store's customer.")
 public class Address {
 
     @NotBlank

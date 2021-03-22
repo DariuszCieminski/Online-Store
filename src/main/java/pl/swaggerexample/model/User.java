@@ -30,7 +30,7 @@ import pl.swaggerexample.validation.UniqueEmail;
 
 @Entity
 @UniqueEmail(groups = ValidationGroups.UserCreation.class)
-@ApiModel(description = "Shop's customer")
+@ApiModel(description = "Store's customer")
 public class User {
 
     @Id

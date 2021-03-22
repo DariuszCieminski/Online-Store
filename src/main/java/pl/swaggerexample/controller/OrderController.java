@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.util.List;
-import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,7 +29,7 @@ import pl.swaggerexample.validation.OrderValidator;
 
 @RestController
 @RequestMapping("/api/orders")
-@Api(description = "Endpoints for getting, adding and removing orders that users make.")
+@Api(tags = "Order controller", description = "Endpoints for getting, adding and removing orders that users make.")
 public class OrderController {
 
     private final OrderService orderService;
@@ -43,7 +42,7 @@ public class OrderController {
     }
 
     @GetMapping
-    @ApiOperation(value = "Returns list of all made orders")
+    @ApiOperation(value = "Returns list of all orders in the store")
     @ApiResponses(value = {@ApiResponse(code = 403, message = "Non-manager is trying to get orders")})
     @JsonView(OrderDetailed.class)
     public List<Order> getOrders() {
@@ -59,21 +58,28 @@ public class OrderController {
         return orderService.getById(id);
     }
 
-    @GetMapping({"/buyer", "/buyer/{id}"})
-    @ApiOperation(value = "Returns list of orders made by particular user. If the buyer ID is not defined, it returns"
-                          + "orders made by the currently logged user.")
+    @GetMapping("/buyer/{id}")
+    @ApiOperation(value = "Returns list of orders made by particular user.")
     @ApiResponses(value = {@ApiResponse(code = 403, message = "Non-manager is trying to get orders of specified user"),
                            @ApiResponse(code = 404, message = "User with specified ID doesn't exist")})
     @JsonView(OrderSimple.class)
-    public List<Order> getOrdersByBuyer(@PathVariable
-                                        @ApiParam(value = "Unique ID of existing user", example = "1") Optional<Long> id) {
-        return id.isPresent() ? orderService.getByBuyerId(id.get()) : orderService.getByCurrentUser();
+    public List<Order> getOrdersByBuyerId(
+        @PathVariable @ApiParam(value = "Unique ID of existing user", example = "1") Long id) {
+        return orderService.getByBuyerId(id);
+    }
+
+    @GetMapping("/buyer")
+    @ApiOperation(value = "Returns list of orders made by currently authenticated user.")
+    @JsonView(OrderSimple.class)
+    public List<Order> getOrdersByCurrentUser() {
+        return orderService.getByCurrentUser();
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Adds new order to database")
-    @ApiResponses(value = {@ApiResponse(code = 422, message = "Order has invalid data")})
+    @ApiResponses(value = {@ApiResponse(code = 403, message = "Non-manager is trying to add new order"),
+                           @ApiResponse(code = 422, message = "Order has invalid data")})
     @JsonView(OrderSimple.class)
     public Order addOrder(@Valid @RequestBody @ApiParam(value = "Data of the new order") Order order) {
         return orderService.add(order);

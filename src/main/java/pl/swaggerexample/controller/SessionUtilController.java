@@ -18,8 +18,8 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 @Profile("session")
 @RequestMapping("/api/util")
-@Api(description = "This controller is available only when 'session' profile is active."
-                   + " Provides various utility endpoints.")
+@Api(tags = "Session util controller", description = "This controller is available only when 'session' profile is active."
+                                                     + " Provides various utility endpoints.")
 public class SessionUtilController {
 
     @GetMapping("/ping")

@@ -29,7 +29,7 @@ import pl.swaggerexample.util.ValidationGroups;
 
 @RestController
 @RequestMapping("/api/users")
-@Api(description = "Endpoints for getting, creating and removing shop customers.")
+@Api(tags = "User controller", description = "Endpoints for getting, creating and removing store customers.")
 public class UserController {
 
     private final UserService userService;
@@ -48,7 +48,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @ApiOperation(value = "Returns single registered customer by his ID")
+    @ApiOperation(value = "Returns a single registered customer by his ID")
     @ApiResponses(value = {@ApiResponse(code = 403, message = "Non-manager is trying to get a user"),
                            @ApiResponse(code = 404, message = "User with specified ID doesn't exist")})
     @JsonView(UserDetailed.class)
