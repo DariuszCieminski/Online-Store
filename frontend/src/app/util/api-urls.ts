@@ -3,6 +3,7 @@ export class ApiUrls {
     private static readonly USERS: string = '/api/users';
     private static readonly PRODUCTS: string = '/api/products';
     private static readonly ORDERS: string = '/api/orders';
+    private static readonly UTIL: string = '/api/util';
 
     public static get login(): string {
         return this.BASE_URL + '/login';
@@ -14,6 +15,10 @@ export class ApiUrls {
 
     public static get swagger(): string {
         return this.BASE_URL + "/swagger-ui/index.html";
+    }
+
+    public static get ping(): string {
+        return this.BASE_URL + this.UTIL + "/ping";
     }
 
     public static get users(): string {

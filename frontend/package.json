@@ -1,10 +1,12 @@
 {
     "name": "frontend",
-    "version": "0.0.0",
+    "version": "1.0.0",
     "scripts": {
         "ng": "ng",
         "start": "ng serve",
         "build": "ng build",
+        "start:session": "ng serve -c session",
+        "build:session": "ng build -c session",
         "test": "ng test",
         "lint": "ng lint",
         "e2e": "ng e2e"

@@ -1,7 +1,4 @@
-<div class="centered" *ngIf="isLoading">
-    <mat-spinner></mat-spinner>
-</div>
-<div *ngIf="!isLoading" fxLayout="column" fxLayoutGap="1rem" fxLayoutAlign="stretch center" style="margin-top: 1rem">
+<div fxLayout="column" fxLayoutGap="1rem" fxLayoutAlign="stretch center" style="margin-top: 1rem">
     <div fxLayout="row">
         <mat-paginator [pageSizeOptions]="[5,10,20]" [pageSize]=5></mat-paginator>
         <mat-form-field class="search-field">
@@ -56,4 +53,5 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
 </div>

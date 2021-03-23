@@ -1,34 +1,29 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 import { NgxPermissionsService } from "ngx-permissions";
 import { Observable, of } from "rxjs";
 import { catchError, mapTo, tap } from "rxjs/operators";
-import { User } from "../app/models/user";
-import { ApiUrls } from "../app/util/api-urls";
-import { AuthService } from "./auth-service";
+import { ApiUrls } from "../../app/util/api-urls";
+import { AuthenticationService } from "../authentication-service";
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: "root"
 })
-export class AuthenticationService implements AuthService {
-    private readonly USER: string = "app_user";
+export class JwtAuthenticationService extends AuthenticationService {
+    private readonly USER_KEY: string = "app_user";
     private readonly ACCESS_TOKEN: string = "access_token";
     private readonly REFRESH_TOKEN: string = "refresh_token";
-    private currentUser: User;
 
     constructor(private httpClient: HttpClient, private permissions: NgxPermissionsService) {
+        super();
         let accessToken = sessionStorage.getItem(this.ACCESS_TOKEN);
 
-        if (accessToken && sessionStorage.getItem(this.REFRESH_TOKEN) && sessionStorage.getItem(this.USER)) {
-            this.currentUser = JSON.parse(sessionStorage.getItem(this.USER));
+        if (accessToken && sessionStorage.getItem(this.REFRESH_TOKEN) && sessionStorage.getItem(this.USER_KEY)) {
+            this.currentUser = JSON.parse(sessionStorage.getItem(this.USER_KEY));
             this.setUserRolesFromToken(accessToken);
         } else {
             this.clearUserData();
         }
-    }
-
-    getUser(): User | null {
-        return this.currentUser;
     }
 
     isAuthenticated(): boolean {
@@ -78,7 +73,7 @@ export class AuthenticationService implements AuthService {
     private loadUser(response: object): void {
         this.currentUser = response["user"];
         this.setUserRolesFromToken(response[this.ACCESS_TOKEN]);
-        sessionStorage.setItem(this.USER, JSON.stringify(this.currentUser));
+        sessionStorage.setItem(this.USER_KEY, JSON.stringify(this.currentUser));
         sessionStorage.setItem(this.ACCESS_TOKEN, response[this.ACCESS_TOKEN]);
         sessionStorage.setItem(this.REFRESH_TOKEN, response[this.REFRESH_TOKEN]);
     }

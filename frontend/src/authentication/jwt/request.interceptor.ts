@@ -3,14 +3,12 @@ import { Injectable } from '@angular/core';
 import { Router } from "@angular/router";
 import { EMPTY, Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from "rxjs/operators";
-import { AuthenticationService } from "./authentication.service";
+import { JwtAuthenticationService } from "./jwt-authentication.service";
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable()
 export class RequestInterceptor implements HttpInterceptor {
 
-    constructor(private auth: AuthenticationService, private router: Router) {
+    constructor(private auth: JwtAuthenticationService, private router: Router) {
     }
 
     intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {

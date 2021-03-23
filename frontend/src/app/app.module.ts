@@ -1,46 +1,46 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { registerLocaleData } from "@angular/common";
+import { HttpClientModule } from "@angular/common/http";
 import localePl from '@angular/common/locales/pl';
-import { AppComponent } from './app.component';
-import { NavbarComponent } from './components/navbar/navbar.component';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { LoginComponent } from './components/login/login.component';
-import { RegisterComponent } from './components/register/register.component';
-import { HomeComponent } from './components/home/home.component';
-import { ProductsComponent } from './components/products/products.component';
-import { ProductDetailsComponent } from './components/products/product-details/product-details.component';
-import { ProductDataComponent } from './components/products/product-data/product-data.component';
-import { CartComponent } from './components/cart/cart.component';
-import { FilterPanelComponent } from './components/filter-panel/filter-panel.component';
-import { ProductDeleteComponent } from './components/products/product-delete.component';
-import { QuantityPanelComponent } from './components/products/quantity-panel/quantity-panel.component';
-import { NewOrderComponent } from './components/new-order/new-order.component';
-import { OrdersComponent } from './components/orders/orders.component';
+import { NgModule } from '@angular/core';
+import { FlexLayoutModule } from "@angular/flex-layout";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { MatIconModule } from "@angular/material/icon";
-import { RouterModule } from "@angular/router";
+import { MatBadgeModule } from "@angular/material/badge";
 import { MatButtonModule } from "@angular/material/button";
-import { MatGridListModule } from "@angular/material/grid-list";
-import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from "@angular/material/snack-bar";
-import { MatStepperModule } from "@angular/material/stepper";
 import { MatCardModule } from "@angular/material/card";
-import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatExpansionModule } from "@angular/material/expansion";
-import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
-import { NgxPermissionsGuard, NgxPermissionsModule } from 'ngx-permissions';
-import { RequestInterceptor } from "../authentication/request.interceptor";
-import { AuthenticationGuard } from "../authentication/authentication.guard";
-import { FlexLayoutModule } from "@angular/flex-layout";
-import { registerLocaleData } from "@angular/common";
-import { MatBadgeModule } from "@angular/material/badge";
-import { MatRadioModule } from "@angular/material/radio";
-import { MatTableModule } from "@angular/material/table";
-import { MatSortModule } from "@angular/material/sort";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatGridListModule } from "@angular/material/grid-list";
+import { MatIconModule } from "@angular/material/icon";
+import { MatInputModule } from "@angular/material/input";
+import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatRadioModule } from "@angular/material/radio";
+import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatSortModule } from "@angular/material/sort";
+import { MatStepperModule } from "@angular/material/stepper";
+import { MatTableModule } from "@angular/material/table";
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterModule } from "@angular/router";
+import { NgxPermissionsGuard, NgxPermissionsModule } from 'ngx-permissions';
+import { AuthenticationGuard } from "../authentication/authentication-guard";
+import { PROVIDERS } from "../environments/providers";
+import { AppComponent } from './app.component';
+import { CartComponent } from './components/cart/cart.component';
+import { FilterPanelComponent } from './components/filter-panel/filter-panel.component';
+import { HomeComponent } from './components/home/home.component';
+import { LoginComponent } from './components/login/login.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { NewOrderComponent } from './components/new-order/new-order.component';
+import { OrdersComponent } from './components/orders/orders.component';
+import { ProductDataComponent } from './components/products/product-data/product-data.component';
+import { ProductDeleteComponent } from './components/products/product-delete.component';
+import { ProductDetailsComponent } from './components/products/product-details/product-details.component';
+import { ProductsComponent } from './components/products/products.component';
+import { QuantityPanelComponent } from './components/products/quantity-panel/quantity-panel.component';
+import { RegisterComponent } from './components/register/register.component';
 import { CurrencyPLNPipe } from './pipes/currency-pln.pipe';
 import { CustomDatePipe } from './pipes/custom-date.pipe';
 
@@ -73,7 +73,7 @@ registerLocaleData(localePl);
                 path: "",
                 component: HomeComponent,
                 canActivate: [AuthenticationGuard],
-                data: {canAnonymous: true}
+                data: {guestAllowed: true}
             },
             {
                 path: "login",
@@ -136,11 +136,7 @@ registerLocaleData(localePl);
         MatProgressSpinnerModule
     ],
     providers: [
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: RequestInterceptor,
-            multi: true
-        },
+        PROVIDERS,
         {
             provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
             useValue: {

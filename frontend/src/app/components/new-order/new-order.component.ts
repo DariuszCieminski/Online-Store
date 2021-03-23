@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
-import { AuthenticationService } from "../../../authentication/authentication.service";
+import { AuthenticationService } from "../../../authentication/authentication-service";
 import { Order } from "../../models/order";
 import { OrderItem } from "../../models/order-item";
 import { PaymentMethod } from "../../models/payment-method.enum";

@@ -17,10 +17,10 @@ export class CartComponent implements OnInit {
 
     ngOnInit(): void {
         this.cartItems = this.cartService.getCartProducts();
-        this.checkCartValidityAndValue();
+        this.checkCartValidityAndCalculateValue();
     }
 
-    checkCartValidityAndValue(): void {
+    checkCartValidityAndCalculateValue(): void {
         this.isCartValid = this.cartService.isCartValid();
 
         if (this.isCartValid) {
@@ -32,13 +32,13 @@ export class CartComponent implements OnInit {
         let modifiedProduct = this.cartItems.find(cartItem => cartItem.product.id === item.product.id);
         modifiedProduct.quantity = newQuantity;
         this.cartService.modifyProduct(item, newQuantity);
-        this.checkCartValidityAndValue();
+        this.checkCartValidityAndCalculateValue();
     }
 
     deleteItem(item: OrderItem): void {
         let index = this.cartItems.findIndex(cartItem => cartItem.product.id === item.product.id);
         this.cartItems.splice(index, 1);
         this.cartService.modifyProduct(item);
-        this.checkCartValidityAndValue();
+        this.checkCartValidityAndCalculateValue();
     }
 }
