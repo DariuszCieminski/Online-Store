@@ -1,6 +1,7 @@
 package pl.swaggerexample;
 
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -14,9 +15,6 @@ import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -30,15 +28,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import pl.swaggerexample.configuration.CustomRequest;
 import pl.swaggerexample.dao.ProductDao;
-import pl.swaggerexample.dao.UserDao;
 import pl.swaggerexample.model.Product;
-import pl.swaggerexample.model.User;
-import pl.swaggerexample.model.enums.Role;
 
 @SpringBootTest
 @ComponentScan
@@ -52,13 +47,7 @@ public class ProductControllerTests {
     private MockMvc mockMvc;
 
     @Autowired
-    private UserDao userDao;
-
-    @Autowired
     private ProductDao productDao;
-
-    @Autowired
-    private EntityManagerFactory entityManagerFactory;
 
     @Autowired
     private ObjectMapper mapper;
@@ -68,13 +57,6 @@ public class ProductControllerTests {
 
     @BeforeAll
     public void init() {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        entityManager.getTransaction().begin();
-        entityManager.createNativeQuery("ALTER SEQUENCE product_sequence RESTART WITH 1").executeUpdate();
-        entityManager.createNativeQuery("ALTER SEQUENCE user_sequence RESTART WITH 1").executeUpdate();
-        entityManager.getTransaction().commit();
-        entityManager.close();
-
         List<Product> products = Arrays.asList(
             new Product("Milk", "A carton of milk.", Collections.singleton("/milkimageurl"), BigDecimal.valueOf(4.99D), 20),
             new Product("Bread", "A single loaf of bread.", Collections.singleton("/breadimageurl"),
@@ -85,21 +67,15 @@ public class ProductControllerTests {
             new Product("Butter", "500g of butter.", Collections.singleton("/butterimageurl"), BigDecimal.valueOf(7.29D), 8));
 
         productDao.saveAll(products);
-
-        User user = new User("Jan", "Kowalski", "user@test.pl", "moje_haslo", Collections.singleton(Role.USER));
-        User manager = new User("Jan", "Kowalski", "manager@test.pl", "moje_haslo", Collections.singleton(Role.MANAGER));
-        userDao.save(user);
-        userDao.save(manager);
     }
 
     @AfterAll
     public void cleanup() {
-        userDao.deleteAll();
         productDao.deleteAll();
     }
 
     @Test
-    @WithUserDetails("manager@test.pl")
+    @WithMockUser(roles = "MANAGER")
     public void createProductReturnOk() throws Exception {
         Product product = new Product("Product 1", "Simple description of Product 1",
                                       Collections.singleton("https://picsum.photos/200"), BigDecimal.valueOf(11.99D), 3);
@@ -116,7 +92,7 @@ public class ProductControllerTests {
     }
 
     @Test
-    @WithUserDetails("manager@test.pl")
+    @WithMockUser(roles = "MANAGER")
     public void createProductWithoutNameReturnUnprocessableEntity() throws Exception {
         Product product = new Product("", "Simple description of Product 1",
                                       Collections.singleton("https://picsum.photos/200"), BigDecimal.valueOf(11.99D), 1);
@@ -127,7 +103,7 @@ public class ProductControllerTests {
     }
 
     @Test
-    @WithUserDetails("manager@test.pl")
+    @WithMockUser(roles = "MANAGER")
     public void createProductWithInvalidImageUrlReturnUnprocessableEntity() throws Exception {
         Product product = new Product("Product", "Simple description of Product 1", Collections.singleton("image_url"),
                                       BigDecimal.valueOf(11.99D), 1);
@@ -138,7 +114,7 @@ public class ProductControllerTests {
     }
 
     @Test
-    @WithUserDetails("manager@test.pl")
+    @WithMockUser(roles = "MANAGER")
     public void createProductWithNegativePriceReturnUnprocessableEntity() throws Exception {
         Product product = new Product("Product", "Description", Collections.singleton("https://picsum.photos/200"),
                                       BigDecimal.valueOf(-8.99D), 1);
@@ -149,7 +125,7 @@ public class ProductControllerTests {
     }
 
     @Test
-    @WithUserDetails("manager@test.pl")
+    @WithMockUser(roles = "MANAGER")
     public void createProductWithPriceWithThreeDecimalPlacesReturnUnprocessableEntity() throws Exception {
         Product product = new Product("Product", "Description", Collections.singleton("https://picsum.photos/200"),
                                       BigDecimal.valueOf(8.999D), 1);
@@ -160,7 +136,7 @@ public class ProductControllerTests {
     }
 
     @Test
-    @WithUserDetails("manager@test.pl")
+    @WithMockUser(roles = "MANAGER")
     public void createProductWithNegativeQuantityReturnUnprocessableEntity() throws Exception {
         Product product = new Product("Product", "Description", Collections.singleton("https://picsum.photos/200"),
                                       BigDecimal.valueOf(-8.99D), -5);
@@ -171,7 +147,7 @@ public class ProductControllerTests {
     }
 
     @Test
-    @WithUserDetails("user@test.pl")
+    @WithMockUser
     public void createProductByNonManagerReturnForbidden() throws Exception {
         Product product = new Product("Product", "Description", Collections.singleton("https://picsum.photos/200"),
                                       BigDecimal.valueOf(11.99D), 1);
@@ -182,7 +158,7 @@ public class ProductControllerTests {
     }
 
     @Test
-    @WithUserDetails("user@test.pl")
+    @WithMockUser
     public void getProductByValidIdReturnOk() throws Exception {
         Long id = 1L;
         mockMvc.perform(get("/api/products/{id}", id)).andDo(print())
@@ -192,20 +168,20 @@ public class ProductControllerTests {
     }
 
     @Test
-    @WithUserDetails("user@test.pl")
+    @WithMockUser
     public void getProductByInvalidIdReturnNotFound() throws Exception {
         mockMvc.perform(get("/api/products/{id}", 999L)).andDo(print())
                .andExpect(status().isNotFound());
     }
 
     @ParameterizedTest
-    @WithUserDetails("user@test.pl")
+    @WithMockUser
     @MethodSource("getRequestParams")
     public void getProductsFilteredByCustomPredicatesReturnOk(SimpleImmutableEntry<String, String> param) throws Exception {
         mockMvc.perform(get("/api/products").queryParam(param.getKey(), param.getValue()))
                .andDo(print())
                .andExpect(status().isOk())
-               .andExpect(jsonPath("$", Matchers.hasSize(Matchers.greaterThanOrEqualTo(1))));
+               .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(1))));
     }
 
     private static List<SimpleImmutableEntry<String, String>> getRequestParams() {
@@ -217,7 +193,7 @@ public class ProductControllerTests {
     }
 
     @Test
-    @WithUserDetails("user@test.pl")
+    @WithMockUser
     public void getProductsFilteredByCustomPredicateWithWrongValueReturnBadRequest() throws Exception {
         mockMvc.perform(get("/api/products").queryParam("priceEqualTo", "price"))
                .andDo(print())
@@ -225,7 +201,7 @@ public class ProductControllerTests {
     }
 
     @Test
-    @WithUserDetails("manager@test.pl")
+    @WithMockUser(roles = "MANAGER")
     public void updateProductReturnOk() throws Exception {
         String productJson = mockMvc.perform(get("/api/products/1"))
                                     .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -244,7 +220,7 @@ public class ProductControllerTests {
     }
 
     @Test
-    @WithUserDetails("manager@test.pl")
+    @WithMockUser(roles = "MANAGER")
     public void updateProductWithInvalidIdReturnNotFound() throws Exception {
         Product product = new Product("Product", "Description", Collections.singleton("https://picsum.photos/200"),
                                       BigDecimal.valueOf(3.99D), 1);
@@ -256,7 +232,7 @@ public class ProductControllerTests {
     }
 
     @Test
-    @WithUserDetails("manager@test.pl")
+    @WithMockUser(roles = "MANAGER")
     public void updateProductWithEmptyNameReturnUnprocessableEntity() throws Exception {
         String productJson = mockMvc.perform(get("/api/products/1"))
                                     .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -273,7 +249,7 @@ public class ProductControllerTests {
     }
 
     @Test
-    @WithUserDetails("manager@test.pl")
+    @WithMockUser(roles = "MANAGER")
     public void updateProductWithInvalidImageUrlReturnUnprocessableEntity() throws Exception {
         String productJson = mockMvc.perform(get("/api/products/1"))
                                     .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -290,7 +266,7 @@ public class ProductControllerTests {
     }
 
     @Test
-    @WithUserDetails("manager@test.pl")
+    @WithMockUser(roles = "MANAGER")
     public void updateProductWithNegativePriceReturnUnprocessableEntity() throws Exception {
         String productJson = mockMvc.perform(get("/api/products/1"))
                                     .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -307,7 +283,7 @@ public class ProductControllerTests {
     }
 
     @Test
-    @WithUserDetails("manager@test.pl")
+    @WithMockUser(roles = "MANAGER")
     public void updateProductWithPriceWithThreeDecimalPlacesReturnUnprocessableEntity() throws Exception {
         String productJson = mockMvc.perform(get("/api/products/1"))
                                     .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -324,7 +300,7 @@ public class ProductControllerTests {
     }
 
     @Test
-    @WithUserDetails("manager@test.pl")
+    @WithMockUser(roles = "MANAGER")
     public void updateProductWithNegativeQuantityReturnUnprocessableEntity() throws Exception {
         String productJson = mockMvc.perform(get("/api/products/1"))
                                     .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -341,7 +317,7 @@ public class ProductControllerTests {
     }
 
     @Test
-    @WithUserDetails("user@test.pl")
+    @WithMockUser
     public void updateProductWithoutAuthorizationReturnForbidden() throws Exception {
         String productJson = mockMvc.perform(get("/api/products/1"))
                                     .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -355,21 +331,21 @@ public class ProductControllerTests {
     }
 
     @Test
-    @WithUserDetails("manager@test.pl")
+    @WithMockUser(roles = "MANAGER")
     public void deleteProductWithAuthorizationReturnNoContent() throws Exception {
         mockMvc.perform(request.builder(HttpMethod.DELETE, "/api/products/{id}", 1L)).andDo(print())
                .andExpect(status().isNoContent());
     }
 
     @Test
-    @WithUserDetails("user@test.pl")
+    @WithMockUser
     public void deleteProductWithoutAuthorizationReturnForbidden() throws Exception {
         mockMvc.perform(request.builder(HttpMethod.DELETE, "/api/products/{id}", 1L)).andDo(print())
                .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithUserDetails("manager@test.pl")
+    @WithMockUser(roles = "MANAGER")
     public void deleteProductWithInvalidIdReturnNotFound() throws Exception {
         mockMvc.perform(request.builder(HttpMethod.DELETE, "/api/products/{id}", 999L)).andDo(print())
                .andExpect(status().isNotFound());

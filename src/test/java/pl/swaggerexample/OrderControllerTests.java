@@ -2,6 +2,7 @@ package pl.swaggerexample;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.anonymous;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -10,20 +11,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -31,7 +34,6 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import pl.swaggerexample.configuration.CustomRequest;
-import pl.swaggerexample.dao.ProductDao;
 import pl.swaggerexample.dao.UserDao;
 import pl.swaggerexample.model.Address;
 import pl.swaggerexample.model.Order;
@@ -41,6 +43,8 @@ import pl.swaggerexample.model.User;
 import pl.swaggerexample.model.enums.OrderStatus;
 import pl.swaggerexample.model.enums.PaymentMethod;
 import pl.swaggerexample.model.enums.Role;
+import pl.swaggerexample.service.OrderService;
+import pl.swaggerexample.service.ProductService;
 
 @SpringBootTest
 @ComponentScan
@@ -53,14 +57,14 @@ public class OrderControllerTests {
     @Autowired
     private MockMvc mockMvc;
 
+    @SpyBean
+    private OrderService orderService;
+
+    @SpyBean
+    private ProductService productService;
+
     @Autowired
     private UserDao userDao;
-
-    @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    private EntityManagerFactory entityManagerFactory;
 
     @Autowired
     private ObjectMapper mapper;
@@ -68,45 +72,44 @@ public class OrderControllerTests {
     @Autowired
     private CustomRequest request;
 
-    @BeforeAll
-    public void init() {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        entityManager.getTransaction().begin();
-        entityManager.createNativeQuery("ALTER SEQUENCE product_sequence RESTART WITH 1").executeUpdate();
-        entityManager.createNativeQuery("ALTER SEQUENCE user_sequence RESTART WITH 1").executeUpdate();
-        entityManager.getTransaction().commit();
-        entityManager.close();
+    List<Order> orderList;
 
+    @BeforeEach
+    public void initOrder() {
+        Mockito.when(orderService.getByBuyerId(1L)).thenReturn(orderList);
+        Mockito.when(orderService.getAll()).thenReturn(orderList);
+        Mockito.doReturn(orderList).when(orderService).getByCurrentUser();
+    }
+
+    @BeforeAll
+    public void initUsersAndProducts() {
         List<Product> products = Arrays.asList(
             new Product("Product 1", "Description 1", Collections.singleton("/url1"), BigDecimal.valueOf(2.99D), 1),
             new Product("Product 2", "Description 2", Collections.singleton("/url2"), BigDecimal.valueOf(8.99D), 2));
-
-        productDao.saveAll(products);
 
         User user = new User("Jan", "Kowalski", "user@test.pl", "moje_haslo", Collections.singleton(Role.USER));
         User manager = new User("Jan", "Kowalski", "manager@test.pl", "moje_haslo", Collections.singleton(Role.MANAGER));
 
         userDao.save(user);
         userDao.save(manager);
+        products.forEach(productService::add);
+        orderList = Collections.singletonList(createOrder());
     }
 
     @AfterAll
     public void cleanup() {
         userDao.deleteAll();
-        productDao.deleteAll();
+        productService.getAll().forEach(product -> productService.delete(product.getId()));
     }
 
-    @WithUserDetails("user@test.pl")
-    private Order createOrder() throws Exception {
+    private Order createOrder() {
         Order order = new Order();
-        String productListJson = mockMvc.perform(get("/api/products"))
-                                    .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-
-        List<Product> productList =
-            mapper.readValue(productListJson, mapper.getTypeFactory().constructCollectionType(List.class, Product.class));
-        order.setItems(productList.stream().map(product -> new OrderItem(product, 1)).collect(Collectors.toSet()));
+        List<Product> products = productService.getAll();
+        order.setItems(products.stream().map(product -> new OrderItem(product, 1)).collect(Collectors.toSet()));
         order.setDeliveryAddress(new Address("Testowa 1", "01-234", "Testowo"));
         order.setPaymentMethod(PaymentMethod.BANK_TRANSFER);
+        order.setStatus(OrderStatus.CREATED);
+        order.setTime(OffsetDateTime.now());
 
         return order;
     }
@@ -237,11 +240,6 @@ public class OrderControllerTests {
     @Test
     @WithUserDetails("manager@test.pl")
     public void getAllOrdersReturnOk() throws Exception {
-        Order order = createOrder();
-        mockMvc.perform(request.builder(HttpMethod.POST,"/api/orders")
-               .content(mapper.writeValueAsString(order)))
-               .andExpect(status().isCreated());
-
         mockMvc.perform(get("/api/orders")).andDo(print())
                .andExpect(status().isOk())
                .andExpect(jsonPath("$").isArray())
@@ -288,30 +286,19 @@ public class OrderControllerTests {
     @Test
     @WithUserDetails("manager@test.pl")
     public void getOrdersByUserIdReturnOk() throws Exception {
-        Order order = createOrder();
-        mockMvc.perform(request.builder(HttpMethod.POST,"/api/orders")
-               .content(mapper.writeValueAsString(order))).andDo(print())
-               .andExpect(status().isCreated());
-
-        mockMvc.perform(get("/api/orders/buyer/{id}", 2L)).andDo(print())
+        mockMvc.perform(get("/api/orders/buyer/1")).andDo(print())
                .andExpect(status().isOk());
     }
 
     @Test
-    @WithUserDetails("user@test.pl")
     public void getOrdersByOtherUserIdReturnForbidden() throws Exception {
-        Order order = createOrder();
-        mockMvc.perform(request.builder(HttpMethod.POST,"/api/orders")
-               .content(mapper.writeValueAsString(order))).andDo(print())
-               .andExpect(status().isCreated());
-
         User otherUser = new User("Other", "User", "other@user.com", "other_user", Collections.singleton(Role.USER));
         mockMvc.perform(request.builder(HttpMethod.POST,"/api/users").with(anonymous())
                .content(mapper.writeValueAsString(otherUser)))
                .andDo(print())
                .andExpect(status().isCreated());
 
-        mockMvc.perform(get("/api/orders/buyer/2")).andDo(print())
+        mockMvc.perform(get("/api/orders/buyer/1").with(user("other@user.com"))).andDo(print())
                .andExpect(status().isForbidden());
     }
 
@@ -342,12 +329,7 @@ public class OrderControllerTests {
     @Test
     @WithUserDetails("manager@test.pl")
     public void getOrdersByBuyerIdShouldNotContainBuyerAndProductId() throws Exception {
-        Order order = createOrder();
-        mockMvc.perform(request.builder(HttpMethod.POST,"/api/orders")
-               .content(mapper.writeValueAsString(order))).andDo(print())
-               .andExpect(status().isCreated());
-
-        mockMvc.perform(get("/api/orders/buyer/2")).andDo(print())
+       mockMvc.perform(get("/api/orders/buyer/1")).andDo(print())
                .andExpect(status().isOk())
                .andExpect(jsonPath("$").isArray())
                .andExpect(jsonPath("$", hasSize(1)))
@@ -358,18 +340,13 @@ public class OrderControllerTests {
     @Test
     @WithUserDetails("user@test.pl")
     public void getOrdersByBuyerIdWithoutPermissionShouldReturnForbidden() throws Exception {
-        mockMvc.perform(get("/api/orders/buyer/2")).andDo(print())
+        mockMvc.perform(get("/api/orders/buyer/1")).andDo(print())
                .andExpect(status().isForbidden());
     }
 
     @Test
     @WithUserDetails("user@test.pl")
     public void getOrdersByCurrentUserShouldReturnOk() throws Exception {
-        Order order = createOrder();
-        mockMvc.perform(request.builder(HttpMethod.POST,"/api/orders")
-               .content(mapper.writeValueAsString(order))).andDo(print())
-               .andExpect(status().isCreated());
-
         mockMvc.perform(get("/api/orders/buyer")).andDo(print())
                .andExpect(status().isOk())
                .andExpect(jsonPath("$").isArray())
