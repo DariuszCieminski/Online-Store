@@ -22,6 +22,7 @@ export class NewOrderComponent implements OnInit {
     cartContent: OrderItem[];
     paymentMethods: string[];
     user: User;
+    makingOrder: boolean;
 
     constructor(private builder: FormBuilder, private router: Router, private cartService: CartService,
                 private orderService: OrderService, private auth: AuthenticationService, private snackBar: SnackbarService) {
@@ -36,6 +37,7 @@ export class NewOrderComponent implements OnInit {
         this.paymentMethods = Object.keys(PaymentMethod);
         this.cartValue = this.cartService.getCartValue();
         this.cartContent = this.cartService.getCartProducts();
+        this.makingOrder = false;
 
         this.shippingData = this.builder.group({
             paymentMethod: new FormControl(
@@ -58,6 +60,7 @@ export class NewOrderComponent implements OnInit {
         let order = new Order(this.cartContent, this.shippingData.get('deliveryAddress').value,
                               this.shippingData.get('paymentMethod').value, this.shippingData.get('information').value);
 
+        this.makingOrder = true;
         this.orderService.createOrder(order)
             .subscribe(() => {
                 this.cartService.clearCart();

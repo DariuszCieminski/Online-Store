@@ -1,0 +1,11 @@
+<button mat-raised-button [color]="color" type="submit" [disabled]="disabled">
+    <mat-icon *ngIf="spinning; else notSpinning">
+        <mat-spinner diameter="20" [color]="color"></mat-spinner>
+    </mat-icon>
+    <ng-template #notSpinning>
+        <mat-icon *ngIf="icon">
+            {{icon}}
+        </mat-icon>
+    </ng-template>
+    {{text}}
+</button>

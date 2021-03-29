@@ -16,7 +16,8 @@ export class SessionAuthenticationService extends AuthenticationService {
         super();
         this.httpClient.get(ApiUrls.ping).subscribe(
             response => this.loadUser(response),
-            () => this.clearUserData());
+            () => this.clearUserData()
+        );
     }
 
     isAuthenticated(): Observable<boolean> {

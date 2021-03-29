@@ -11,27 +11,30 @@ import { SnackbarService } from "../../services/snackbar.service";
 })
 export class LoginComponent implements OnInit {
     form: FormGroup;
+    isAuthenticating: boolean;
 
     constructor(private authService: AuthenticationService, private router: Router, private snackBar: SnackbarService) {
     }
 
     ngOnInit(): void {
+        this.isAuthenticating = false;
         this.form = new FormGroup({
             email: new FormControl('', [Validators.email, Validators.required]),
             password: new FormControl('', Validators.required)
         });
-
-        if (history.state.register) {
-            this.snackBar.showSnackbar("Your account was successfully created. You can now log in.");
-        }
     }
 
     onLogin() {
         if (this.form.valid) {
+            this.isAuthenticating = true;
             this.authService.login(this.form.value)
                 .subscribe(success => {
-                    (success) ? this.router.navigateByUrl('/')
-                              : this.snackBar.showSnackbar("Invalid email or password", "Close");
+                    if (success) {
+                        return this.router.navigateByUrl('/');
+                    } else {
+                        this.isAuthenticating = false;
+                        this.snackBar.showSnackbar("Invalid email or password", "Close");
+                    }
                 });
         }
     }

@@ -11,5 +11,5 @@
         <mat-icon matSuffix>lock</mat-icon>
         <mat-error *ngIf="form.get('password').invalid">Must be not empty</mat-error>
     </mat-form-field>
-    <button color="primary" mat-raised-button type="submit">Login</button>
+    <button-spinner color="primary" text="Login" [disabled]="isAuthenticating" [spinning]="isAuthenticating"></button-spinner>
 </form>

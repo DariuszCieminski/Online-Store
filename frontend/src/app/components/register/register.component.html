@@ -73,8 +73,8 @@
             </mat-form-field>
             <div>
                 <button class="form-btn" mat-raised-button matStepperPrevious>Previous step</button>
-                <button (click)="onSubmit()" class="form-btn" color="primary" mat-raised-button type="submit">Register
-                </button>
+                <button-spinner class="form-btn" color="primary" text="Register" [disabled]="formSubmitted"
+                                [spinning]="formSubmitted" (click)="onSubmit()"></button-spinner>
             </div>
         </mat-step>
     </mat-horizontal-stepper>

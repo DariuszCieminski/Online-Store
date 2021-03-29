@@ -52,10 +52,8 @@
                 </mat-form-field>
                 <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="2rem">
                     <button class="btn-step" mat-raised-button matStepperPrevious>Previous step</button>
-                    <button class="btn-step" mat-raised-button color="primary" (click)="createOrder()">
-                        <mat-icon>receipt</mat-icon>
-                        Make order
-                    </button>
+                    <button-spinner class="btn-step" color="primary" text="Make order" [spinning]="makingOrder"
+                                    [disabled]="makingOrder" icon="receipt" (click)="createOrder()"></button-spinner>
                 </div>
             </mat-step>
         </form>

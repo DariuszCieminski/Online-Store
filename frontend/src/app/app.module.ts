@@ -28,6 +28,7 @@ import { NgxPermissionsGuard, NgxPermissionsModule } from 'ngx-permissions';
 import { AuthenticationGuard } from "../authentication/authentication-guard";
 import { PROVIDERS } from "../environments/providers";
 import { AppComponent } from './app.component';
+import { ButtonSpinnerComponent } from './components/button-spinner/button-spinner.component';
 import { CartComponent } from './components/cart/cart.component';
 import { FilterPanelComponent } from './components/filter-panel/filter-panel.component';
 import { HomeComponent } from './components/home/home.component';
@@ -63,7 +64,8 @@ registerLocaleData(localePl);
         NewOrderComponent,
         OrdersComponent,
         CurrencyPLNPipe,
-        CustomDatePipe
+        CustomDatePipe,
+        ButtonSpinnerComponent
     ],
     imports: [
         BrowserModule,

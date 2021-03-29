@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
+import { SnackbarService } from "../../services/snackbar.service";
 import { ApiUrls } from "../../util/api-urls";
 import { Validator } from "../../util/validator";
 
@@ -12,8 +13,9 @@ import { Validator } from "../../util/validator";
 })
 export class RegisterComponent implements OnInit {
     formGroup: FormGroup;
+    formSubmitted: boolean;
 
-    constructor(private builder: FormBuilder, private httpClient: HttpClient, private router: Router) {
+    constructor(private builder: FormBuilder, private httpClient: HttpClient, private router: Router, private snackBar: SnackbarService) {
     }
 
     get formArray(): AbstractControl {
@@ -21,6 +23,7 @@ export class RegisterComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.formSubmitted = false;
         this.formGroup = this.builder.group({
             formArray: this.builder.array([
                 this.builder.group({
@@ -67,10 +70,23 @@ export class RegisterComponent implements OnInit {
             if (!address.street && !address.postCode && !address.city) data.address = null;
             else data.address = address;
 
+            this.formSubmitted = true;
             this.httpClient.post(ApiUrls.users, data)
                 .subscribe(() => {
-                    this.router.navigateByUrl('/login', {state: {register: true}});
-                });
+                        this.router.navigateByUrl('/login')
+                            .then(() => this.snackBar.showSnackbar("Your account was successfully created. You can now log in."));
+                    },
+                    error => {
+                        this.formSubmitted = false;
+                        this.handleError(error);
+                    }
+                );
         }
+    }
+
+    private handleError(errorResponse: any): void {
+        const errors: string[] = errorResponse.error.errors.map(value => value.error);
+        const message = errors.reduce((previousValue, currentValue) => `${previousValue}\n${currentValue}`);
+        this.snackBar.showSnackbar(message, "Close", {panelClass: 'snackbar'});
     }
 }
