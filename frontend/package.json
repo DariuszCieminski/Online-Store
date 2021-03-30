@@ -3,10 +3,10 @@
     "version": "1.0.0",
     "scripts": {
         "ng": "ng",
-        "start": "ng serve",
-        "build": "ng build",
-        "start:session": "ng serve -c session",
-        "build:session": "ng build -c session",
+        "start": "ng serve --prod",
+        "build": "ng build --prod",
+        "start:session": "ng serve --prod -c session",
+        "build:session": "ng build --prod -c session",
         "test": "ng test",
         "lint": "ng lint",
         "e2e": "ng e2e"
