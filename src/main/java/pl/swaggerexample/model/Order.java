@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Convert;
@@ -161,6 +162,18 @@ public class Order {
         return items.stream()
                     .map(orderItem -> orderItem.getProduct().getPrice().multiply(new BigDecimal(orderItem.getQuantity())))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(),
+                            getBuyer(),
+                            getItems(),
+                            getDeliveryAddress(),
+                            getPaymentMethod(),
+                            getInformation(),
+                            getStatus(),
+                            getTime());
     }
 
     @Override

@@ -48,7 +48,7 @@ import pl.swaggerexample.util.JsonViews.UserSimple;
 @AutoConfigureMockMvc
 @TestInstance(Lifecycle.PER_CLASS)
 @Transactional
-public class UserControllerTests {
+class UserControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -66,7 +66,7 @@ public class UserControllerTests {
     private CustomRequest request;
 
     @BeforeAll
-    public void init() {
+    void init() {
         User user = new User("Jan", "Kowalski", "user@test.pl", "moje_haslo", Collections.singleton(Role.USER));
         User manager = new User("Jan", "Kowalski", "manager@test.pl", "moje_haslo", Collections.singleton(Role.MANAGER));
         user.setId(1L);
@@ -77,12 +77,12 @@ public class UserControllerTests {
     }
 
     @AfterAll
-    public void cleanup() {
+    void cleanup() {
         userDao.deleteAll();
     }
 
     @Test
-    public void addUserReturnOk() throws Exception {
+    void addUserReturnOk() throws Exception {
         User user = new User("Użytkownik", "Testowy", "test@test.com", "test-test", Collections.singleton(Role.USER));
         Address address = new Address("ul. Testowa 1", "01-234", "Testowo");
         user.setAddress(address);
@@ -93,7 +93,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void addUserWithoutNameReturnUnprocessableEntity() throws Exception {
+    void addUserWithoutNameReturnUnprocessableEntity() throws Exception {
         User user = new User("", "Kowalski", "test@test.com", "moje_haslo", Collections.singleton(Role.USER));
 
         mockMvc.perform(request.builder(HttpMethod.POST, "/api/users")
@@ -102,7 +102,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void addUserWithoutSurnameReturnUnprocessableEntity() throws Exception {
+    void addUserWithoutSurnameReturnUnprocessableEntity() throws Exception {
         User user = new User("Jan", "", "test@test.com", "moje_haslo", Collections.singleton(Role.USER));
 
         mockMvc.perform(request.builder(HttpMethod.POST, "/api/users")
@@ -111,7 +111,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void addUserWithoutEmailReturnUnprocessableEntity() throws Exception {
+    void addUserWithoutEmailReturnUnprocessableEntity() throws Exception {
         User user = new User("Jan", "Kowalski", "", "moje_haslo", Collections.singleton(Role.USER));
 
         mockMvc.perform(request.builder(HttpMethod.POST, "/api/users")
@@ -120,7 +120,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void addUserWithInvalidAddressReturnUnprocessableEntity() throws Exception {
+    void addUserWithInvalidAddressReturnUnprocessableEntity() throws Exception {
         User user = new User("Jan", "Kowalski", "test@test.com", "moje_haslo", Collections.singleton(Role.USER));
         user.setAddress(new Address("", "12345", "Miasto"));
 
@@ -130,7 +130,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void addUserWithNoPasswordReturnUnprocessableEntity() throws Exception {
+    void addUserWithNoPasswordReturnUnprocessableEntity() throws Exception {
         User user = new User("Jan", "Kowalski", "test@test.com", "", Collections.singleton(Role.USER));
 
         mockMvc.perform(request.builder(HttpMethod.POST, "/api/users")
@@ -139,7 +139,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void addUserWithTooShortPasswordReturnUnprocessableEntity() throws Exception {
+    void addUserWithTooShortPasswordReturnUnprocessableEntity() throws Exception {
         User user = new User("Jan", "Kowalski", "test@test.com", "haslo", Collections.singleton(Role.USER));
 
         mockMvc.perform(request.builder(HttpMethod.POST, "/api/users")
@@ -149,7 +149,7 @@ public class UserControllerTests {
 
     @Test
     @WithMockUser(roles = "MANAGER")
-    public void addUserWithDeveloperRoleWithPermissionReturnUserWithRoleDeveloper() {
+    void addUserWithDeveloperRoleWithPermissionReturnUserWithRoleDeveloper() {
         User user = new User("Użytkownik", "Testowy", "test@test.com", "test-test", Collections.singleton(Role.DEVELOPER));
         user = userService.add(user);
 
@@ -157,7 +157,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void addUserWithDeveloperRoleWithoutPermissionReturnUserWithRoleUser() {
+    void addUserWithDeveloperRoleWithoutPermissionReturnUserWithRoleUser() {
         User user = new User("Użytkownik", "Testowy", "test@test.com", "test-test", Collections.singleton(Role.DEVELOPER));
         user = userService.add(user);
 
@@ -166,7 +166,7 @@ public class UserControllerTests {
 
     @Test
     @WithMockUser(roles = "MANAGER")
-    public void getAllUsersReturnOk() throws Exception {
+    void getAllUsersReturnOk() throws Exception {
         mockMvc.perform(get("/api/users")).andDo(print())
                .andExpect(status().isOk())
                .andExpect(jsonPath("$").isArray())
@@ -175,14 +175,14 @@ public class UserControllerTests {
 
     @Test
     @WithMockUser
-    public void getAllUsersWithoutPermissionReturnForbidden() throws Exception {
+    void getAllUsersWithoutPermissionReturnForbidden() throws Exception {
         mockMvc.perform(get("/api/users")).andDo(print())
                .andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(roles = "MANAGER")
-    public void getUserByValidIdReturnOk() throws Exception {
+    void getUserByValidIdReturnOk() throws Exception {
         mockMvc.perform(get("/api/users/1")).andDo(print())
                .andExpect(status().isOk())
                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -191,21 +191,21 @@ public class UserControllerTests {
 
     @Test
     @WithMockUser
-    public void getUserWithoutPermissionReturnForbidden() throws Exception {
+    void getUserWithoutPermissionReturnForbidden() throws Exception {
         mockMvc.perform(get("/api/users/1")).andDo(print())
                .andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(roles = "MANAGER")
-    public void getUserByInvalidIdReturnNotFound() throws Exception {
+    void getUserByInvalidIdReturnNotFound() throws Exception {
         mockMvc.perform(get("/api/users/{id}", 999L)).andDo(print())
                .andExpect(status().isNotFound());
     }
 
     @Test
     @WithMockUser(roles = "MANAGER")
-    public void getUserWithUserDetailedViewShouldContainIdAndRoles() throws Exception {
+    void getUserWithUserDetailedViewShouldContainIdAndRoles() throws Exception {
         String userJson = mockMvc.perform(get("/api/users/1"))
                                  .andExpect(status().isOk())
                                  .andReturn().getResponse().getContentAsString();
@@ -218,7 +218,7 @@ public class UserControllerTests {
 
     @Test
     @WithMockUser(roles = "MANAGER")
-    public void getUserWithUserAuthenticationViewShouldNotContainIdAndRoles() throws Exception {
+    void getUserWithUserAuthenticationViewShouldNotContainIdAndRoles() throws Exception {
         String userJson = mockMvc.perform(get("/api/users/1"))
                                  .andExpect(status().isOk())
                                  .andReturn().getResponse().getContentAsString();
@@ -231,7 +231,7 @@ public class UserControllerTests {
 
     @Test
     @WithMockUser(roles = "MANAGER")
-    public void addAndgetUsersExpectGreaterOrEqualToNumberOfUsersAdded() throws Exception {
+    void addAndgetUsersExpectGreaterOrEqualToNumberOfUsersAdded() throws Exception {
         int counter = 3;
         for (int i = 1; i <= counter; i++) {
             User user = new User("Jan", "Kowalski", "jan.kowalski" + i + "@poczta.pl", "moje_haslo",
@@ -249,7 +249,7 @@ public class UserControllerTests {
 
     @Test
     @WithMockUser(roles = "MANAGER")
-    public void updateUserSurnameReturnOk() throws Exception {
+    void updateUserSurnameReturnOk() throws Exception {
         String userJson = mockMvc.perform(get("/api/users/1"))
                                  .andExpect(status().isOk())
                                  .andReturn().getResponse().getContentAsString();
@@ -265,7 +265,7 @@ public class UserControllerTests {
 
     @Test
     @WithMockUser(roles = "MANAGER")
-    public void updateUserWithInvalidIdReturnNotFound() throws Exception {
+    void updateUserWithInvalidIdReturnNotFound() throws Exception {
         User user = new User("Jan", "Kowalski", "testowy.email@poczta.pl", "moje_haslo", Collections.singleton(Role.USER));
         user.setId(333L);
 
@@ -276,7 +276,7 @@ public class UserControllerTests {
 
     @Test
     @WithMockUser(roles = "MANAGER")
-    public void updateUserWithEmptyNameReturnUnprocessableEntity() throws Exception {
+    void updateUserWithEmptyNameReturnUnprocessableEntity() throws Exception {
         String userJson = mockMvc.perform(get("/api/users/1"))
                                  .andExpect(status().isOk())
                                  .andReturn().getResponse().getContentAsString();
@@ -294,7 +294,7 @@ public class UserControllerTests {
 
     @Test
     @WithMockUser(roles = "MANAGER")
-    public void updateUserWithEmptySurnameReturnUnprocessableEntity() throws Exception {
+    void updateUserWithEmptySurnameReturnUnprocessableEntity() throws Exception {
         String userJson = mockMvc.perform(get("/api/users/1"))
                                  .andExpect(status().isOk())
                                  .andReturn().getResponse().getContentAsString();
@@ -312,7 +312,7 @@ public class UserControllerTests {
 
     @Test
     @WithMockUser(roles = "MANAGER")
-    public void updateUserWithInvalidEmailAndPasswordReturnUnprocessableEntity() throws Exception {
+    void updateUserWithInvalidEmailAndPasswordReturnUnprocessableEntity() throws Exception {
         String userJson = mockMvc.perform(get("/api/users/1"))
                                  .andExpect(status().isOk())
                                  .andReturn().getResponse().getContentAsString();
@@ -331,7 +331,7 @@ public class UserControllerTests {
 
     @Test
     @WithMockUser(roles = "MANAGER")
-    public void updateUserWithInvalidAddressReturnUnprocessableEntity() throws Exception {
+    void updateUserWithInvalidAddressReturnUnprocessableEntity() throws Exception {
         String userJson = mockMvc.perform(get("/api/users/1"))
                                  .andExpect(status().isOk())
                                  .andReturn().getResponse().getContentAsString();
@@ -350,7 +350,7 @@ public class UserControllerTests {
 
     @Test
     @WithMockUser(roles = "MANAGER")
-    public void updateUserWithoutAuthorizationReturnForbidden() throws Exception {
+    void updateUserWithoutAuthorizationReturnForbidden() throws Exception {
         String userJson = mockMvc.perform(get("/api/users/1"))
                                  .andExpect(status().isOk())
                                  .andReturn().getResponse().getContentAsString();
@@ -365,21 +365,21 @@ public class UserControllerTests {
 
     @Test
     @WithMockUser(roles = "MANAGER")
-    public void deleteUserWithAuthorizationReturnNoContent() throws Exception {
+    void deleteUserWithAuthorizationReturnNoContent() throws Exception {
         mockMvc.perform(request.builder(HttpMethod.DELETE, "/api/users/{id}", 1L)).andDo(print())
                .andExpect(status().isNoContent());
     }
 
     @Test
     @WithMockUser
-    public void deleteUserWithoutAuthorizationReturnForbidden() throws Exception {
+    void deleteUserWithoutAuthorizationReturnForbidden() throws Exception {
         mockMvc.perform(request.builder(HttpMethod.DELETE, "/api/users/{id}", 1L)).andDo(print())
                .andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(roles = "MANAGER")
-    public void deleteUserWithInvalidIdReturnNotFound() throws Exception {
+    void deleteUserWithInvalidIdReturnNotFound() throws Exception {
         mockMvc.perform(request.builder(HttpMethod.DELETE, "/api/users/{id}", 999L)).andDo(print())
                .andExpect(status().isNotFound());
     }

@@ -35,7 +35,7 @@ import pl.swaggerexample.model.enums.Role;
 @AutoConfigureTestDatabase
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class SessionAuthenticationTests {
+class SessionAuthenticationTests {
 
     private static final String LOGIN_TEMPLATE = "{\"email\":\"%s\",\"password\":\"%s\"}";
     private static final User USER = new User("Test", "User", "user@test.pl",
@@ -53,7 +53,7 @@ public class SessionAuthenticationTests {
     private CustomRequest request;
 
     @BeforeAll
-    public void init() {
+    void init() {
         userDao.save(USER);
         userDao.save(DEV);
 
@@ -62,12 +62,12 @@ public class SessionAuthenticationTests {
     }
 
     @AfterAll
-    public void cleanup() {
+    void cleanup() {
         userDao.deleteAll();
     }
 
     @Test
-    public void sessionLoginShouldReturnOk() throws Exception {
+    void sessionLoginShouldReturnOk() throws Exception {
         mockMvc.perform(request.builder(HttpMethod.POST, "/login")
                .content(String.format(LOGIN_TEMPLATE, USER.getEmail(), USER.getPassword())))
                .andExpect(status().isOk())
@@ -81,7 +81,7 @@ public class SessionAuthenticationTests {
     }
 
     @Test
-    public void sessionLoginInvalidPasswordShouldReturnUnauthorized() throws Exception {
+    void sessionLoginInvalidPasswordShouldReturnUnauthorized() throws Exception {
         mockMvc.perform(request.builder(HttpMethod.POST, "/login")
                .content(String.format(LOGIN_TEMPLATE, USER.getEmail(), "wrong_password")))
                .andExpect(status().isUnauthorized())
@@ -90,7 +90,7 @@ public class SessionAuthenticationTests {
     }
 
     @Test
-    public void sessionLogoutShouldDeleteSessionAndCsrfCookies() throws Exception {
+    void sessionLogoutShouldDeleteSessionAndCsrfCookies() throws Exception {
         mockMvc.perform(request.builder(HttpMethod.POST, "/login")
                .content(String.format(LOGIN_TEMPLATE, USER.getEmail(), USER.getPassword())))
                .andExpect(status().isOk())
@@ -105,7 +105,7 @@ public class SessionAuthenticationTests {
 
     @Test
     @WithUserDetails("user@test.pl")
-    public void pingServerAsUserShouldReturnOkWithUserInformation() throws Exception {
+    void pingServerAsUserShouldReturnOkWithUserInformation() throws Exception {
         mockMvc.perform(get("/api/util/ping"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.name").exists())
@@ -117,7 +117,7 @@ public class SessionAuthenticationTests {
     }
 
     @Test
-    public void pingServerAnonymouslyShouldReturnUnauthorized() throws Exception {
+    void pingServerAnonymouslyShouldReturnUnauthorized() throws Exception {
         mockMvc.perform(get("/api/util/ping"))
                .andExpect(status().isUnauthorized());
     }

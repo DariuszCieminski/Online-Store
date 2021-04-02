@@ -22,7 +22,7 @@ import pl.swaggerexample.security.jwt.JwtManager;
 @SpringBootTest
 @ActiveProfiles("jwt")
 @AutoConfigureMockMvc
-public class SwaggerCookieTests {
+class SwaggerCookieTests {
 
     private static final UserBuilder USER = builder().username("user").password("user").roles(Role.USER.name());
     private static final UserBuilder DEVELOPER = builder().username("dev").password("dev").roles(Role.DEVELOPER.name());
@@ -34,7 +34,7 @@ public class SwaggerCookieTests {
     private JwtManager jwt;
 
     @Test
-    public void openSwaggerWithCookieShouldReturnOk() throws Exception {
+    void openSwaggerWithCookieShouldReturnOk() throws Exception {
         Authentication auth = new UsernamePasswordAuthenticationToken(DEVELOPER.build().getUsername(),
                                                                       DEVELOPER.build().getPassword(),
                                                                       DEVELOPER.build().getAuthorities());
@@ -51,7 +51,7 @@ public class SwaggerCookieTests {
     }
 
     @Test
-    public void openSwaggerWithoutCookieShouldReturnUnauthorized() throws Exception {
+    void openSwaggerWithoutCookieShouldReturnUnauthorized() throws Exception {
         mockMvc.perform(get("/swagger-ui/index.html").with(user(DEVELOPER.build())))
                .andExpect(status().isUnauthorized())
                .andExpect(content().string("UNAUTHORIZED"));
@@ -62,7 +62,7 @@ public class SwaggerCookieTests {
     }
 
     @Test
-    public void openSwaggerWithInvalidCookieShouldReturnUnauthorized() throws Exception {
+    void openSwaggerWithInvalidCookieShouldReturnUnauthorized() throws Exception {
         Authentication auth = new UsernamePasswordAuthenticationToken(DEVELOPER.build().getUsername(),
                                                                       DEVELOPER.build().getPassword(),
                                                                       DEVELOPER.build().getAuthorities());
@@ -81,7 +81,7 @@ public class SwaggerCookieTests {
     }
 
     @Test
-    public void openSwaggerAsRegularUserShouldReturnUnauthorized() throws Exception {
+    void openSwaggerAsRegularUserShouldReturnUnauthorized() throws Exception {
         mockMvc.perform(get("/swagger-ui/index.html").with(user(USER.build())))
                .andExpect(status().isUnauthorized())
                .andExpect(content().string("UNAUTHORIZED"));

@@ -9,7 +9,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,7 +44,7 @@ public class JwtManager {
     public String generateAccessToken(Authentication authentication) {
         Date expirationTime = Date.from(LocalDateTime.now()
                                                      .plusMinutes(ACCESS_TOKEN_VALIDATION_TIME)
-                                                     .atZone(ZoneOffset.systemDefault())
+                                                     .atZone(ZoneId.systemDefault())
                                                      .toInstant());
 
         List<String> roles = authentication.getAuthorities()
@@ -63,7 +63,7 @@ public class JwtManager {
     public String generateRefreshToken(Authentication authentication) {
         Date expirationTime = Date.from(LocalDateTime.now()
                                                      .plusMinutes(REFRESH_TOKEN_VALIDATION_TIME)
-                                                     .atZone(ZoneOffset.systemDefault())
+                                                     .atZone(ZoneId.systemDefault())
                                                      .toInstant());
 
         return Jwts.builder()

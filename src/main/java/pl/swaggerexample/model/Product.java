@@ -46,7 +46,7 @@ public class Product {
     @Column(name = "image")
     @ApiModelProperty(value = "Links to product's images.", example = "['http://picsum.photos/200', '/link']", position = 5)
     @JsonView(OrderSimple.class)
-    private Set<@Pattern(regexp = "^(http|https)?.*/.*") String> images;
+    private Set<@Pattern(regexp = "^(http|https)?.{0,50}/.{0,200}") String> images;
 
     @NotNull(message = "Product price was not specified.")
     @Positive(message = "Price must be greater than zero.")
@@ -119,6 +119,11 @@ public class Product {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getName(), getDescription(), getImages(), getPrice(), getQuantity());
     }
 
     @Override

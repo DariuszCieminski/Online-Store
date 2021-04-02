@@ -27,6 +27,9 @@ import pl.swaggerexample.util.JsonViews.UserSimple;
 @Profile("jwt")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
+    private static final String ACCESS_TOKEN = "access_token";
+    private static final String REFRESH_TOKEN = "refresh_token";
+
     private final JwtManager jwt;
     private final ObjectMapper mapper;
 
@@ -87,8 +90,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     private Authentication doReauthentication(JsonNode requestBody) {
-        String accessToken = requestBody.get("access_token").textValue();
-        String refreshToken = requestBody.get("refresh_token").textValue();
+        String accessToken = requestBody.get(ACCESS_TOKEN).textValue();
+        String refreshToken = requestBody.get(REFRESH_TOKEN).textValue();
 
         if (!jwt.isTokenValid(refreshToken)) {
             throw new JwtTokenParsingException("Refresh token is not valid.");
@@ -108,20 +111,21 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             Cookie cookie = new Cookie("swagger_id", jwt.generateSwaggerToken(authentication));
             cookie.setPath("/");
             cookie.setHttpOnly(true);
+            cookie.setSecure(true);
             response.addCookie(cookie);
         }
     }
 
     private boolean isReAuthentication(JsonNode node) {
-        boolean hasAccessToken = node.has("access_token");
-        boolean hasRefreshToken = node.has("refresh_token");
+        boolean hasAccessToken = node.has(ACCESS_TOKEN);
+        boolean hasRefreshToken = node.has(REFRESH_TOKEN);
 
         return hasAccessToken && hasRefreshToken;
     }
 
     private String writeReauthentication(Authentication authentication) throws JsonProcessingException {
         ObjectNode node = mapper.createObjectNode();
-        node.put("access_token", jwt.generateAccessToken(authentication));
+        node.put(ACCESS_TOKEN, jwt.generateAccessToken(authentication));
 
         return mapper.writeValueAsString(node);
     }
@@ -131,8 +135,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         ObjectNode node = mapper.createObjectNode();
 
         node.putPOJO("user", user);
-        node.put("access_token", jwt.generateAccessToken(authentication));
-        node.put("refresh_token", jwt.generateRefreshToken(authentication));
+        node.put(ACCESS_TOKEN, jwt.generateAccessToken(authentication));
+        node.put(REFRESH_TOKEN, jwt.generateRefreshToken(authentication));
 
         return mapper.writerWithView(UserSimple.class).writeValueAsString(node);
     }

@@ -20,14 +20,12 @@ public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, Us
     public boolean isValid(User value, ConstraintValidatorContext context) {
         Optional<User> user = userService.getUserByEmail(value.getEmail());
 
-        if (user.isPresent()) {
-            if (!user.get().getId().equals(value.getId())) {
-                context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate(
-                    "A user with e-mail address: " + user.get().getEmail() + " already exists.")
-                       .addPropertyNode("email").addConstraintViolation();
-                return false;
-            }
+        if (user.isPresent() && !user.get().getId().equals(value.getId())) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate(
+                "A user with e-mail address: " + user.get().getEmail() + " already exists.")
+                   .addPropertyNode("email").addConstraintViolation();
+            return false;
         }
 
         return true;

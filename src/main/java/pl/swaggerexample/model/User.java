@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Convert;
@@ -153,6 +154,18 @@ public class User {
 
     public void setOrders(Set<Order> orders) {
         this.orders = orders;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(),
+                            getName(),
+                            getSurname(),
+                            getAddress(),
+                            getEmail(),
+                            getPassword(),
+                            getRoles(),
+                            getOrders());
     }
 
     @Override

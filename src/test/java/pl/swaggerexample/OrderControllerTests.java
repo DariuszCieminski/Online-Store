@@ -52,7 +52,7 @@ import pl.swaggerexample.service.ProductService;
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Transactional
-public class OrderControllerTests {
+class OrderControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -75,14 +75,14 @@ public class OrderControllerTests {
     List<Order> orderList;
 
     @BeforeEach
-    public void initOrder() {
+    void initOrder() {
         Mockito.when(orderService.getByBuyerId(1L)).thenReturn(orderList);
         Mockito.when(orderService.getAll()).thenReturn(orderList);
         Mockito.doReturn(orderList).when(orderService).getByCurrentUser();
     }
 
     @BeforeAll
-    public void initUsersAndProducts() {
+    void initUsersAndProducts() {
         List<Product> products = Arrays.asList(
             new Product("Product 1", "Description 1", Collections.singleton("/url1"), BigDecimal.valueOf(2.99D), 1),
             new Product("Product 2", "Description 2", Collections.singleton("/url2"), BigDecimal.valueOf(8.99D), 2));
@@ -97,7 +97,7 @@ public class OrderControllerTests {
     }
 
     @AfterAll
-    public void cleanup() {
+    void cleanup() {
         userDao.deleteAll();
         productService.getAll().forEach(product -> productService.delete(product.getId()));
     }
@@ -116,7 +116,7 @@ public class OrderControllerTests {
 
     @Test
     @WithUserDetails("user@test.pl")
-    public void addOrderReturnOk() throws Exception {
+    void addOrderReturnOk() throws Exception {
         Order order = createOrder();
         mockMvc.perform(request.builder(HttpMethod.POST,"/api/orders")
                .content(mapper.writeValueAsString(order))).andDo(print())
@@ -125,7 +125,7 @@ public class OrderControllerTests {
 
     @Test
     @WithUserDetails("user@test.pl")
-    public void addOrderWithoutProductsReturnUnprocessableEntity() throws Exception {
+    void addOrderWithoutProductsReturnUnprocessableEntity() throws Exception {
         Order order = createOrder();
         order.setItems(Collections.emptySet());
 
@@ -136,7 +136,7 @@ public class OrderControllerTests {
 
     @Test
     @WithUserDetails("user@test.pl")
-    public void addOrderWithProductsWithInvalidIdReturnUnprocessableEntity() throws Exception {
+    void addOrderWithProductsWithInvalidIdReturnUnprocessableEntity() throws Exception {
         Order order = createOrder();
         Product p1 = new Product("Product", "Description", Collections.singleton("/url"), BigDecimal.valueOf(9.99D), 3);
         Product p2 = new Product("Product", "Description", Collections.singleton("/url"), BigDecimal.valueOf(9.99D), 3);
@@ -152,7 +152,7 @@ public class OrderControllerTests {
 
     @Test
     @WithUserDetails("user@test.pl")
-    public void addOrderWithNegativeProductQuantityReturnUnprocessableEntity() throws Exception {
+    void addOrderWithNegativeProductQuantityReturnUnprocessableEntity() throws Exception {
         Order order = createOrder();
         order.getItems().iterator().next().setQuantity(-5);
 
@@ -163,7 +163,7 @@ public class OrderControllerTests {
 
     @Test
     @WithUserDetails("user@test.pl")
-    public void addOrderWithTooLargeProductQuantityReturnUnprocessableEntity() throws Exception {
+    void addOrderWithTooLargeProductQuantityReturnUnprocessableEntity() throws Exception {
         Order order = createOrder();
         order.getItems().iterator().next().setQuantity(999);
 
@@ -174,7 +174,7 @@ public class OrderControllerTests {
 
     @Test
     @WithUserDetails("user@test.pl")
-    public void addOrderWithNoDeliveryAddressReturnUnprocessableEntity() throws Exception {
+    void addOrderWithNoDeliveryAddressReturnUnprocessableEntity() throws Exception {
         Order order = createOrder();
         order.setDeliveryAddress(null);
 
@@ -185,7 +185,7 @@ public class OrderControllerTests {
 
     @Test
     @WithUserDetails("user@test.pl")
-    public void addOrderWithInvalidDeliveryAddressReturnUnprocessableEntity() throws Exception {
+    void addOrderWithInvalidDeliveryAddressReturnUnprocessableEntity() throws Exception {
         Order order = createOrder();
         order.setDeliveryAddress(new Address("Testowa 1", "12345", "Testowo"));
 
@@ -196,7 +196,7 @@ public class OrderControllerTests {
 
     @Test
     @WithUserDetails("user@test.pl")
-    public void addOrderWithNoPaymentMethodReturnUnprocessableEntity() throws Exception {
+    void addOrderWithNoPaymentMethodReturnUnprocessableEntity() throws Exception {
         Order order = createOrder();
         order.setPaymentMethod(null);
 
@@ -207,7 +207,7 @@ public class OrderControllerTests {
 
     @Test
     @WithUserDetails("user@test.pl")
-    public void addOrderShouldHaveOrderStatusCreated() throws Exception {
+    void addOrderShouldHaveOrderStatusCreated() throws Exception {
         Order order = createOrder();
         mockMvc.perform(request.builder(HttpMethod.POST,"/api/orders")
                .content(mapper.writeValueAsString(order))).andDo(print())
@@ -217,7 +217,7 @@ public class OrderControllerTests {
 
     @Test
     @WithUserDetails("user@test.pl")
-    public void addOrderWithTooLongInformationReturnUnprocessableEntity() throws Exception {
+    void addOrderWithTooLongInformationReturnUnprocessableEntity() throws Exception {
         Order order = createOrder();
         order.setInformation(String.join("", Collections.nCopies(151, "a")));
 
@@ -228,7 +228,7 @@ public class OrderControllerTests {
 
     @Test
     @WithUserDetails("user@test.pl")
-    public void addOrderWithMaximumInformationLengthReturnCreated() throws Exception {
+    void addOrderWithMaximumInformationLengthReturnCreated() throws Exception {
         Order order = createOrder();
         order.setInformation(String.join("", Collections.nCopies(150, "a")));
 
@@ -239,7 +239,7 @@ public class OrderControllerTests {
 
     @Test
     @WithUserDetails("manager@test.pl")
-    public void getAllOrdersReturnOk() throws Exception {
+    void getAllOrdersReturnOk() throws Exception {
         mockMvc.perform(get("/api/orders")).andDo(print())
                .andExpect(status().isOk())
                .andExpect(jsonPath("$").isArray())
@@ -248,14 +248,14 @@ public class OrderControllerTests {
 
     @Test
     @WithUserDetails("user@test.pl")
-    public void getAllOrdersWithoutPermissionReturnForbidden() throws Exception {
+    void getAllOrdersWithoutPermissionReturnForbidden() throws Exception {
         mockMvc.perform(get("/api/orders")).andDo(print())
                .andExpect(status().isForbidden());
     }
 
     @Test
     @WithUserDetails("manager@test.pl")
-    public void getOrderByValidIdReturnOk() throws Exception {
+    void getOrderByValidIdReturnOk() throws Exception {
         Order order = createOrder();
         String orderJson = mockMvc.perform(request.builder(HttpMethod.POST,"/api/orders")
                                   .content(mapper.writeValueAsString(order)))
@@ -271,27 +271,27 @@ public class OrderControllerTests {
 
     @Test
     @WithUserDetails("user@test.pl")
-    public void getOrderWithoutPermissionReturnForbidden() throws Exception {
+    void getOrderWithoutPermissionReturnForbidden() throws Exception {
         mockMvc.perform(get("/api/orders/1")).andDo(print())
                .andExpect(status().isForbidden());
     }
 
     @Test
     @WithUserDetails("manager@test.pl")
-    public void getOrderByInvalidIdReturnNotFound() throws Exception {
+    void getOrderByInvalidIdReturnNotFound() throws Exception {
         mockMvc.perform(get("/api/orders/{id}", 999L)).andDo(print())
                .andExpect(status().isNotFound());
     }
 
     @Test
     @WithUserDetails("manager@test.pl")
-    public void getOrdersByUserIdReturnOk() throws Exception {
+    void getOrdersByUserIdReturnOk() throws Exception {
         mockMvc.perform(get("/api/orders/buyer/1")).andDo(print())
                .andExpect(status().isOk());
     }
 
     @Test
-    public void getOrdersByOtherUserIdReturnForbidden() throws Exception {
+    void getOrdersByOtherUserIdReturnForbidden() throws Exception {
         User otherUser = new User("Other", "User", "other@user.com", "other_user", Collections.singleton(Role.USER));
         mockMvc.perform(request.builder(HttpMethod.POST,"/api/users").with(anonymous())
                .content(mapper.writeValueAsString(otherUser)))
@@ -304,14 +304,14 @@ public class OrderControllerTests {
 
     @Test
     @WithUserDetails("manager@test.pl")
-    public void getOrdersByInvalidUserIdReturnNotFound() throws Exception {
+    void getOrdersByInvalidUserIdReturnNotFound() throws Exception {
         mockMvc.perform(get("/api/orders/buyer/{id}", 999L)).andDo(print())
                .andExpect(status().isNotFound());
     }
 
     @Test
     @WithUserDetails("manager@test.pl")
-    public void getOrderByIdShouldContainBuyerAndProductId() throws Exception {
+    void getOrderByIdShouldContainBuyerAndProductId() throws Exception {
         Order order = createOrder();
         String postOrder = mockMvc.perform(request.builder(HttpMethod.POST,"/api/orders")
                                   .content(mapper.writeValueAsString(order)))
@@ -328,7 +328,7 @@ public class OrderControllerTests {
 
     @Test
     @WithUserDetails("manager@test.pl")
-    public void getOrdersByBuyerIdShouldNotContainBuyerAndProductId() throws Exception {
+    void getOrdersByBuyerIdShouldNotContainBuyerAndProductId() throws Exception {
        mockMvc.perform(get("/api/orders/buyer/1")).andDo(print())
                .andExpect(status().isOk())
                .andExpect(jsonPath("$").isArray())
@@ -339,14 +339,14 @@ public class OrderControllerTests {
 
     @Test
     @WithUserDetails("user@test.pl")
-    public void getOrdersByBuyerIdWithoutPermissionShouldReturnForbidden() throws Exception {
+    void getOrdersByBuyerIdWithoutPermissionShouldReturnForbidden() throws Exception {
         mockMvc.perform(get("/api/orders/buyer/1")).andDo(print())
                .andExpect(status().isForbidden());
     }
 
     @Test
     @WithUserDetails("user@test.pl")
-    public void getOrdersByCurrentUserShouldReturnOk() throws Exception {
+    void getOrdersByCurrentUserShouldReturnOk() throws Exception {
         mockMvc.perform(get("/api/orders/buyer")).andDo(print())
                .andExpect(status().isOk())
                .andExpect(jsonPath("$").isArray())
@@ -355,7 +355,7 @@ public class OrderControllerTests {
 
     @Test
     @WithUserDetails("manager@test.pl")
-    public void deleteOrderWithAuthorizationReturnNoContent() throws Exception {
+    void deleteOrderWithAuthorizationReturnNoContent() throws Exception {
         Order order = createOrder();
         String postOrder = mockMvc.perform(request.builder(HttpMethod.POST, "/api/orders")
                                   .content(mapper.writeValueAsString(order)))
@@ -369,14 +369,14 @@ public class OrderControllerTests {
 
     @Test
     @WithUserDetails("user@test.pl")
-    public void deleteOrderWithoutAuthorizationReturnForbidden() throws Exception {
+    void deleteOrderWithoutAuthorizationReturnForbidden() throws Exception {
         mockMvc.perform(request.builder(HttpMethod.DELETE, "/api/orders/{id}", 1L)).andDo(print())
                .andExpect(status().isForbidden());
     }
 
     @Test
     @WithUserDetails("manager@test.pl")
-    public void deleteOrderWithInvalidIdReturnNotFound() throws Exception {
+    void deleteOrderWithInvalidIdReturnNotFound() throws Exception {
         mockMvc.perform(request.builder(HttpMethod.DELETE, "/api/orders/{id}", 999L)).andDo(print())
                .andExpect(status().isNotFound());
     }

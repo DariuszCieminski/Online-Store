@@ -39,7 +39,7 @@ import pl.swaggerexample.model.enums.Role;
 @AutoConfigureTestDatabase
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class JwtAuthenticationTests {
+class JwtAuthenticationTests {
 
     private static final String LOGIN_TEMPLATE = "{\"email\":\"%s\",\"password\":\"%s\"}";
     private static final String REFRESH_TOKEN_TEMPLATE = "{\"access_token\":%s,\"refresh_token\":%s}";
@@ -61,7 +61,7 @@ public class JwtAuthenticationTests {
     private CustomRequest request;
 
     @BeforeAll
-    public void init() {
+    void init() {
         userDao.save(USER);
         userDao.save(DEV);
 
@@ -70,12 +70,12 @@ public class JwtAuthenticationTests {
     }
 
     @AfterAll
-    public void cleanup() {
+    void cleanup() {
         userDao.deleteAll();
     }
 
     @Test
-    public void jwtLoginShouldReturnOk() throws Exception {
+    void jwtLoginShouldReturnOk() throws Exception {
         mockMvc.perform(request.builder(HttpMethod.POST, "/login")
                .content(String.format(LOGIN_TEMPLATE, USER.getEmail(), USER.getPassword())))
                .andExpect(status().isOk())
@@ -85,7 +85,7 @@ public class JwtAuthenticationTests {
     }
 
     @Test
-    public void jwtLoginInvalidPasswordShouldReturnUnauthorized() throws Exception {
+    void jwtLoginInvalidPasswordShouldReturnUnauthorized() throws Exception {
         mockMvc.perform(request.builder(HttpMethod.POST, "/login")
                .content(String.format(LOGIN_TEMPLATE, USER.getEmail(), "wrong_password")))
                .andExpect(status().isUnauthorized())
@@ -94,7 +94,7 @@ public class JwtAuthenticationTests {
 
     @ParameterizedTest
     @MethodSource("getLoginDataList")
-    public void loginWithInvalidDataShouldReturnUnauthorized(String loginData) throws Exception {
+    void loginWithInvalidDataShouldReturnUnauthorized(String loginData) throws Exception {
         mockMvc.perform(request.builder(HttpMethod.POST, "/login")
                .content(loginData))
                .andExpect(status().isUnauthorized());
@@ -126,7 +126,7 @@ public class JwtAuthenticationTests {
     }
 
     @Test
-    public void loginAsDeveloperShouldCreateSwaggerCookie() throws Exception {
+    void loginAsDeveloperShouldCreateSwaggerCookie() throws Exception {
         mockMvc.perform(request.builder(HttpMethod.POST, "/login")
                .content(String.format(LOGIN_TEMPLATE, DEV.getEmail(), DEV.getPassword())))
                .andExpect(status().isOk())
@@ -136,7 +136,7 @@ public class JwtAuthenticationTests {
     }
 
     @Test
-    public void loginAsUserShouldNotCreateSwaggerCookie() throws Exception {
+    void loginAsUserShouldNotCreateSwaggerCookie() throws Exception {
         mockMvc.perform(request.builder(HttpMethod.POST, "/login")
                .content(String.format(LOGIN_TEMPLATE, USER.getEmail(), USER.getPassword())))
                .andExpect(status().isOk())
@@ -144,7 +144,7 @@ public class JwtAuthenticationTests {
     }
 
     @Test
-    public void refreshAccessTokenShouldReturnNewToken() throws Exception {
+    void refreshAccessTokenShouldReturnNewToken() throws Exception {
         String loginResultJson = mockMvc.perform(request.builder(HttpMethod.POST, "/login")
                                         .content(String.format(LOGIN_TEMPLATE, USER.getEmail(), USER.getPassword())))
                                         .andExpect(status().isOk())
@@ -161,7 +161,7 @@ public class JwtAuthenticationTests {
     }
 
     @Test
-    public void refreshAccessTokenWithoutRefreshTokenShouldReturnUnauthorized() throws Exception {
+    void refreshAccessTokenWithoutRefreshTokenShouldReturnUnauthorized() throws Exception {
         String loginResultJson = mockMvc.perform(request.builder(HttpMethod.POST, "/login")
                                         .content(String.format(LOGIN_TEMPLATE, USER.getEmail(), USER.getPassword())))
                                         .andExpect(status().isOk())
@@ -176,7 +176,7 @@ public class JwtAuthenticationTests {
     }
 
     @Test
-    public void refreshAccessTokenWithoutAuthorizationHeaderShouldReturnUnauthorized() throws Exception {
+    void refreshAccessTokenWithoutAuthorizationHeaderShouldReturnUnauthorized() throws Exception {
         String loginResultJson = mockMvc.perform(request.builder(HttpMethod.POST, "/login")
                                         .content(String.format(LOGIN_TEMPLATE, USER.getEmail(), USER.getPassword())))
                                         .andExpect(status().isOk())
@@ -191,7 +191,7 @@ public class JwtAuthenticationTests {
     }
 
     @Test
-    public void jwtLogoutShouldDeleteSwaggerCookie() throws Exception {
+    void jwtLogoutShouldDeleteSwaggerCookie() throws Exception {
         MockHttpServletResponse loginResponse = mockMvc.perform(request.builder(HttpMethod.POST, "/login")
                                                        .content(String.format(LOGIN_TEMPLATE, DEV.getEmail(), DEV.getPassword())))
                                                        .andExpect(status().isOk())
@@ -207,7 +207,7 @@ public class JwtAuthenticationTests {
 
     @Test
     @WithMockUser
-    public void pingServerShouldReturnNotFound() throws Exception {
+    void pingServerShouldReturnNotFound() throws Exception {
         mockMvc.perform(get("/api/util/ping"))
                .andExpect(status().isNotFound());
     }
