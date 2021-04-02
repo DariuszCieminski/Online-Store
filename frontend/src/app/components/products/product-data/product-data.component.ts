@@ -40,7 +40,7 @@ export class ProductDataComponent implements OnInit {
     }
 
     createImageField(): FormControl {
-        return new FormControl('', Validators.pattern("^(http|https)?.*\\/.*"));
+        return new FormControl('', Validator.imageUrl);
     }
 
     addImageFieldToForm(): void {

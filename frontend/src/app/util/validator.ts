@@ -11,6 +11,10 @@ export class Validator {
         return RegExp("^[0-9]{2}-[0-9]{3}$").test(control.value) ? null : {'postCode': true};
     }
 
+    static imageUrl(control: AbstractControl): ValidationErrors | null {
+        return RegExp("^(http|https)?.{0,50}/.{0,200}").test(control.value) ? null : {'imageUrl': true};
+    }
+
     static price(control: AbstractControl): ValidationErrors | null {
         if (control.value == null) return null;
         return RegExp("^\\d{1,10}([,.]\\d{1,2})?$").test(control.value) ? null : {'price': true};
