@@ -10,10 +10,10 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>pl</groupId>
-  <artifactId>swaggerexample</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>Swagger Example</name>
-  <description>Example Spring Boot project with Swagger</description>
+  <artifactId>onlinestore</artifactId>
+  <version>0.5.0-SNAPSHOT</version>
+  <name>Online Store</name>
+  <description>Online store project made with Spring Boot</description>
 
   <properties>
     <java.version>1.8</java.version>
@@ -76,7 +76,7 @@
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <scope>runtime</scope>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -85,6 +85,9 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <finalName>${project.artifactId}-${version}</finalName>
+        </configuration>
       </plugin>
     </plugins>
   </build>
