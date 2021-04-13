@@ -1,0 +1,45 @@
+# Build stage
+FROM node:alpine as build
+
+# Create folder for building the application
+RUN mkdir /app
+
+# Set it as workdir
+WORKDIR /app
+
+# Copy package.json files containing required dependencies
+COPY frontend/package*.json .
+
+# Install dependencies
+RUN npm install
+
+# Copy source files to the workdir
+COPY frontend/ .
+
+# Read selected profile or set to default if build argument doesn't exist
+ARG PROFILE=jwt
+
+# Build the application
+RUN npm run build:$PROFILE
+
+
+# Run stage
+FROM nginx:alpine
+
+# Set workdir
+WORKDIR /usr/share/nginx/html
+
+# Remove the default website
+RUN rm *
+
+# Copy app files to the workdir
+COPY --from=build /app/dist/frontend/ .
+
+# Copy startup script
+COPY --from=build /app/startup.sh .
+
+# Copy nginx server configuration
+COPY --from=build /app/default.conf /etc/nginx/conf.d
+
+# Run the application
+ENTRYPOINT ["./startup.sh"]

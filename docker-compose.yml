@@ -1,0 +1,47 @@
+version: "3.9"
+
+volumes:
+  db_data:
+
+services:
+  database:
+    image: postgres:alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: dockerfile-backend
+    image: onlinestore-server:latest
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    environment:
+      SPRING_PROFILES_ACTIVE: ${PROFILE}
+      SPRING_DATASOURCE_URL: ${DB_URL}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL-AUTO: update
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+      
+  frontend:
+    build:
+      context: .
+      dockerfile: dockerfile-frontend
+      args:
+        PROFILE: ${PROFILE}
+    image: onlinestore-client_${PROFILE}:latest
+    restart: on-failure
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend
+    environment:
+      API_URL: ${API_URL}
