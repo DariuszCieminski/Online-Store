@@ -3,9 +3,8 @@
     "version": "1.0.0",
     "scripts": {
         "ng": "ng",
-        "start": "ng serve --prod",
-        "build": "ng build --prod",
-        "start:session": "ng serve --prod -c session",
+        "start": "ng serve",
+        "build:jwt": "ng build --prod",
         "build:session": "ng build --prod -c session",
         "test": "ng test",
         "lint": "ng lint",

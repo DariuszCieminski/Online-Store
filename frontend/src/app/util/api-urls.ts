@@ -1,5 +1,5 @@
 export class ApiUrls {
-    private static readonly BASE_URL: string = 'http://localhost:8080';
+    private static readonly BASE_URL: string = '{API_URL}';
     private static readonly USERS: string = '/api/users';
     private static readonly PRODUCTS: string = '/api/products';
     private static readonly ORDERS: string = '/api/orders';
