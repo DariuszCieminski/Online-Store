@@ -36,8 +36,8 @@ public class OnlineStoreApplication {
 
     private ApiInfo getApiInfo() {
         return new ApiInfoBuilder()
-            .title("Swagger Example Application")
-            .description("Simple REST Application with Swagger")
+            .title("Online Store Application")
+            .description("Simple REST API documented by Swagger")
             .version("1.0")
             .build();
     }

@@ -1,5 +1,6 @@
 <mat-toolbar color="primary" fxLayoutGap="1rem">
-    <span>Swagger Example</span>
+    <mat-icon fontSet="material-icons-round">local_mall</mat-icon>
+    <span>Online Store</span>
     <a routerLink="/">Home</a>
     <a *ngxPermissionsOnly="'DEVELOPER'" [href]="getSwaggerUrl()" target="_blank">Swagger UI</a>
     <a *ngxPermissionsExcept="'GUEST'" routerLink="/products">Products</a>
