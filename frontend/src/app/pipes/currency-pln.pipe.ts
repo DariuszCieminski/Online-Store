@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
     name: 'currencyPLN'
 })
 export class CurrencyPLNPipe extends CurrencyPipe implements PipeTransform {
-    transform(value: any): string | null {
+    transform(value: any): any {
         return super.transform(value, 'PLN', 'symbol', '1.2-2', 'pl');
     }
 }

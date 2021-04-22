@@ -185,7 +185,7 @@ class UserControllerTests {
     void getUserByValidIdReturnOk() throws Exception {
         mockMvc.perform(get("/api/users/1")).andDo(print())
                .andExpect(status().isOk())
-               .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+               .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                .andExpect(jsonPath("$.id").value(1));
     }
 

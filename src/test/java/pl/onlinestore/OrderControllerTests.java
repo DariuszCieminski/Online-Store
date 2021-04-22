@@ -265,7 +265,7 @@ class OrderControllerTests {
 
         mockMvc.perform(get("/api/orders/{id}", order.getId())).andDo(print())
                .andExpect(status().isOk())
-               .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+               .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                .andExpect(jsonPath("$.id").value(order.getId()));
     }
 
@@ -321,7 +321,7 @@ class OrderControllerTests {
 
         mockMvc.perform(get("/api/orders/{id}", order.getId())).andDo(print())
                .andExpect(status().isOk())
-               .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+               .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                .andExpect(jsonPath("$.buyer").exists())
                .andExpect(jsonPath("$.items[0].id").exists());
     }

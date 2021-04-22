@@ -188,7 +188,7 @@ class ProductControllerTests {
         Long id = 1L;
         mockMvc.perform(get("/api/products/{id}", id)).andDo(print())
                .andExpect(status().isOk())
-               .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+               .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                .andExpect(jsonPath("$.id").value(id));
     }
 
