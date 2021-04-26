@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { NgxPermissionsService } from "ngx-permissions";
 import { Observable, of } from "rxjs";
 import { catchError, mapTo, tap } from "rxjs/operators";
-import { ApiUrls } from "../../app/util/api-urls";
+import { ApiUrls } from "../../../util/api-urls";
 import { AuthenticationService } from "../authentication-service";
 
 @Injectable({

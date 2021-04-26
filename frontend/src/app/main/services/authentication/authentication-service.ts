@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { User } from "../app/models/user";
+import { User } from "../../models/user";
 
 export abstract class AuthenticationService {
     protected currentUser: User;

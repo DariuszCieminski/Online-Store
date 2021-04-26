@@ -3,7 +3,7 @@ import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { interval } from "rxjs";
-import { AuthenticationService } from "../../../authentication/authentication-service";
+import { AuthenticationService } from "../../services/authentication/authentication-service";
 import { Order } from "../../models/order";
 import { OrderStatus } from "../../models/order-status.enum";
 import { PaymentMethod } from "../../models/payment-method.enum";

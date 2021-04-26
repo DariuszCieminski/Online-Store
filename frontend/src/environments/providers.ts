@@ -1,11 +1,11 @@
 import { HTTP_INTERCEPTORS, HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { NgxPermissionsService } from "ngx-permissions";
-import { AuthenticationGuard } from "../authentication/authentication-guard";
-import { AuthenticationService } from "../authentication/authentication-service";
-import { JwtAuthenticationGuard } from "../authentication/jwt/jwt-authentication-guard";
-import { JwtAuthenticationService } from "../authentication/jwt/jwt-authentication.service";
-import { RequestInterceptor } from "../authentication/jwt/request.interceptor";
+import { AuthenticationGuard } from "../app/main/services/authentication/authentication-guard";
+import { AuthenticationService } from "../app/main/services/authentication/authentication-service";
+import { JwtAuthenticationGuard } from "../app/main/services/authentication/jwt/jwt-authentication-guard";
+import { JwtAuthenticationService } from "../app/main/services/authentication/jwt/jwt-authentication.service";
+import { RequestInterceptor } from "../app/main/services/authentication/jwt/request.interceptor";
 
 export const PROVIDERS = [
     {
