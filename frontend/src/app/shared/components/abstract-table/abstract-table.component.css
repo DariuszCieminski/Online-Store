@@ -1,0 +1,22 @@
+table {
+    width: 100%
+}
+
+th.mat-header-cell {
+    text-align: center;
+    font-size: medium;
+}
+
+td.mat-cell {
+    text-align: center;
+    word-break: break-word;
+}
+
+img {
+    width: 5rem;
+    max-width: 5rem;
+}
+
+::ng-deep .mat-sort-header-container {
+    justify-content: center;
+}

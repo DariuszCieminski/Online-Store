@@ -42,8 +42,9 @@ import { ProductDetailsComponent } from './views/products/product-details/produc
 import { ProductsComponent } from './views/products/products.component';
 import { QuantityPanelComponent } from './views/products/quantity-panel/quantity-panel.component';
 import { RegisterComponent } from './views/register/register.component';
-import { CurrencyPLNPipe } from './pipes/currency-pln.pipe';
-import { CustomDatePipe } from './pipes/custom-date.pipe';
+import { AdminComponent } from "../admin/admin.component";
+import { AdminModule } from "../admin/admin.module";
+import { SharedModule } from "../shared/shared.module";
 
 registerLocaleData(localePl);
 
@@ -63,8 +64,6 @@ registerLocaleData(localePl);
         QuantityPanelComponent,
         NewOrderComponent,
         OrdersComponent,
-        CurrencyPLNPipe,
-        CustomDatePipe,
         ButtonSpinnerComponent
     ],
     imports: [
@@ -112,6 +111,12 @@ registerLocaleData(localePl);
                 component: OrdersComponent,
                 canActivate: [NgxPermissionsGuard, AuthenticationGuard],
                 data: {permissions: {except: 'GUEST', redirectTo: '/login'}}
+            },
+            {
+                path: "management",
+                component: AdminComponent,
+                canActivate: [NgxPermissionsGuard, AuthenticationGuard],
+                data: {permissions: {only: 'MANAGER', redirectTo: '/'}}
             }
         ]),
         NgxPermissionsModule.forRoot(),
@@ -135,7 +140,9 @@ registerLocaleData(localePl);
         MatRadioModule,
         MatTableModule,
         MatSortModule,
-        MatProgressSpinnerModule
+        MatProgressSpinnerModule,
+        AdminModule,
+        SharedModule
     ],
     providers: [
         PROVIDERS,

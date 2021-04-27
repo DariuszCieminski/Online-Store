@@ -1,0 +1,5 @@
+table-users, table-orders {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}

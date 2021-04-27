@@ -7,51 +7,6 @@
             <input matInput #search (input)="dataSource.filter = search.value">
         </mat-form-field>
     </div>
-    <table mat-table matSort [dataSource]="dataSource" matSortActive="time" matSortDirection="desc">
-        <ng-container matColumnDef="items">
-            <th mat-header-cell *matHeaderCellDef>Products</th>
-            <td class="products" mat-cell *matCellDef="let order" fxLayout="column" fxLayoutGap="1rem"
-                [ngStyle]="order.items.length > 0 ? {'display': 'table-cell'} : {'display': 'flex'}">
-                <div *ngFor="let item of order.items" fxLayout="row" fxLayoutGap="1.5rem" fxLayoutAlign="baseline center">
-                    <img [src]="item.product.images[0]">
-                    <span class="product-name">{{item.product.name}}</span>
-                    <span>{{item.quantity}}&emsp;x&emsp;{{item.product.price | currencyPLN}}</span>
-                </div>
-            </td>
-        </ng-container>
-        <ng-container matColumnDef="deliveryAddress">
-            <th mat-header-cell *matHeaderCellDef>Delivery address</th>
-            <td mat-cell *matCellDef="let order">
-                <div fxLayout="column" fxLayoutGap=".4rem">
-                    <span>{{order.deliveryAddress.street}}</span>
-                    <span>{{order.deliveryAddress.postCode}}</span>
-                    <span>{{order.deliveryAddress.city}}</span>
-                </div>
-            </td>
-        </ng-container>
-        <ng-container matColumnDef="paymentMethod">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Payment method</th>
-            <td mat-cell *matCellDef="let order">{{getPaymentMethod(order.paymentMethod)}}</td>
-        </ng-container>
-        <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
-            <td mat-cell *matCellDef="let order">{{getOrderStatus(order.status)}}</td>
-        </ng-container>
-        <ng-container matColumnDef="cost">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Cost</th>
-            <td mat-cell *matCellDef="let order">{{order.cost | currencyPLN}}</td>
-        </ng-container>
-        <ng-container matColumnDef="time">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="time">Place order time</th>
-            <td mat-cell *matCellDef="let order">{{order.time | customDate}}</td>
-        </ng-container>
-        <ng-container matColumnDef="information">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Additional information</th>
-            <td mat-cell class="order-information" *matCellDef="let order">{{order.information}}</td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-    </table>
+    <table-orders [dataSource]="dataSource" [displayedColumns]="displayedColumns"></table-orders>
     <mat-spinner *ngIf="isLoading"></mat-spinner>
 </div>

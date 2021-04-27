@@ -1,0 +1,12 @@
+<mat-tab-group dynamicHeight mat-align-tabs="center">
+    <mat-tab label="Users">
+        <ng-template matTabContent>
+            <table-users [dataSource]="usersDataSource" [displayedColumns]="userDisplayedCols"></table-users>
+        </ng-template>
+    </mat-tab>
+    <mat-tab label="Orders">
+        <ng-template matTabContent>
+            <table-orders [dataSource]="ordersDataSource" [displayedColumns]="orderDisplayedCols"></table-orders>
+        </ng-template>
+    </mat-tab>
+</mat-tab-group>

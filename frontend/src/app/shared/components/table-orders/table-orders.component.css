@@ -1,0 +1,13 @@
+.products {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.product-name {
+    width: 10vw;
+    max-width: 10vw;
+}
+
+.order-information {
+    max-width: 12vw;
+}

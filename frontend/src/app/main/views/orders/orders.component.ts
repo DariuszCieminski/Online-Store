@@ -5,8 +5,6 @@ import { MatTableDataSource } from "@angular/material/table";
 import { interval } from "rxjs";
 import { AuthenticationService } from "../../services/authentication/authentication-service";
 import { Order } from "../../models/order";
-import { OrderStatus } from "../../models/order-status.enum";
-import { PaymentMethod } from "../../models/payment-method.enum";
 import { OrderService } from "../../services/order.service";
 
 @Component({
@@ -42,13 +40,5 @@ export class OrdersComponent implements OnInit {
                         });
                 }
             });
-    }
-
-    getPaymentMethod(key: string): string {
-        return PaymentMethod[key];
-    }
-
-    getOrderStatus(key: string): string {
-        return OrderStatus[key];
     }
 }

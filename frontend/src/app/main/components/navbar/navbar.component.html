@@ -3,6 +3,7 @@
     <span>Online Store</span>
     <a routerLink="/">Home</a>
     <a *ngxPermissionsOnly="'DEVELOPER'" [href]="getSwaggerUrl()" target="_blank">Swagger UI</a>
+    <a *ngxPermissionsOnly="'MANAGER'" routerLink="/management">Management</a>
     <a *ngxPermissionsExcept="'GUEST'" routerLink="/products">Products</a>
     <a *ngxPermissionsExcept="'GUEST'" routerLink="/orders">My orders</a>
     <span class="fill-space"></span>
