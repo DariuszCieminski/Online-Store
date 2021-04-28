@@ -1,4 +1,11 @@
-import { HttpErrorResponse, HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import {
+    HttpErrorResponse,
+    HttpEvent,
+    HttpHandler,
+    HttpHeaders,
+    HttpInterceptor,
+    HttpRequest
+} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from "@angular/router";
 import { EMPTY, Observable, throwError } from 'rxjs';
@@ -16,15 +23,17 @@ export class RequestInterceptor implements HttpInterceptor {
 
         if (this.auth.isAuthenticated() || reqHeaders.has("reauth")) {
             reqHeaders = this.appendAuthHeader(reqHeaders).delete("reauth");
-        } else if (this.auth.getAccessToken()) {
+        } else if (this.auth.getAccessToken() != null && !request.url.includes("/logout")) {
             return this.auth.reAuthentication().pipe(
                 switchMap(() => {
-                    return next.handle(request.clone({headers: this.appendAuthHeader(reqHeaders), withCredentials: true}));
+                    return next.handle(request.clone({
+                        headers: this.appendAuthHeader(reqHeaders),
+                        withCredentials: true
+                    }));
                 }),
                 catchError((error: HttpErrorResponse) => {
                     if (error.status === 401) {
-                        this.router.navigateByUrl('/login');
-                        return EMPTY;
+                        this.router.navigateByUrl('/login').then(() => EMPTY);
                     } else {
                         return throwError(error);
                     }

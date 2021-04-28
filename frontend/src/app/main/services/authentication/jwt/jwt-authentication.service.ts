@@ -55,7 +55,7 @@ export class JwtAuthenticationService extends AuthenticationService {
         let refreshToken = sessionStorage.getItem(this.REFRESH_TOKEN);
         let tokens = {"access_token": accessToken, "refresh_token": refreshToken};
 
-        return this.httpClient.post(ApiUrls.login, tokens, {headers: {"reauth": "yes"}}).pipe(
+        return this.httpClient.post(ApiUrls.login, tokens, {headers: {"reauth": "true"}}).pipe(
             tap(response => sessionStorage.setItem(this.ACCESS_TOKEN, response[this.ACCESS_TOKEN]),
                 () => this.clearUserData())
         );
