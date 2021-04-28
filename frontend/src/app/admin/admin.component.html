@@ -1,12 +1,27 @@
-<mat-tab-group dynamicHeight mat-align-tabs="center">
-    <mat-tab label="Users">
-        <ng-template matTabContent>
-            <table-users [dataSource]="usersDataSource" [displayedColumns]="userDisplayedCols"></table-users>
-        </ng-template>
-    </mat-tab>
-    <mat-tab label="Orders">
-        <ng-template matTabContent>
-            <table-orders [dataSource]="ordersDataSource" [displayedColumns]="orderDisplayedCols"></table-orders>
-        </ng-template>
-    </mat-tab>
-</mat-tab-group>
+<div fxLayout="column">
+    <div fxLayout="row" fxLayoutGap="2rem" fxLayoutAlign="center">
+        <mat-paginator [pageSizeOptions]="[5,10,20]" [pageSize]="10"></mat-paginator>
+        <mat-form-field>
+            <mat-icon matPrefix>search</mat-icon>
+            <input matInput placeholder="Search..." (input)="onSearch($event.target)">
+        </mat-form-field>
+    </div>
+    <mat-tab-group dynamicHeight mat-align-tabs="center">
+        <mat-tab>
+            <ng-template matTabLabel>
+                <span class="tab-label">Users</span>
+            </ng-template>
+            <ng-template matTabContent>
+                <table-users [dataSource]="dataSource[0]" [displayedColumns]="displayedColumns[0]"></table-users>
+            </ng-template>
+        </mat-tab>
+        <mat-tab>
+            <ng-template matTabLabel>
+                <span class="tab-label">Orders</span>
+            </ng-template>
+            <ng-template matTabContent>
+                <table-orders [dataSource]="dataSource[1]" [displayedColumns]="displayedColumns[1]"></table-orders>
+            </ng-template>
+        </mat-tab>
+    </mat-tab-group>
+</div>

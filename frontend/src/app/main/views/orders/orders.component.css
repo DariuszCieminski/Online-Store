@@ -1,12 +1,16 @@
 table-orders {
-  display: flex;
-  width: 100%;
-  justify-content: center;
+    display: flex;
+    width: 100%;
+    justify-content: center;
 }
 
 .search-field {
-  position: absolute;
-  max-width: 15vw;
-  margin-left: 40vw;
-  margin-top: .1rem;
+    position: absolute;
+    max-width: 15vw;
+    margin-left: 40vw;
+    margin-top: .1rem;
+}
+
+.search-field input.mat-input-element {
+    margin-top: .2rem;
 }

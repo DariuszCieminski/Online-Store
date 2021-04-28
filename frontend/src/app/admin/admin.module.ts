@@ -4,8 +4,12 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { MatTableModule } from "@angular/material/table";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { SharedModule } from "../shared/shared.module";
-import { AdminComponent } from "./admin.component";
 import { MatSortModule } from "@angular/material/sort";
+import { MatPaginatorModule } from "@angular/material/paginator";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatIconModule } from "@angular/material/icon";
+import { MatInputModule } from "@angular/material/input";
+import { AdminComponent } from "./admin.component";
 import { TableUsersComponent } from './components/table-users/table-users.component';
 
 @NgModule({
@@ -19,7 +23,11 @@ import { TableUsersComponent } from './components/table-users/table-users.compon
         MatTableModule,
         FlexLayoutModule,
         SharedModule,
-        MatSortModule
+        MatSortModule,
+        MatPaginatorModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatInputModule
     ]
 })
 export class AdminModule {

@@ -14,9 +14,8 @@ import { OrderService } from "../../services/order.service";
 })
 export class OrdersComponent implements OnInit {
     isLoading: boolean = true;
-    orders: Order[];
-    displayedColumns: string[] = ['items', 'deliveryAddress', 'paymentMethod', 'status', 'cost', 'time', 'information'];
     dataSource: MatTableDataSource<Order>;
+    displayedColumns: string[] = ['items', 'deliveryAddress', 'paymentMethod', 'status', 'cost', 'time', 'information'];
     @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
     @ViewChild(MatSort, {static: false}) sort: MatSort;
 
@@ -32,9 +31,8 @@ export class OrdersComponent implements OnInit {
                     loadingSubscriber.unsubscribe();
 
                     this.orderService.getOrdersByCurrentUser()
-                        .subscribe(value => {
-                            this.orders = value;
-                            this.dataSource = new MatTableDataSource<Order>(this.orders);
+                        .subscribe(response => {
+                            this.dataSource = new MatTableDataSource<Order>(response);
                             this.dataSource.paginator = this.paginator;
                             this.dataSource.sort = this.sort;
                         });

@@ -3,3 +3,11 @@ table-users, table-orders {
     width: 100%;
     justify-content: center;
 }
+
+input.mat-input-element {
+    margin-top: .2rem;
+}
+
+.tab-label {
+    font-size: x-large;
+}
