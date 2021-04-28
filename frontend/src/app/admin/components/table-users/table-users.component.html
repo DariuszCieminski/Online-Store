@@ -14,11 +14,12 @@
     <ng-container matColumnDef="address">
         <th mat-header-cell *matHeaderCellDef>Address</th>
         <td mat-cell *matCellDef="let user">
-            <div fxLayout="column" fxLayoutGap=".4rem">
+            <div *ngIf="user.address; else noAddress" fxLayout="column" fxLayoutGap=".4rem">
                 <span>{{user.address.street}}</span>
                 <span>{{user.address.postCode}}</span>
                 <span>{{user.address.city}}</span>
             </div>
+            <ng-template #noAddress>-</ng-template>
         </td>
     </ng-container>
 
