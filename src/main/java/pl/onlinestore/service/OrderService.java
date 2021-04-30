@@ -1,10 +1,5 @@
 package pl.onlinestore.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -17,6 +12,13 @@ import pl.onlinestore.model.OrderItem;
 import pl.onlinestore.model.Product;
 import pl.onlinestore.model.User;
 import pl.onlinestore.model.enums.OrderStatus;
+
+import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService implements EntityService<Order> {
@@ -85,7 +87,13 @@ public class OrderService implements EntityService<Order> {
 
     @Override
     public Order update(Order object) {
-        throw new UnsupportedOperationException("Order update is unsupported.");
+        if (object.getId() == null || !orderDao.existsById(object.getId())) {
+            throw new EntityNotFoundException("There is no order with id: " + object.getId());
+        }
+
+        Order order = orderDao.findById(object.getId()).get();
+        order.setStatus(object.getStatus());
+        return orderDao.save(object);
     }
 
     @Override

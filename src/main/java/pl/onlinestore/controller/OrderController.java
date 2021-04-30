@@ -1,25 +1,14 @@
 package pl.onlinestore.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
+
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.onlinestore.model.Order;
 import pl.onlinestore.service.OrderService;
 import pl.onlinestore.service.ProductService;
@@ -83,6 +72,16 @@ public class OrderController {
     @JsonView(OrderSimple.class)
     public Order addOrder(@Valid @RequestBody @ApiParam(value = "Data of the new order") Order order) {
         return orderService.add(order);
+    }
+
+    @PatchMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation(value = "Modifies status of the order")
+    @ApiResponses({@ApiResponse(code = 403, message = "Non-manager is trying to modify order status"),
+                   @ApiResponse(code = 404, message = "Order with specified ID doesn't exist")})
+    public void modifyOrderStatus(@RequestBody @ApiParam(value = "Id and new status of the order",
+            examples = @Example(@ExampleProperty(value = "{ 'id': 1, 'status': SENT }"))) Order order) {
+        orderService.update(order);
     }
 
     @DeleteMapping("/{id}")

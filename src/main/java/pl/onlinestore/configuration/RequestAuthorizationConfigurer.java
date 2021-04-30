@@ -21,6 +21,7 @@ public class RequestAuthorizationConfigurer implements
             .antMatchers(HttpMethod.GET, "/api/users/**", "/api/orders/**").hasRole(Role.MANAGER.name())
             .antMatchers(HttpMethod.POST, "/api/products").hasRole(Role.MANAGER.name())
             .antMatchers(HttpMethod.PUT, "/api/products", "/api/users").hasRole(Role.MANAGER.name())
+            .antMatchers(HttpMethod.PATCH, "/api/orders").hasRole(Role.MANAGER.name())
             .antMatchers(HttpMethod.POST, "/api/users").permitAll()
             .antMatchers(HttpMethod.POST, "/login").anonymous()
             .anyRequest().authenticated();
