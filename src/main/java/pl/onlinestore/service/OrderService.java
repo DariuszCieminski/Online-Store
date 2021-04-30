@@ -93,7 +93,7 @@ public class OrderService implements EntityService<Order> {
 
         Order order = orderDao.findById(object.getId()).get();
         order.setStatus(object.getStatus());
-        return orderDao.save(object);
+        return orderDao.save(order);
     }
 
     @Override
