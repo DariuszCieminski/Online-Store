@@ -26,12 +26,12 @@ export class AdminComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
         this.tabs.focusChange.subscribe(event => {
-            const index = event.index;
-            if (this.dataSource[index] == null) {
-                this.httpClient.get(this.apiUrls[index])
-                    .subscribe((response: any[]) => this.addDataSource(index, response));
+            const tabIndex = event.index;
+            if (this.dataSource[tabIndex] == null) {
+                this.httpClient.get(this.apiUrls[tabIndex])
+                    .subscribe((response: any[]) => this.addDataSource(tabIndex, response));
             } else {
-                this.dataSource[index].filter = null;
+                this.dataSource[tabIndex].filter = null;
             }
         });
         this.tabs._focusChanged(0);

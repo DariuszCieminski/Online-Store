@@ -1,0 +1,12 @@
+<div fxLayout="column" fxLayoutAlign="center">
+    <div class="title">Set new status</div>
+    <mat-form-field>
+        <mat-label>New status of the order</mat-label>
+        <mat-select [value]="data" #select>
+            <mat-option *ngFor="let status of getStatusList()" [value]="status">
+                {{getStatusName(status)}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <button mat-flat-button color="primary" (click)="onSubmit(select.value)">Submit</button>
+</div>

@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from '@angular/core';
 import { Observable } from "rxjs";
 import { Order } from "../models/order";
+import { OrderStatus } from "../models/order-status.enum";
 import { ApiUrls } from "../util/api-urls";
 
 @Injectable({
@@ -10,10 +11,6 @@ import { ApiUrls } from "../util/api-urls";
 export class OrderService {
 
     constructor(private http: HttpClient) {
-    }
-
-    getAllOrders(): Observable<Order[]> {
-        return this.http.get<Order[]>(ApiUrls.orders);
     }
 
     getOrdersByUserId(id: number): Observable<Order[]> {
@@ -26,6 +23,10 @@ export class OrderService {
 
     createOrder(order: Order): Observable<Order> {
         return this.http.post<Order>(ApiUrls.orders, order);
+    }
+
+    modifyOrderStatus(id: number, status: OrderStatus): Observable<void> {
+        return this.http.patch<void>(ApiUrls.orders, {'id': id, 'status': status});
     }
 
     deleteOrder(id: number): Observable<void> {

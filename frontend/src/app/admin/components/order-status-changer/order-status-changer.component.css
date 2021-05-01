@@ -1,0 +1,19 @@
+mat-form-field {
+    padding: 0 1rem;
+}
+
+button {
+    align-self: center;
+    width: 75%;
+    margin: 1rem;
+}
+
+.title {
+    padding: .5rem 0;
+    margin-bottom: 1rem;
+    text-align: center;
+    background-color: #673ab7;
+    color: white;
+    font-size: large;
+    border-bottom: 2px solid black;
+}
