@@ -65,7 +65,7 @@ export class NewOrderComponent implements OnInit {
             .subscribe(() => {
                 this.cartService.clearCart();
                 this.router.navigateByUrl('/')
-                    .then(() => this.snackBar.showSnackbar('Order has been made successfully.', 'OK', {duration: 0}));
+                    .then(() => this.snackBar.show('Order has been made successfully.', 'OK', {duration: 0}));
             });
     }
 }

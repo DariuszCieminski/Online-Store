@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
                         return this.router.navigateByUrl('/');
                     } else {
                         this.isAuthenticating = false;
-                        this.snackBar.showSnackbar("Invalid email or password", "Close");
+                        this.snackBar.show("Invalid email or password", "Close");
                     }
                 });
         }

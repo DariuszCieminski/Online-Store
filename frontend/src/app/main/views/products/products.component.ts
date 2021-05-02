@@ -7,7 +7,7 @@ import { Product } from "../../models/product";
 import { ProductService } from "../../services/product.service";
 import { SnackbarService } from "../../services/snackbar.service";
 import { ProductDataComponent } from "./product-data/product-data.component";
-import { ProductDeleteComponent } from "./product-delete.component";
+import { DialogDeleteComponent } from "../../../shared/components/dialog-delete.component";
 import { ProductDetailsComponent } from './product-details/product-details.component';
 
 @Component({
@@ -88,9 +88,10 @@ export class ProductsComponent {
     }
 
     showProductDeleteDialog(id: number): void {
-        this.dialog.open(ProductDeleteComponent, {
+        this.dialog.open(DialogDeleteComponent, {
             height: 'auto',
             width: '30%',
+            disableClose: true,
             scrollStrategy: new NoopScrollStrategy()
         }).afterClosed()
             .subscribe(value => {
@@ -106,10 +107,10 @@ export class ProductsComponent {
     }
 
     private showSnackBar(message: string): void {
-        this.snackBar.showSnackbar(message, "OK", {duration: 0});
+        this.snackBar.show(message, "OK", {duration: 0});
     }
 
     private handleError(error: HttpErrorResponse): void {
-        this.showSnackBar(`${error.name} (status ${error.status}): ${error.message}`);
+        this.showSnackBar(`Error (status ${error.status}): ${error.error}`);
     }
 }

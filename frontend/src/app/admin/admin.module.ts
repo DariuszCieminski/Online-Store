@@ -15,12 +15,14 @@ import { MatButtonModule } from "@angular/material/button";
 import { AdminComponent } from "./admin.component";
 import { TableUsersComponent } from './components/table-users/table-users.component';
 import { OrderStatusChangerComponent } from './components/order-status-changer/order-status-changer.component';
+import { UserDataComponent } from './components/user-data/user-data.component';
 
 @NgModule({
     declarations: [
         AdminComponent,
         TableUsersComponent,
-        OrderStatusChangerComponent
+        OrderStatusChangerComponent,
+        UserDataComponent
     ],
     imports: [
         CommonModule,

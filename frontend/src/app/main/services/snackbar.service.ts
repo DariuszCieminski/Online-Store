@@ -9,7 +9,7 @@ export class SnackbarService {
     constructor(private snackBar: MatSnackBar) {
     }
 
-    showSnackbar(message: string, action?: string, options?: MatSnackBarConfig): MatSnackBarRef<any> {
+    show(message: string, action?: string, options?: MatSnackBarConfig): MatSnackBarRef<any> {
         return this.snackBar.open(message, action, options);
     }
 }

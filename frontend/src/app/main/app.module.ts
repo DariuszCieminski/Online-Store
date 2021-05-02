@@ -37,7 +37,6 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { NewOrderComponent } from './views/new-order/new-order.component';
 import { OrdersComponent } from './views/orders/orders.component';
 import { ProductDataComponent } from './views/products/product-data/product-data.component';
-import { ProductDeleteComponent } from './views/products/product-delete.component';
 import { ProductDetailsComponent } from './views/products/product-details/product-details.component';
 import { ProductsComponent } from './views/products/products.component';
 import { QuantityPanelComponent } from './views/products/quantity-panel/quantity-panel.component';
@@ -60,7 +59,6 @@ registerLocaleData(localePl);
         CartComponent,
         ProductDataComponent,
         FilterPanelComponent,
-        ProductDeleteComponent,
         QuantityPanelComponent,
         NewOrderComponent,
         OrdersComponent,

@@ -17,7 +17,7 @@ export class AdminComponent implements AfterViewInit {
     dataSource: MatTableDataSource<any>[] = new Array(2);
     apiUrls: string[] = [ApiUrls.users, ApiUrls.orders];
     displayedColumns: string[][] = [
-        ['name', 'surname', 'email', 'address'],
+        ['id', 'name', 'surname', 'email', 'address', 'roles', 'edit-remove'],
         ['id', 'buyer', 'items', 'deliveryAddress', 'paymentMethod', 'status', 'cost', 'time', 'information']
     ];
 

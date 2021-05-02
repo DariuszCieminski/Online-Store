@@ -1,10 +1,11 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { SnackbarService } from "../../services/snackbar.service";
 import { ApiUrls } from "../../util/api-urls";
 import { Validator } from "../../util/validator";
+import { Utilities } from "../../../shared/util/utilities";
 
 @Component({
     selector: 'app-register',
@@ -44,21 +45,7 @@ export class RegisterComponent implements OnInit {
             ])
         });
 
-        this.formArray.get([2]).valueChanges
-            .subscribe(value => {
-                if (value.street || value.postCode || value.city) {
-                    this.formArray.get([2]).get('street').setValidators(Validators.required);
-                    this.formArray.get([2]).get('postCode').setValidators([Validators.required, Validator.postCode]);
-                    this.formArray.get([2]).get('city').setValidators(Validators.required);
-                } else {
-                    this.formArray.get([2]).get('street').clearValidators();
-                    this.formArray.get([2]).get('postCode').clearValidators();
-                    this.formArray.get([2]).get('city').clearValidators();
-                }
-                this.formArray.get([2]).get('street').updateValueAndValidity({emitEvent: false});
-                this.formArray.get([2]).get('postCode').updateValueAndValidity({emitEvent: false});
-                this.formArray.get([2]).get('city').updateValueAndValidity({emitEvent: false});
-            });
+        Utilities.setEventForAddressChange(this.formArray.get([2]));
     }
 
     onSubmit(): void {
@@ -74,7 +61,7 @@ export class RegisterComponent implements OnInit {
             this.httpClient.post(ApiUrls.users, data)
                 .subscribe(() => {
                         this.router.navigateByUrl('/login')
-                            .then(() => this.snackBar.showSnackbar("Your account was successfully created. You can now log in."));
+                            .then(() => this.snackBar.show("Your account was successfully created. You can now log in."));
                     },
                     error => {
                         this.formSubmitted = false;
@@ -84,9 +71,10 @@ export class RegisterComponent implements OnInit {
         }
     }
 
-    private handleError(errorResponse: any): void {
-        const errors: string[] = errorResponse.error.errors.map(value => value.error);
+    private handleError(errorResponse: HttpErrorResponse): void {
+        //map error messages to a list
+        const errors: string[] = errorResponse.error["errors"].map(value => value.error);
         const message = errors.reduce((previousValue, currentValue) => `${previousValue}\n${currentValue}`);
-        this.snackBar.showSnackbar(message, "Close", {panelClass: 'snackbar'});
+        this.snackBar.show(message, "Close", {panelClass: 'snackbar'});
     }
 }

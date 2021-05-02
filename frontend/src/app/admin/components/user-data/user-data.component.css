@@ -1,0 +1,16 @@
+.container {
+    font-size: 120%;
+}
+
+.title {
+    font-size: x-large !important;
+    padding: .75rem !important;
+}
+
+mat-form-field {
+    width: 15rem;
+}
+
+button {
+    width: 50% !important;
+}

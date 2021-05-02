@@ -1,0 +1,12 @@
+td {
+    font-size: large;
+}
+
+mat-icon {
+    font-size: 220%;
+}
+
+.address {
+    padding-top: .4rem;
+    padding-bottom: .4rem;
+}
