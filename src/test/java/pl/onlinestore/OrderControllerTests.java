@@ -313,11 +313,11 @@ class OrderControllerTests {
     @WithUserDetails("manager@test.pl")
     void getOrderByIdShouldContainBuyerAndProductId() throws Exception {
         Order order = createOrder();
-        String postOrder = mockMvc.perform(request.builder(HttpMethod.POST,"/api/orders")
-                                  .content(mapper.writeValueAsString(order)))
-                                  .andExpect(status().isCreated())
-                                  .andReturn().getResponse().getContentAsString();
-        order = mapper.readValue(postOrder, Order.class);
+        String makeOrderResponse = mockMvc.perform(request.builder(HttpMethod.POST, "/api/orders")
+                                          .content(mapper.writeValueAsString(order)))
+                                          .andExpect(status().isCreated())
+                                          .andReturn().getResponse().getContentAsString();
+        order = mapper.readValue(makeOrderResponse, Order.class);
 
         mockMvc.perform(get("/api/orders/{id}", order.getId())).andDo(print())
                .andExpect(status().isOk())
@@ -355,13 +355,45 @@ class OrderControllerTests {
 
     @Test
     @WithUserDetails("manager@test.pl")
+    void updateOrderStatusShouldReturnOk() throws Exception {
+        Order order = createOrder();
+        String makeOrderResponse = mockMvc.perform(request.builder(HttpMethod.POST, "/api/orders")
+                                          .with(user("user@test.pl"))
+                                          .content(mapper.writeValueAsString(order)))
+                                          .andExpect(status().isCreated())
+                                          .andExpect(jsonPath("$.status").value(OrderStatus.CREATED.name()))
+                                          .andReturn().getResponse().getContentAsString();
+
+        order = mapper.readValue(makeOrderResponse, Order.class);
+        order.setStatus(OrderStatus.IN_PROGRESS);
+        mockMvc.perform(request.builder(HttpMethod.PATCH, "/api/orders")
+               .content(mapper.writeValueAsString(order)))
+               .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/orders/{id}", order.getId()))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.id").value(order.getId()))
+               .andExpect(jsonPath("$.status").value(OrderStatus.IN_PROGRESS.name()));
+    }
+
+    @Test
+    @WithUserDetails("user@test.pl")
+    void updateOrderStatusWithoutAuthorizationShouldReturnForbidden() throws Exception {
+        Order order = createOrder();
+        mockMvc.perform(request.builder(HttpMethod.PATCH, "/api/orders")
+               .content(mapper.writeValueAsString(order)))
+               .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithUserDetails("manager@test.pl")
     void deleteOrderWithAuthorizationReturnNoContent() throws Exception {
         Order order = createOrder();
-        String postOrder = mockMvc.perform(request.builder(HttpMethod.POST, "/api/orders")
-                                  .content(mapper.writeValueAsString(order)))
-                                  .andExpect(status().isCreated())
-                                  .andReturn().getResponse().getContentAsString();
-        order = mapper.readValue(postOrder, Order.class);
+        String makeOrderResponse = mockMvc.perform(request.builder(HttpMethod.POST, "/api/orders")
+                                          .content(mapper.writeValueAsString(order)))
+                                          .andExpect(status().isCreated())
+                                          .andReturn().getResponse().getContentAsString();
+        order = mapper.readValue(makeOrderResponse, Order.class);
 
         mockMvc.perform(request.builder(HttpMethod.DELETE, "/api/orders/{id}", order.getId())).andDo(print())
                .andExpect(status().isNoContent());

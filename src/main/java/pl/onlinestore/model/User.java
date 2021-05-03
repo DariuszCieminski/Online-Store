@@ -164,8 +164,7 @@ public class User {
                             getAddress(),
                             getEmail(),
                             getPassword(),
-                            getRoles(),
-                            getOrders());
+                            getRoles());
     }
 
     @Override

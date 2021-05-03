@@ -14,7 +14,6 @@ import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -51,8 +50,7 @@ public class Order {
     private User buyer;
 
     @NotEmpty(message = "Product list is empty.")
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", orphanRemoval = true, cascade = {CascadeType.PERSIST,
-                                                                                             CascadeType.REMOVE})
+    @OneToMany(mappedBy = "order", orphanRemoval = true, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @ApiModelProperty(value = "List of products that user purchased. Cannot be empty or null.", required = true,
                       position = 2)
     @JsonIgnoreProperties("order")
@@ -168,7 +166,6 @@ public class Order {
     public int hashCode() {
         return Objects.hash(getId(),
                             getBuyer(),
-                            getItems(),
                             getDeliveryAddress(),
                             getPaymentMethod(),
                             getInformation(),

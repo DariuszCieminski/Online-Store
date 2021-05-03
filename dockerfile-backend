@@ -22,10 +22,10 @@ FROM adoptopenjdk/openjdk8:alpine-slim
 RUN mkdir /app
 
 # Copy application package to the newly created folder
-COPY --from=maven /build/target/onlinestore-1.0.0.jar /app
+COPY --from=maven /build/target/*.jar /app/app.jar
 
 # Expose port
 EXPOSE 8080
 
 # Run the application
-ENTRYPOINT ["java", "-jar", "/app/onlinestore-1.0.0-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
