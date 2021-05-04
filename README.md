@@ -7,12 +7,12 @@ The working demo application is available [HERE](https://pl-onlinestore.netlify.
 Application uses following technologies:
  - Spring Boot
  - Hibernate
- - Springfox
+ - JUnit
  - Angular
 
 There are 3 user roles:
  1. User (regular store customer)
- 2. Manager (administrator, can modify users and products)
+ 2. Manager (administrator, can modify users, products and change order status)
  3. Developer (has access to the Swagger UI)
 
 Some application features:
@@ -20,10 +20,8 @@ Some application features:
  - data validation using Hibernate Validator
  - filtering products by multiple predicates
  - browsing your orders with ability to sort and search
+ - managing users and orders by administration panel
 
-## To do
- - Administrator panel to manage users/orders by the UI
- 
 # Running the application
 The application starts in 'jwt' profile by default in both backend and frontend modules.
 
@@ -34,7 +32,7 @@ You can modify any application property in the `.env` config file.<br><br>
 To start the application, run the following command in project's main folder:
 
 ```
-docker-compose up
+docker compose up
 ```
 
 This will build Docker images for all app modules (DB, Frontend and Backend) and start them as separate containers connected to shared network.<br><br>
@@ -42,7 +40,7 @@ After all modules finish loading, type in a web browser `http://localhost:4200` 
 To stop running containers, type in the console:
 
 ```
-docker-compose down
+docker compose down
 ```
 
 ## Without Docker
